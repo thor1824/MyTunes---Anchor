@@ -12,38 +12,78 @@ import java.io.File;
  * @author Christian
  */
 public class Song {
-    
-        private File fileParth;
-        private String Title;
-        public int id;
 
-    public Song(File fileParth, String Title, int id) {
-        this.fileParth = fileParth;
+    private static String filePath;
+    private static String Title;
+    private static File file;
+    private static int id;
+    private static String artist;
+    private static double duration;
+
+    public Song(String fileParth, String Title, int id, String artist, double duration) {
+        this.filePath = fileParth;
         this.Title = Title;
         this.id = id;
-    }     
-        
-
-    /**
-     * Get the value of fileParth
-     *
-     * @return the value of fileParth
-     */
-    public File getFileParth() {
-        return fileParth;
-    }
-
-    /**
-     * Set the value of fileParth
-     *
-     * @param fileParth new value of fileParth
-     */
-    public void setFileParth(File fileParth) {
-        this.fileParth = fileParth;
+        this.artist = artist;
+        this.duration = duration;
+        this.file = new File(fileParth);
     }
 
     
-    
+
+    /**
+     * Get the value of duration
+     *
+     * @return the value of duration
+     */
+    public double getDuration() {
+        return duration;
+    }
+
+    /**
+     * Set the value of duration
+     *
+     * @param duration new value of duration
+     */
+    public void setDuration(double duration) {
+        this.duration = duration;
+    }
+
+    /**
+     * Get the value of artist
+     *
+     * @return the value of artist
+     */
+    public String getArtist() {
+        return artist;
+    }
+
+    /**
+     * Set the value of artist
+     *
+     * @param artist new value of artist
+     */
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    /**
+     * Get the value of filePath
+     *
+     * @return the value of filePath
+     */
+    public String getFilePath() {
+        return filePath;
+    }
+
+    /**
+     * Set the value of filePath
+     *
+     * @param fileParth new value of filePath
+     */
+    public void setFilePath(String fileParth) {
+        this.filePath = fileParth;
+    }
 
     /**
      * Get the value of Title
@@ -62,15 +102,8 @@ public class Song {
     public void setTitle(String Title) {
         this.Title = Title;
     }
-    
-    
-     public int getId() {
+
+    public int getId() {
         return id;
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    
 }

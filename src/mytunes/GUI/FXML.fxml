@@ -16,13 +16,14 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytune.GUI.Controller.FXMLController">
+<VBox xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.FXMLController">
    <children>
-      <MenuBar layoutY="1.0" prefHeight="26.0" prefWidth="800.0">
+      <MenuBar prefHeight="26.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem mnemonicParsing="false" onAction="#menuAddSong" text="Add Song" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuAddAlbum" text="Add Album" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -37,18 +38,13 @@
           </Menu>
         </menus>
       </MenuBar>
-      <HBox layoutY="27.0" prefHeight="600.0" prefWidth="199.0">
+      <HBox prefHeight="600.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox prefHeight="600.0" prefWidth="200.0">
+            <VBox prefHeight="600.0" prefWidth="200.0" HBox.hgrow="NEVER">
                <children>
-                  <ListView fx:id="LstPlaylist" prefHeight="416.0" prefWidth="178.0" />
-                  <AnchorPane prefHeight="192.0" prefWidth="174.0">
+                  <ListView fx:id="LstPlaylist" prefHeight="416.0" prefWidth="178.0" VBox.vgrow="ALWAYS" />
+                  <AnchorPane prefHeight="192.0" prefWidth="174.0" VBox.vgrow="NEVER">
                      <children>
-                        <ImageView fx:id="btnpause" fitHeight="42.0" fitWidth="42.0" layoutX="76.0" layoutY="104.0">
-                           <image>
-                              <Image url="@../../../Pics/PauseBtn.png" />
-                           </image>
-                        </ImageView>
                         <Slider fx:id="sldVol" layoutX="27.0" layoutY="167.0" onDragDetected="#volSlider" />
                         <Label fx:id="lblPlaying" layoutX="83.0" layoutY="69.0" text="Label" />
                         <Button fx:id="btnNewPlaylist" layoutX="60.0" layoutY="25.0" mnemonicParsing="false" onAction="#newPlaylistBtn" text="New Playlist" />
@@ -84,26 +80,25 @@
                   <Insets />
                </HBox.margin>
             </VBox>
+            <VBox prefHeight="200.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <TableView fx:id="tbvSongs" prefHeight="527.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                      <TableColumn minWidth="298.0" prefWidth="-1.0" text="Title" />
+                        <TableColumn minWidth="150.0" prefWidth="-1.0" text="Artist" />
+                        <TableColumn minWidth="100.0" prefWidth="-1.0" text="Genre" />
+                        <TableColumn id="tcTime" minWidth="50.0" prefWidth="-1.0" text="Time" />
+                    </columns>
+                  </TableView>
+                  <AnchorPane prefHeight="74.0" prefWidth="600.0" VBox.vgrow="NEVER">
+                     <children>
+                        <Slider fx:id="sldProg" layoutX="48.0" layoutY="30.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="14.0" prefWidth="526.0" />
+                        <Label fx:id="lbltime" layoutX="14.0" layoutY="29.0" nodeOrientation="LEFT_TO_RIGHT" text="Label" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </VBox>
          </children>
       </HBox>
-      <HBox layoutX="200.0" layoutY="27.0" prefHeight="550.0" prefWidth="600.0">
-         <children>
-            <TableView fx:id="tbvSongs" prefHeight="528.0" prefWidth="600.0">
-              <columns>
-                <TableColumn prefWidth="75.0" text="Song ID" />
-                <TableColumn prefWidth="130.4000244140625" text="Title" />
-                  <TableColumn prefWidth="130.4000244140625" text="Author" />
-                  <TableColumn prefWidth="130.4000244140625" text="Genre" />
-                  <TableColumn prefWidth="130.4000244140625" text="Time" />
-              </columns>
-            </TableView>
-         </children>
-      </HBox>
-      <AnchorPane layoutX="200.0" layoutY="577.0" prefHeight="74.0" prefWidth="600.0">
-         <children>
-            <Slider fx:id="sldProg" layoutX="48.0" layoutY="30.0" prefHeight="14.0" prefWidth="526.0" />
-            <Label fx:id="lbltime" layoutX="14.0" layoutY="29.0" text="Label" />
-         </children>
-      </AnchorPane>
    </children>
-</AnchorPane>
+</VBox>

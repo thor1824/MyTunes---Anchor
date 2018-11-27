@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mytunes.BE.Playlist;
 import mytunes.BE.Song;
-import mytunes.DAL.ServerConnect;
+import mytunes.DAL.DB.ServerConnect;
 
 /**
  *
@@ -87,8 +87,8 @@ public class PlaylistDAO {
                     File file = new File(resultSet.getNString("Path"));
                     int songID = resultSet.getInt("SongID");
                     String songTitle = resultSet.getNString("Title");
-                    Song song = new Song(file, songTitle, songID);
-                    playlist.addToPlaylist(song);
+                   // Song song = new Song(file, songTitle, songID);
+                   //playlist.addToPlaylist(song);
                 }
                 
             playlists.add(playlist);
