@@ -28,7 +28,7 @@ public class PlaylistDAO {
 
     public PlaylistDAO() {
 
-        server = new ServerConnect();
+        this.server = new ServerConnect();
     }
 
     public Playlist createPlaylist(String name) throws SQLServerException, SQLException {
@@ -101,12 +101,20 @@ public class PlaylistDAO {
         String sql = "UPDATE Playlist SET Title = ? WHERE PlaylistID =" + playlist.getId();
 
         Connection con = server.getConnection();
+        
+//        Statement st = con.createStatement();
+//        
+//        ResultSet rs = st.executeQuery("SELECT * FROM Playlist WHER PlaylistID = " + playlist.getId());
+//        rs.next();
+//        int id = rs.getInt("PlaylistID");
+//        String name = rs.getNString("Name");
+//        Playli
+        
+        PreparedStatement pst = con.prepareStatement(sql);
 
-        PreparedStatement st = con.prepareStatement(sql);
+        pst.setString(1, playlist.getTitle());
 
-        st.setString(1, playlist.getTitle());
-
-        int rowsAffected = st.executeUpdate();
+        int rowsAffected = pst.executeUpdate();
         
         if (rowsAffected >= 1){
             return true;

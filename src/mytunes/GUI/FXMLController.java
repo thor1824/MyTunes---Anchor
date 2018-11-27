@@ -24,6 +24,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.TableColumn;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -44,6 +48,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Nijas Hansen
  */
 public class FXMLController implements Initializable {
+
     //FXML
     @FXML
     private ListView<?> LstPlaylist;
@@ -60,14 +65,15 @@ public class FXMLController implements Initializable {
     @FXML
     private Button btnNewPlaylist;
     @FXML
-    private TableView<?> tbvSongs;
+    private TableView<Song> tbvSongs;
     @FXML
     private Slider sldProg;
     @FXML
     private Label lbltime;
-    
+
     //other
-    
+    private MediaPlayer mPlayer;
+    private MyTunesModel mtModel;
     private int paused = 1;
     private List<Song> activePlaylist;
 
@@ -76,11 +82,33 @@ public class FXMLController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+//        try {
+//            mtModel = new MyTunesModel();
+//
+//            activePlaylist = mtModel.getAllSong();
+//            tbvSongs.getItems().addAll(activePlaylist);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
+
+
+//        Media media = new Media(source);
+
+        mPlayer = new MediaPlayer(null);
+        
+        TableColumn<Song, String> title = new TableColumn<>();
+        title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
+        title.setText("Title");
+        tbvSongs.getColumns().add(title);
+
     }
 
     @FXML
     private void volSlider(MouseEvent event) {
+        double volume = sldVol.getBaselineOffset();
+        double max = sldVol.getMax();
+        mPlayer.setVolume(volume/max * 100);
     }
 
     @FXML
@@ -154,7 +182,7 @@ public class FXMLController implements Initializable {
     @FXML
     private void menuAddAlbum(ActionEvent event) {
         DirectoryChooser dc = new DirectoryChooser();
-        
+
         File[] files = dc.showDialog(null).listFiles();
         for (File addedFile : files) {
             if (addedFile.getAbsolutePath().contains(".mp3")) {

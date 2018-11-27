@@ -22,12 +22,12 @@ import mytunes.BE.Song;
 public class SongDAO {
 
     ServerConnect sc;
-
-    public SongDAO(ServerConnect sc) {
-        this.sc = sc;
+    
+    public SongDAO() {
+        sc = new ServerConnect();
     }
 
-    public Song CreateSong(String filePath, String title, String artist, double duration) throws SQLServerException, SQLException {
+    public Song createSong(String filePath, String title, String artist, double duration) throws SQLServerException, SQLException {
         String sql = "INSERT INTO Song (Title, Path, Artist, duration) VALUES (?, ?, ?, ?)"; //måske album og nr på album
 
         Connection con = sc.getConnection();
@@ -59,19 +59,29 @@ public class SongDAO {
         String sql = "UPDATE Song SET Title = ?, Artist = ?, Path = ? WHERE SongID =" + song.getId();
 
         Connection con = sc.getConnection();
+        
+//        Statement st = con.createStatement(); // hurtiger metode jo flere Sange vi har
+//        ResultSet rs = st.executeQuery("SELECT * FROM Song Where SongID = " + song.getId());
+//        rs.next();
+//        int id = rs.getInt("SongID");
+//        String title = rs.getNString("Title");
+//        String path = rs.getNString("Path");
+//        String artist = rs.getNString("Artist");
+//        double duration = rs.getDouble("Duration");
+//        Song oldSong = new Song(path, title, id, artist, duration);
 
-        PreparedStatement st = con.prepareStatement(sql);
+        PreparedStatement pst = con.prepareStatement(sql);
 
-        st.setString(1, song.getTitle());
-        st.setString(2, song.getArtist());
-        st.setString(3, song.getFilePath());
+        pst.setString(1, song.getTitle());
+        pst.setString(2, song.getArtist());
+        pst.setString(3, song.getFilePath());
 
-        int rowsAffected = st.executeUpdate();
-
+        int rowsAffected = pst.executeUpdate();
         if (rowsAffected >= 1) {
             return true;
         }
         return false;
+//        return oldSong;
     }
 
     public void deleteSong(Song song) throws SQLServerException, SQLException {
