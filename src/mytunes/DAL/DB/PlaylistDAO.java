@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mytunes.DAL;
+package mytunes.DAL.DB;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,8 +14,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import mytune.DAL.ServerConnect;
 import mytunes.BE.Playlist;
+import mytunes.BE.Song;
+import mytunes.DAL.ServerConnect;
 
 /**
  *
@@ -71,11 +73,24 @@ public class PlaylistDAO {
         Connection con = server.getConnection();
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM Playlist");
-        //ResultSet resultSet = st.executeQuery("SELECT FROM Song_Playlist ")
+        
         while (rs.next()) {
             int id = rs.getInt("PlaylistID");
             String title = rs.getNString("Title");
             Playlist playlist = new Playlist(title, id);
+            ResultSet resultSet = st.executeQuery("SELECT * "
+                + "FROM Song"
+                + "LEFT JOIN Song_Playlist ON Song.SongID = Song_Playlist.SongID "
+                + "WHERE PlaylistID = " + id
+                );
+                while  (resultSet.next()){
+                    File file = new File(resultSet.getNString("Path"));
+                    int songID = resultSet.getInt("SongID");
+                    String songTitle = resultSet.getNString("Title");
+                    Song song = new Song(file, songTitle, songID);
+                    playlist.addToPlaylist(song);
+                }
+                
             playlists.add(playlist);
         }
         return playlists;

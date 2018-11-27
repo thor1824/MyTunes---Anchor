@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytune.GUI.Controller.FXMLController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytune.GUI.Controller.FXMLController">
    <children>
       <MenuBar layoutY="1.0" prefHeight="26.0" prefWidth="800.0">
         <menus>
@@ -54,27 +54,27 @@
                         <Button fx:id="btnNewPlaylist" layoutX="60.0" layoutY="25.0" mnemonicParsing="false" onAction="#newPlaylistBtn" text="New Playlist" />
                         <ImageView fx:id="btnPlay" fitHeight="42.0" fitWidth="42.0" layoutX="75.0" layoutY="104.0" onMouseClicked="#playSongBtn">
                            <image>
-                              <Image url="@../../../Pics/Playbtn.png" />
+                              <Image url="@../../Pics/Playbtn.png" />
                            </image>
                         </ImageView>
                         <ImageView fx:id="btnNext" fitHeight="42.0" fitWidth="42.0" layoutX="125.0" layoutY="104.0" onMouseClicked="#NextSongBtn">
                            <image>
-                              <Image url="@../../../Pics/playnext%20song.png" />
+                              <Image url="@../../Pics/playnext%20song.png" />
                            </image>
                         </ImageView>
                         <ImageView fx:id="btnPrev" fitHeight="42.0" fitWidth="42.0" layoutX="27.0" layoutY="104.0" onMouseClicked="#prevSongBtn">
                            <image>
-                              <Image url="@../../../Pics/playprev%20song.png" />
+                              <Image url="@../../Pics/playprev%20song.png" />
                            </image>
                         </ImageView>
                         <ImageView fitHeight="10.0" fitWidth="8.0" layoutX="14.0" layoutY="169.0">
                            <image>
-                              <Image url="@../../../Pics/Slukket%20Speaker.png" />
+                              <Image url="@../../Pics/Slukket%20Speaker.png" />
                            </image>
                         </ImageView>
                         <ImageView fitHeight="12.0" fitWidth="12.0" layoutX="167.0" layoutY="168.0">
                            <image>
-                              <Image url="@../../../Pics/Tændt%20speaker.png" />
+                              <Image url="@../../Pics/Tændt%20speaker.png" />
                            </image>
                         </ImageView>
                      </children>
