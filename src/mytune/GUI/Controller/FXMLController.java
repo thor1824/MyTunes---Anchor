@@ -15,7 +15,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * FXML Controller class
@@ -28,7 +30,7 @@ public class FXMLController implements Initializable
     @FXML
     private ListView<?> LstPlaylist;
     @FXML
-    private Button btnPlay;
+    private ImageView btnPlay;
     @FXML
     private Button btnPrev;
     @FXML
@@ -43,6 +45,8 @@ public class FXMLController implements Initializable
     private TableView<?> tbvSongs;
     @FXML
     private Slider sldProg;
+    @FXML
+    private AnchorPane btnpause;
 
     /**
      * Initializes the controller class.
@@ -53,10 +57,6 @@ public class FXMLController implements Initializable
         // TODO
     }    
 
-    @FXML
-    private void playSongBtn(ActionEvent event)
-    {
-    }
 
     @FXML
     private void prevSongBtn(ActionEvent event)
@@ -75,6 +75,11 @@ public class FXMLController implements Initializable
 
     @FXML
     private void newPlaylistBtn(ActionEvent event)
+    {
+    }
+
+    @FXML
+    private void playSongBtn(MouseEvent event)
     {
     }
     
