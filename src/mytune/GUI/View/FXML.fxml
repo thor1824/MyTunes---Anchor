@@ -42,9 +42,9 @@
             <VBox prefHeight="600.0" prefWidth="200.0">
                <children>
                   <ListView fx:id="LstPlaylist" prefHeight="416.0" prefWidth="178.0" />
-                  <AnchorPane fx:id="btnpause" prefHeight="192.0" prefWidth="174.0">
+                  <AnchorPane prefHeight="192.0" prefWidth="174.0">
                      <children>
-                        <ImageView fitHeight="42.0" fitWidth="42.0" layoutX="76.0" layoutY="104.0">
+                        <ImageView fx:id="btnpause" fitHeight="42.0" fitWidth="42.0" layoutX="76.0" layoutY="104.0">
                            <image>
                               <Image url="@../../../Pics/PauseBtn.png" />
                            </image>

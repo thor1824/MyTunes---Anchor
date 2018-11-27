@@ -15,9 +15,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+
 
 /**
  * FXML Controller class
@@ -32,9 +33,9 @@ public class FXMLController implements Initializable
     @FXML
     private ImageView btnPlay;
     @FXML
-    private Button btnPrev;
+    private ImageView btnPrev;
     @FXML
-    private Button btnNext;
+    private ImageView btnNext;
     @FXML
     private Slider sldVol;
     @FXML
@@ -46,7 +47,9 @@ public class FXMLController implements Initializable
     @FXML
     private Slider sldProg;
     @FXML
-    private AnchorPane btnpause;
+    private ImageView btnpause;
+    @FXML
+    private Label lbltime;
 
     /**
      * Initializes the controller class.
@@ -58,15 +61,6 @@ public class FXMLController implements Initializable
     }    
 
 
-    @FXML
-    private void prevSongBtn(ActionEvent event)
-    {
-    }
-
-    @FXML
-    private void NextSongBtn(ActionEvent event)
-    {
-    }
 
     @FXML
     private void volSlider(MouseEvent event)
@@ -80,6 +74,22 @@ public class FXMLController implements Initializable
 
     @FXML
     private void playSongBtn(MouseEvent event)
+    {
+       btnPlay.setOpacity(0);
+       
+       if(btnPlay.getOpacity() == 0)
+       {
+           btnPlay.setOpacity(1);
+       }
+    }
+
+    @FXML
+    private void NextSongBtn(MouseEvent event)
+    {
+    }
+
+    @FXML
+    private void prevSongBtn(MouseEvent event)
     {
     }
     
