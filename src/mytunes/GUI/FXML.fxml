@@ -7,13 +7,16 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
 
 <VBox xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.FXMLController">
    <children>
@@ -41,12 +44,13 @@
          <children>
             <VBox prefHeight="600.0" prefWidth="200.0" HBox.hgrow="NEVER">
                <children>
+                  <MediaView fx:id="mview" />
                   <ListView fx:id="LstPlaylist" prefHeight="416.0" prefWidth="178.0" VBox.vgrow="ALWAYS" />
-                  <AnchorPane prefHeight="192.0" prefWidth="174.0" VBox.vgrow="NEVER">
+                  <AnchorPane minHeight="192.0" minWidth="174.0" prefHeight="192.0" prefWidth="174.0" VBox.vgrow="NEVER">
                      <children>
-                        <Slider fx:id="sldVol" layoutX="27.0" layoutY="167.0" onDragDetected="#volSlider" />
+                        <Slider fx:id="sldVol" layoutX="27.0" layoutY="167.0" min="1.0" onMouseClicked="#volSlider" onMouseDragged="#volSlider" />
                         <Label fx:id="lblPlaying" layoutX="83.0" layoutY="69.0" text="Label" />
-                        <Button fx:id="btnNewPlaylist" layoutY="25.0" mnemonicParsing="false" onAction="#newPlaylistBtn" text="New Playlist" />
+                        <Button fx:id="btnNewPlaylist" layoutX="8.0" layoutY="25.0" mnemonicParsing="false" onAction="#newPlaylistBtn" text="New Playlist" />
                         <ImageView fx:id="btnPlay" fitHeight="42.0" fitWidth="42.0" layoutX="75.0" layoutY="104.0" onMouseClicked="#playSongBtn">
                            <image>
                               <Image url="@../../Pics/Playbtn.png" />
@@ -72,7 +76,7 @@
                               <Image url="@../../Pics/Tændt%20speaker.png" />
                            </image>
                         </ImageView>
-                        <Button fx:id="btnEdit" layoutX="99.0" layoutY="25.0" mnemonicParsing="false" onAction="#editPlaylist" text="Edit Playlist" />
+                        <Button fx:id="btnEdit" layoutX="108.0" layoutY="25.0" mnemonicParsing="false" onAction="#editPlaylist" text="Edit Playlist" />
                      </children>
                   </AnchorPane>
                </children>
@@ -80,13 +84,18 @@
                   <Insets />
                </HBox.margin>
             </VBox>
-            <VBox prefHeight="200.0" HBox.hgrow="ALWAYS">
+            <VBox prefHeight="600.0" prefWidth="502.0" HBox.hgrow="ALWAYS">
                <children>
                   <TableView fx:id="tbvSongs" prefHeight="527.0" VBox.vgrow="ALWAYS" />
                   <AnchorPane prefHeight="74.0" prefWidth="600.0" VBox.vgrow="NEVER">
                      <children>
-                        <Slider fx:id="sldProg" layoutX="48.0" layoutY="30.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="14.0" prefWidth="526.0" />
-                        <Label fx:id="lbltime" layoutX="14.0" layoutY="29.0" nodeOrientation="LEFT_TO_RIGHT" text="Label" />
+                        <Label fx:id="lbltime" layoutX="7.0" layoutY="44.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="17.0" prefWidth="126.0" text="Label" />
+                        <StackPane layoutX="140.0" prefHeight="105.0" prefWidth="460.0">
+                           <children>
+                              <ProgressBar fx:id="songProg" prefHeight="12.0" prefWidth="532.0" progress="0.0" />
+                              <Slider fx:id="sldProg" nodeOrientation="LEFT_TO_RIGHT" prefHeight="19.0" prefWidth="358.0" style="-fx-background-color: null;" />
+                           </children>
+                        </StackPane>
                      </children>
                   </AnchorPane>
                </children>
