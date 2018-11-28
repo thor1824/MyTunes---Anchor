@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mytunes.BE.Playlist;
 import mytunes.BE.Song;
-import mytunes.DAL.DB.ServerConnect;
+import mytunes.DAL.ServerConnect;
 
 /**
  *

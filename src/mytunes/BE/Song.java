@@ -19,14 +19,34 @@ public class Song {
     private static int id;
     private static String artist;
     private static double duration;
+    private static String genre;
 
-    public Song(String fileParth, String Title, int id, String artist, double duration) {
+    /**
+     * Get the value of genre
+     *
+     * @return the value of genre
+     */
+    public String getGenre() {
+        return genre;
+    }
+
+    /**
+     * Set the value of genre
+     *
+     * @param genre new value of genre
+     */
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+
+    public Song(String fileParth, String Title, int id, String artist, double duration, String genre) {
         this.filePath = fileParth;
         this.Title = Title;
         this.id = id;
         this.artist = artist;
         this.duration = duration;
-        this.file = new File(fileParth);
+        this.genre = genre;
     }
 
     

@@ -54,8 +54,9 @@ public class MyTunesManager {
         return songDAO.updateSong(song);
     }
 
-    public Song createSong(String filePath, String title, String artist, double duration) throws SQLException {
-        return songDAO.createSong(filePath, title, artist, duration);
+    public Song createSong(String filePath, String title, String artist, double duration, String genre) throws SQLException {
+        System.out.println("2");
+        return songDAO.createSong(filePath, title, artist, duration, genre);
     }
 
 }

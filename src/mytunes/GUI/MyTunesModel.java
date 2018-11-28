@@ -27,10 +27,10 @@ public class MyTunesModel {
         logiclayer = new MyTunesManager();
         
         songs = FXCollections.observableArrayList();
-        songs.addAll(logiclayer.getAllSong());
+        //songs.addAll(logiclayer.getAllSong());
         
         playlists = FXCollections.observableArrayList();
-        playlists.addAll(logiclayer.getAllPlaylits());
+        //playlists.addAll(logiclayer.getAllPlaylits());
     }
     
     public List<Song> getAllSong() {
@@ -46,8 +46,10 @@ public class MyTunesModel {
         playlists.add(playlist);
     }
     
-    public void CreateSong(String filePath, String title, String artist, double duration) throws SQLException {
-        Song song = logiclayer.createSong(filePath, title, artist, duration);
+    public void createSong(String filePath, String title, String artist, double duration, String genre) throws SQLException {
+        System.out.println("0");
+        Song song = logiclayer.createSong(filePath, title, artist, duration, genre);
+        System.out.println("1");
         songs.add(song);
     }
     

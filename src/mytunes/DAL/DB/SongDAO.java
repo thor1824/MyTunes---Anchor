@@ -5,6 +5,7 @@
  */
 package mytunes.DAL.DB;
 
+import mytunes.DAL.ServerConnect;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,20 +28,22 @@ public class SongDAO {
         sc = new ServerConnect();
     }
 
-    public Song createSong(String filePath, String title, String artist, double duration) throws SQLServerException, SQLException {
-        String sql = "INSERT INTO Song (Title, Path, Artist, duration) VALUES (?, ?, ?, ?)"; //måske album og nr på album
+    public Song createSong(String filePath, String title, String artist, double duration, String genre) throws SQLServerException, SQLException {
+        String sql = "INSERT INTO Song (Title, Artist, Genre, Duration, Path) VALUES (?, ?, ?, ?, ?);"; //måske album og nr på album
 
         Connection con = sc.getConnection();
 
         PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        System.out.println("3");
 
         st.setString(1, title);
-        st.setString(2, filePath);
-        st.setString(3, artist);
+        st.setString(5, filePath);
+        st.setString(2, artist);
         st.setDouble(4, duration);
+        st.setString(3, genre);
 
         int rowsAffected = st.executeUpdate();
-
+        System.out.println("nej!");
         ResultSet rs = st.getGeneratedKeys();
 
         int id = 0;
@@ -50,7 +53,7 @@ public class SongDAO {
 
         }
 
-        Song song = new Song(filePath, title, id, artist, duration);
+        Song song = new Song(filePath, title, id, artist, duration, genre);
 
         return song;
     }
@@ -105,9 +108,10 @@ public class SongDAO {
             String title = rs.getNString("Title");
             String path = rs.getNString("Path");
             String artist = rs.getNString("Artist");
-            double duration = rs.getDouble("duration");
+            double duration = rs.getDouble("Duration");
+            String genre = rs.getString("genre");
             
-            Song song = new Song(path, title, id, artist, duration);
+            Song song = new Song(path, title, id, artist, duration, genre);
             songs.add(song);
         }
         return songs;
