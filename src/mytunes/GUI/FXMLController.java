@@ -25,12 +25,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import mytunes.BE.Song;
 
 import org.apache.tika.exception.TikaException;
@@ -76,6 +79,8 @@ public class FXMLController implements Initializable {
     private MyTunesModel mtModel;
     private int paused = 1;
     private List<Song> activePlaylist;
+    @FXML
+    private Button btnEdit;
 
     /**
      * Initializes the controller class.
@@ -95,8 +100,8 @@ public class FXMLController implements Initializable {
 
 //        Media media = new Media(source);
 
-        mPlayer = new MediaPlayer(null);
-        
+//        mPlayer = new MediaPlayer(null);
+//        
         TableColumn<Song, String> title = new TableColumn<>();
         title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
         title.setText("Title");
@@ -113,6 +118,17 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void newPlaylistBtn(ActionEvent event) {
+        Parent root;
+        try{
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("mytunes/GUI/AddPlaylist.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Create Playlist");
+            stage.setScene(new Scene(root, 450, 176));
+            stage.show();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -219,6 +235,22 @@ public class FXMLController implements Initializable {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    @FXML
+    private void editPlaylist(ActionEvent event)
+    {
+        Parent root;
+        try{
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("mytunes/GUI/EditPlaylist.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Edit Playlist");
+            stage.setScene(new Scene(root, 450, 176));
+            stage.show();
+        }
+        catch (IOException e){
+            e.printStackTrace();
         }
     }
 

@@ -47,7 +47,7 @@
                      <children>
                         <Slider fx:id="sldVol" layoutX="27.0" layoutY="167.0" onDragDetected="#volSlider" />
                         <Label fx:id="lblPlaying" layoutX="83.0" layoutY="69.0" text="Label" />
-                        <Button fx:id="btnNewPlaylist" layoutX="60.0" layoutY="25.0" mnemonicParsing="false" onAction="#newPlaylistBtn" text="New Playlist" />
+                        <Button fx:id="btnNewPlaylist" layoutY="25.0" mnemonicParsing="false" onAction="#newPlaylistBtn" text="New Playlist" />
                         <ImageView fx:id="btnPlay" fitHeight="42.0" fitWidth="42.0" layoutX="75.0" layoutY="104.0" onMouseClicked="#playSongBtn">
                            <image>
                               <Image url="@../../Pics/Playbtn.png" />
@@ -73,6 +73,7 @@
                               <Image url="@../../Pics/Tændt%20speaker.png" />
                            </image>
                         </ImageView>
+                        <Button fx:id="btnEdit" layoutX="99.0" layoutY="25.0" mnemonicParsing="false" onAction="#editPlaylist" text="Edit Playlist" />
                      </children>
                   </AnchorPane>
                </children>
