@@ -8,7 +8,6 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -83,14 +82,7 @@
             </VBox>
             <VBox prefHeight="200.0" HBox.hgrow="ALWAYS">
                <children>
-                  <TableView fx:id="tbvSongs" prefHeight="527.0" VBox.vgrow="ALWAYS">
-                    <columns>
-                      <TableColumn minWidth="298.0" prefWidth="-1.0" text="Title" />
-                        <TableColumn minWidth="150.0" prefWidth="-1.0" text="Artist" />
-                        <TableColumn minWidth="100.0" prefWidth="-1.0" text="Genre" />
-                        <TableColumn id="tcTime" minWidth="50.0" prefWidth="-1.0" text="Time" />
-                    </columns>
-                  </TableView>
+                  <TableView fx:id="tbvSongs" prefHeight="527.0" VBox.vgrow="ALWAYS" />
                   <AnchorPane prefHeight="74.0" prefWidth="600.0" VBox.vgrow="NEVER">
                      <children>
                         <Slider fx:id="sldProg" layoutX="48.0" layoutY="30.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="14.0" prefWidth="526.0" />
