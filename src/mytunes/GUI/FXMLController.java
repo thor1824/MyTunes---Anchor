@@ -25,12 +25,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -75,59 +78,53 @@ public class FXMLController implements Initializable {
     private Slider sldProg;
     @FXML
     private Label lbltime;
+    @FXML
+    private Button btnEdit;
 
     //other
     private MediaPlayer mPlayer;
     private MyTunesModel mtModel;
     private int paused = 1;
     private List<Song> activePlaylist;
-    @FXML
-    private Button btnEdit;
+    private Song activeSong;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-//        try {
-//            mtModel = new MyTunesModel();
-//
+        try {
+            mtModel = new MyTunesModel();
+
 //            activePlaylist = mtModel.getAllSong();
 //            tbvSongs.getItems().addAll(activePlaylist);
-//        } catch (SQLException ex) {
-//            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        } catch (SQLException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-//        Media media = new Media(source);
-//        mPlayer = new MediaPlayer(null);
-//        
         TableColumn<Song, String> title = new TableColumn<>();
         title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
         title.setText("Title");
-        title.setMinWidth(350);
-        title.setResizable(true);
+        title.setPrefWidth(350);
         tbvSongs.getColumns().add(title);
 
         TableColumn<Song, String> artist = new TableColumn<>();
         artist.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getArtist()));
         artist.setText("Artist");
         artist.setPrefWidth(200);
-        artist.setResizable(true);
         tbvSongs.getColumns().add(artist);
 
         //Husk denne skal ændres fra getTitle til genrer i stedet for
         TableColumn<Song, String> genrer = new TableColumn<>();
         genrer.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
-        genrer.setText("Genrer");
+        genrer.setText("Genre");
         genrer.setPrefWidth(150);
-        genrer.setResizable(true);
         tbvSongs.getColumns().add(genrer);
 
         TableColumn<Song, Double> durations = new TableColumn<>();
         durations.setCellValueFactory(c -> new SimpleObjectProperty(c.getValue().getDuration()));
         durations.setText("Duration");
         durations.setPrefWidth(80);
-        durations.setResizable(true);
         tbvSongs.getColumns().add(durations);
 
     }
@@ -136,7 +133,7 @@ public class FXMLController implements Initializable {
     private void volSlider(MouseEvent event) {
         double volume = sldVol.getBaselineOffset();
         double max = sldVol.getMax();
-        mPlayer.setVolume(volume / max * 100);
+        mPlayer.setVolume((volume / max * 100) / 100);
     }
 
     @FXML
@@ -163,6 +160,7 @@ public class FXMLController implements Initializable {
                 paused = 1;
                 break;
             case 1:
+
                 btnPlay.setImage(pause);
                 paused = 0;
                 break;
@@ -171,6 +169,7 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void NextSongBtn(MouseEvent event) {
+
     }
 
     @FXML
@@ -185,7 +184,7 @@ public class FXMLController implements Initializable {
         File addedFile = fc.showOpenDialog(null);
         try {
 
-            createSongFromMetadat(addedFile);
+            createSongFromMetadata(addedFile);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -207,7 +206,7 @@ public class FXMLController implements Initializable {
             if (addedFile.getAbsolutePath().contains(".mp3")) {
                 try {
 
-                    createSongFromMetadat(addedFile);
+                    createSongFromMetadata(addedFile);
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -222,7 +221,7 @@ public class FXMLController implements Initializable {
         }
     }
 
-    public void createSongFromMetadat(File addedFile) throws IOException, SAXException, SQLException, FileNotFoundException, TikaException, NumberFormatException {
+    private void createSongFromMetadata(File addedFile) throws IOException, SAXException, SQLException, FileNotFoundException, TikaException, NumberFormatException {
         InputStream input = new FileInputStream(addedFile);
         ContentHandler handler = new DefaultHandler();
         Metadata metadata = new Metadata();
@@ -238,6 +237,12 @@ public class FXMLController implements Initializable {
         String genre = metadata.get("xmpDM:genre");
 
         mtModel.createSong(filePath, title, artist, duration, genre);
+    }
+
+    private void playSong(Song song) {
+        Media media = new Media(song.getFilePath());
+        mPlayer = new MediaPlayer(media);
+        mPlayer.play();
     }
 
     @FXML
