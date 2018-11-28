@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.List;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -97,10 +98,7 @@ public class FXMLController implements Initializable {
 //            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
-
-
 //        Media media = new Media(source);
-
 //        mPlayer = new MediaPlayer(null);
 //        
         TableColumn<Song, String> title = new TableColumn<>();
@@ -109,15 +107,14 @@ public class FXMLController implements Initializable {
         title.setMinWidth(350);
         title.setResizable(true);
         tbvSongs.getColumns().add(title);
-        
+
         TableColumn<Song, String> artist = new TableColumn<>();
         artist.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getArtist()));
         artist.setText("Artist");
         artist.setPrefWidth(200);
         artist.setResizable(true);
         tbvSongs.getColumns().add(artist);
-        
-        
+
         //Husk denne skal ændres fra getTitle til genrer i stedet for
         TableColumn<Song, String> genrer = new TableColumn<>();
         genrer.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
@@ -125,8 +122,7 @@ public class FXMLController implements Initializable {
         genrer.setPrefWidth(150);
         genrer.setResizable(true);
         tbvSongs.getColumns().add(genrer);
-        
-        
+
         TableColumn<Song, Double> durations = new TableColumn<>();
         durations.setCellValueFactory(c -> new SimpleObjectProperty(c.getValue().getDuration()));
         durations.setText("Duration");
@@ -140,20 +136,19 @@ public class FXMLController implements Initializable {
     private void volSlider(MouseEvent event) {
         double volume = sldVol.getBaselineOffset();
         double max = sldVol.getMax();
-        mPlayer.setVolume(volume/max * 100);
+        mPlayer.setVolume(volume / max * 100);
     }
 
     @FXML
     private void newPlaylistBtn(ActionEvent event) {
         Parent root;
-        try{
+        try {
             root = FXMLLoader.load(getClass().getClassLoader().getResource("mytunes/GUI/AddPlaylist.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Create Playlist");
             stage.setScene(new Scene(root, 450, 176));
             stage.show();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -183,33 +178,14 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    private void menuAddSong(ActionEvent event) {
+    private void menuAddSong(ActionEvent event) throws SQLException {
 
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(new ExtensionFilter("mp3 files", "*.mp3"));
         File addedFile = fc.showOpenDialog(null);
         try {
 
-            InputStream input = new FileInputStream(addedFile);
-            ContentHandler handler = new DefaultHandler();
-            Metadata metadata = new Metadata();
-            Parser parser = new Mp3Parser();
-            ParseContext parseCtx = new ParseContext();
-            parser.parse(input, handler, metadata, parseCtx);
-            input.close();
-
-            String[] metadataNames = metadata.names();
-
-            for (String name : metadataNames) {
-                System.out.println(name + ": " + metadata.get(name));
-            }
-
-            System.out.println("----------------------------------------------");
-            System.out.println("Title: " + metadata.get("title"));
-            System.out.println("Artists: " + metadata.get("xmpDM:artist"));
-            System.out.println("Composer : " + metadata.get("xmpDM:composer"));
-            System.out.println("Genre : " + metadata.get("xmpDM:genre"));
-            System.out.println("Album : " + metadata.get("xmpDM:album"));
+            createSongFromMetadat(addedFile);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -223,7 +199,7 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    private void menuAddAlbum(ActionEvent event) {
+    private void menuAddAlbum(ActionEvent event) throws SQLException {
         DirectoryChooser dc = new DirectoryChooser();
 
         File[] files = dc.showDialog(null).listFiles();
@@ -231,26 +207,7 @@ public class FXMLController implements Initializable {
             if (addedFile.getAbsolutePath().contains(".mp3")) {
                 try {
 
-                    InputStream input = new FileInputStream(addedFile);
-                    ContentHandler handler = new DefaultHandler();
-                    Metadata metadata = new Metadata();
-                    Parser parser = new Mp3Parser();
-                    ParseContext parseCtx = new ParseContext();
-                    parser.parse(input, handler, metadata, parseCtx);
-                    input.close();
-
-                    String[] metadataNames = metadata.names();
-
-                    for (String name : metadataNames) {
-                        System.out.println(name + ": " + metadata.get(name));
-                    }
-
-                    System.out.println("----------------------------------------------");
-                    System.out.println("Title: " + metadata.get("title"));
-                    System.out.println("Artists: " + metadata.get("xmpDM:artist"));
-                    System.out.println("Composer : " + metadata.get("xmpDM:composer"));
-                    System.out.println("Genre : " + metadata.get("xmpDM:genre"));
-                    System.out.println("Album : " + metadata.get("xmpDM:album"));
+                    createSongFromMetadat(addedFile);
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -265,18 +222,34 @@ public class FXMLController implements Initializable {
         }
     }
 
+    public void createSongFromMetadat(File addedFile) throws IOException, SAXException, SQLException, FileNotFoundException, TikaException, NumberFormatException {
+        InputStream input = new FileInputStream(addedFile);
+        ContentHandler handler = new DefaultHandler();
+        Metadata metadata = new Metadata();
+        Parser parser = new Mp3Parser();
+        ParseContext parseCtx = new ParseContext();
+        parser.parse(input, handler, metadata, parseCtx);
+        input.close();
+
+        String filePath = addedFile.getAbsolutePath();
+        String title = metadata.get("title");
+        String artist = metadata.get("xmpDM:artist");
+        double duration = Double.parseDouble(metadata.get("xmpDM:duration"));
+        String genre = metadata.get("xmpDM:genre");
+
+        mtModel.createSong(filePath, title, artist, duration, genre);
+    }
+
     @FXML
-    private void editPlaylist(ActionEvent event)
-    {
+    private void editPlaylist(ActionEvent event) {
         Parent root;
-        try{
+        try {
             root = FXMLLoader.load(getClass().getClassLoader().getResource("mytunes/GUI/EditPlaylist.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Edit Playlist");
             stage.setScene(new Scene(root, 450, 176));
             stage.show();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
