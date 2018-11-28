@@ -76,10 +76,10 @@ public class FXMLController implements Initializable
     private void playSongBtn(MouseEvent event)
     {
        btnPlay.setOpacity(0);
-       
+        
        if(btnPlay.getOpacity() == 0)
        {
-           btnPlay.setOpacity(1);
+           btnPlay.setOpacity(1); 
        }
     }
 
