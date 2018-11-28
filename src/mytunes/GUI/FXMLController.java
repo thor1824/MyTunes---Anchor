@@ -94,6 +94,8 @@ public class FXMLController implements Initializable {
     private Button btnEdit;
     @FXML
     private ProgressBar songProg;
+    @FXML
+    private MediaView mview;
 
     //other
     private MediaPlayer mPlayer;
@@ -101,9 +103,6 @@ public class FXMLController implements Initializable {
     private int paused = 1;
     private List<Song> activePlaylist;
     private Song activeSong;
-    private javafx.beans.value.ChangeListener<Duration> progressChangeListener;
-    @FXML
-    private MediaView mview;
     private Duration duration;
 
     /**
@@ -111,15 +110,6 @@ public class FXMLController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            mtModel = new MyTunesModel();
-            String path = new File("src/Music/Dee_Yan-Key_-_01_-_That_aint_Chopin.mp3").getAbsolutePath();
-            path.replace("\\", "/").replaceAll(" ", "%20");
-            Media media = new Media(new File(path).toURI().toString());
-            mPlayer = new MediaPlayer(media);
-        } catch (SQLException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         //Collum Init
         TableColumn<Song, String> title = new TableColumn<>();
@@ -146,6 +136,26 @@ public class FXMLController implements Initializable {
         durations.setPrefWidth(80);
         tbvSongs.getColumns().add(durations);
 
+        //other init
+        try {
+            mtModel = new MyTunesModel();
+            String path = new File("src/Music/Dee_Yan-Key_-_01_-_That_aint_Chopin.mp3").getAbsolutePath();
+            path.replace("\\", "/").replaceAll(" ", "%20");
+            Media media = new Media(new File(path).toURI().toString());
+            mPlayer = new MediaPlayer(media);
+//            activeSong = activePlaylist.get(0);
+//            activePlaylist = mtModel.getAllSong();
+//            tbvSongs.getItems().addAll(activePlaylist);
+        } catch (SQLException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //timer
+        updateTimer();
+
+        //slider
+        updateSlide();
+
         //Event init
         tbvSongs.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -158,17 +168,6 @@ public class FXMLController implements Initializable {
                 }
             }
         });
-
-        //timer
-        updateTimer();
-
-        //slider
-        updateSlide();
-
-        //other init
-//        activeSong = activePlaylist.get(0);
-//        activePlaylist = mtModel.getAllSong();
-//        tbvSongs.getItems().addAll(activePlaylist);
     }
 
     @FXML
@@ -230,7 +229,7 @@ public class FXMLController implements Initializable {
     private void prevSongBtn(MouseEvent event) {
         int previousIndex = activePlaylist.indexOf(activeSong) - 1;
         if (previousIndex > 0) {
-            previousIndex = activePlaylist.size()-1;
+            previousIndex = activePlaylist.size() - 1;
         }
         activeSong = activePlaylist.get(previousIndex);
         playSong(activeSong);
