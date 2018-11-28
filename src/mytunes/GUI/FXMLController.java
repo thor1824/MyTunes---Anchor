@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -105,7 +106,33 @@ public class FXMLController implements Initializable {
         TableColumn<Song, String> title = new TableColumn<>();
         title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
         title.setText("Title");
+        title.setMinWidth(350);
+        title.setResizable(true);
         tbvSongs.getColumns().add(title);
+        
+        TableColumn<Song, String> artist = new TableColumn<>();
+        artist.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getArtist()));
+        artist.setText("Artist");
+        artist.setPrefWidth(200);
+        artist.setResizable(true);
+        tbvSongs.getColumns().add(artist);
+        
+        
+        //Husk denne skal ændres fra getTitle til genrer i stedet for
+        TableColumn<Song, String> genrer = new TableColumn<>();
+        genrer.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
+        genrer.setText("Genrer");
+        genrer.setPrefWidth(150);
+        genrer.setResizable(true);
+        tbvSongs.getColumns().add(genrer);
+        
+        
+        TableColumn<Song, Double> durations = new TableColumn<>();
+        durations.setCellValueFactory(c -> new SimpleObjectProperty(c.getValue().getDuration()));
+        durations.setText("Duration");
+        durations.setPrefWidth(80);
+        durations.setResizable(true);
+        tbvSongs.getColumns().add(durations);
 
     }
 
