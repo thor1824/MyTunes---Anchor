@@ -53,6 +53,11 @@ public class MyTunesManager {
     public boolean updateSong(Song song) throws SQLException {
         return songDAO.updateSong(song);
     }
+    
+    public void addSongToPlaylist(Song song , Playlist playlist) throws SQLException
+    {
+        playlistDAO.addSongToPlaylist(song, playlist);
+    }
 
     public Song createSong(String filePath, String title, String artist, double duration, String genre) throws SQLException {
         System.out.println("2");

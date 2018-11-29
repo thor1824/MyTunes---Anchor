@@ -7,6 +7,8 @@ package mytunes.GUI;
 
 import java.sql.SQLException;
 import java.util.List;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mytunes.BE.Playlist;
@@ -20,7 +22,7 @@ import mytunes.BLL.MyTunesManager;
 public class MyTunesModel {
     
     private ObservableList<Song> songs;
-    private ObservableList<Playlist> playlists;
+    private ObservableList<Playlist> playlists = FXCollections.observableArrayList();
     private MyTunesManager logiclayer;
     
     public MyTunesModel() throws SQLException {
@@ -30,15 +32,24 @@ public class MyTunesModel {
         //songs.addAll(logiclayer.getAllSong());
         
         playlists = FXCollections.observableArrayList();
-        //playlists.addAll(logiclayer.getAllPlaylits());
+        playlists.addAll(logiclayer.getAllPlaylits());
+        playlists.addListener((Observable observable) -> {
+        });
     }
     
     public List<Song> getAllSong() {
         return songs;
     }
     
-    public List<Playlist> getAllPlaylists() {
+    public ObservableList<Playlist> getAllPlaylists() {
         return playlists;
+    }
+    
+    public void addSongToPlaylist(Song song, Playlist playlist) throws SQLException
+    {
+        logiclayer.addSongToPlaylist(song, playlist);
+        int index = playlists.indexOf(playlist);
+        playlists.get(index).addToPlaylist(song);
     }
     
     public void createPlaylist(String name) throws SQLException {

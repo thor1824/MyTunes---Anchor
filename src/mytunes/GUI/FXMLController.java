@@ -52,6 +52,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import mytunes.BE.Song;
 import javafx.beans.Observable;
+import mytunes.BE.Playlist;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -71,7 +72,7 @@ public class FXMLController implements Initializable {
 
     //FXML
     @FXML
-    private ListView<?> LstPlaylist;
+    private ListView<Playlist> LstPlaylist;
     @FXML
     private ImageView btnPlay;
     @FXML
@@ -146,9 +147,12 @@ public class FXMLController implements Initializable {
 //            activeSong = activePlaylist.get(0);
 //            activePlaylist = mtModel.getAllSong();
 //            tbvSongs.getItems().addAll(activePlaylist);
+            LstPlaylist.setItems(mtModel.getAllPlaylists());
+           
         } catch (SQLException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
 
         //timer
         updateTimer();
@@ -182,13 +186,19 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void newPlaylistBtn(ActionEvent event) {
-        Parent root;
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("mytunes/GUI/AddPlaylist.fxml"));
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/AddPlaylist.fxml"));
+            
+            Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Create Playlist");
             stage.setScene(new Scene(root, 450, 176));
             stage.show();
+            
+            AddPlaylistController addCon = loader.getController();
+            addCon.setMtModel(mtModel);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }

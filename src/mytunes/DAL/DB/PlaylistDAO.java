@@ -55,6 +55,18 @@ public class PlaylistDAO {
         return playlist;
 
     }
+    
+    public void addSongToPlaylist(Song song, Playlist playlist) throws SQLServerException, SQLException
+    {
+        Connection con = server.getConnection();
+        String sql = "INSERT INTO Song_Playlist (SongID, PlaylistID) VALUES (?,?)";
+        
+        PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        
+        st.setInt(1, song.getId());
+        st.setInt(2, playlist.getId());
+        
+    }
 
     public void deletePlayliste(Playlist playlist) throws SQLServerException, SQLException {
         Connection con = server.getConnection();
@@ -77,22 +89,28 @@ public class PlaylistDAO {
             int id = rs.getInt("PlaylistID");
             String title = rs.getNString("Title");
             Playlist playlist = new Playlist(title, id);
-            ResultSet resultSet = st.executeQuery("SELECT * "
-                + "FROM Song"
-                + "LEFT JOIN Song_Playlist ON Song.SongID = Song_Playlist.SongID "
-                + "WHERE PlaylistID = " + id
-                );
-                while  (resultSet.next()){
-                    File file = new File(resultSet.getNString("Path"));
-                    int songID = resultSet.getInt("SongID");
-                    String songTitle = resultSet.getNString("Title");
-                   // Song song = new Song(file, songTitle, songID);
-                   //playlist.addToPlaylist(song);
-                }
+            getSongFromPlaylist(id);
                 
             playlists.add(playlist);
         }
         return playlists;
+    }
+
+    public void getSongFromPlaylist(int id) throws SQLException {
+        Connection con = server.getConnection();
+        Statement st = con.createStatement();
+        ResultSet resultSet = st.executeQuery("SELECT * "
+                + "FROM Song "
+                + "LEFT JOIN Song_Playlist ON Song.SongID = Song_Playlist.SongID "
+                + "WHERE PlaylistID = " + id
+        );
+        while  (resultSet.next()){
+            File file = new File(resultSet.getNString("Path"));
+            int songID = resultSet.getInt("SongID");
+            String songTitle = resultSet.getNString("Title");
+            // Song song = new Song(file, songTitle, songID);
+            //playlist.addToPlaylist(song);
+        }
     }
 
     public boolean updatePlaylist(Playlist playlist) throws SQLServerException, SQLException {

@@ -54,7 +54,11 @@ public class AddPlaylistController implements Initializable
     {
            mtModel.createPlaylist(txtPlaylistName.getText());
     }
-
+    
+    public void setMtModel(MyTunesModel mtm)
+    {
+        mtModel = mtm;
+    }
     /**
      * 
      * @param event closes the window
