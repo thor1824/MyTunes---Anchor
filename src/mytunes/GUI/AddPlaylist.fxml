@@ -7,7 +7,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="176.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.AddPlaylistController">
    <children>
-      <TextField fx:id="txtPlaylistName" layoutX="65.0" layoutY="68.0" onAction="#txtField" prefHeight="26.0" prefWidth="332.0" />
+      <TextField fx:id="txtPlaylistName" layoutX="65.0" layoutY="68.0" prefHeight="26.0" prefWidth="332.0" />
       <Button fx:id="btnAdd" layoutX="249.0" layoutY="125.0" mnemonicParsing="false" onAction="#addPlaylistBTN" prefHeight="25.0" prefWidth="100.0" text="Add Playlist" />
       <Text layoutX="4.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add the name of your new playlist" textAlignment="CENTER" wrappingWidth="453.6000061035156" />
       <Button fx:id="btnCancel" layoutX="110.0" layoutY="125.0" mnemonicParsing="false" onAction="#cancelPlaylist" prefHeight="25.0" prefWidth="100.0" text="Cancel" />

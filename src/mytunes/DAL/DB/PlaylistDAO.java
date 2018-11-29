@@ -48,7 +48,6 @@ public class PlaylistDAO {
 
         if (rs.next()) {
             id = rs.getInt(1);
-
         }
 
         Playlist playlist = new Playlist(name, id);

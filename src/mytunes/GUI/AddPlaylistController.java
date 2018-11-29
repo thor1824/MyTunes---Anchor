@@ -8,6 +8,8 @@ package mytunes.GUI;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,33 +26,33 @@ import mytunes.DAL.DB.PlaylistDAO;
 public class AddPlaylistController implements Initializable
 {
 
-    @FXML
-    private TextField txtField;
-    @FXML
+    
     private Button btnAdd;
     @FXML
     private Button btnCancel;
 
-    private PlaylistDAO play;
+    private MyTunesModel mtModel;
+    @FXML
+    private TextField txtPlaylistName;
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        // TODO
+        try
+        {
+            mtModel = new MyTunesModel();
+        } catch (SQLException ex)
+        {
+            Logger.getLogger(AddPlaylistController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }    
-
-    @FXML
-    private void txtField(ActionEvent event)
-    {
-        
-    }
 
     @FXML
     private void addPlaylistBTN(ActionEvent event) throws SQLException
     {
-           play.createPlaylist(txtField.getText());
+           mtModel.createPlaylist(txtPlaylistName.getText());
     }
 
     /**
