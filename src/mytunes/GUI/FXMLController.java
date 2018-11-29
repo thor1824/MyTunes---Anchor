@@ -144,9 +144,9 @@ public class FXMLController implements Initializable {
             path.replace("\\", "/").replaceAll(" ", "%20");
             Media media = new Media(new File(path).toURI().toString());
             mPlayer = new MediaPlayer(media);
-//            activeSong = activePlaylist.get(0);
-//            activePlaylist = mtModel.getAllSong();
-//            tbvSongs.getItems().addAll(activePlaylist);
+            activeSong = activePlaylist.get(0);
+            activePlaylist = mtModel.getAllSong();
+            tbvSongs.getItems().addAll(activePlaylist);
             LstPlaylist.setItems(mtModel.getAllPlaylists());
            
         } catch (SQLException ex) {
@@ -355,14 +355,14 @@ public class FXMLController implements Initializable {
         String artist = metadata.get("xmpDM:artist");
         double duration = Double.parseDouble(metadata.get("xmpDM:duration"));
         String genre = metadata.get("xmpDM:genre");
-
+        filePath = formatePathTosrc(filePath);
         mtModel.createSong(filePath, title, artist, duration, genre);
     }
 
     private void playSong(Song song) {
         mPlayer.stop();
-//        String path = new File(song.getFilePath()).getAbsolutePath();
-        String path = new File("src/Music/Dee_Yan-Key_-_01_-_That_aint_Chopin.mp3").getAbsolutePath();
+        activeSong = song;
+        String path = new File(song.getFilePath()).getAbsolutePath();
         path.replace("\\", "/").replaceAll(" ", "%20");
         Media media = new Media(new File(path).toURI().toString());
         mPlayer = new MediaPlayer(media);
@@ -379,9 +379,8 @@ public class FXMLController implements Initializable {
             }
         });
 
-        //lblPlaying.setText(song.getTitle());
-//        volSlider(null);
-//        System.out.println(mPlayer.getTotalDuration());
+        lblPlaying.setText(song.getTitle());
+        volSlider(null);
     }
 
     private static String formatTime(Duration elapsed, Duration duration) {
@@ -435,6 +434,15 @@ public class FXMLController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    private String formatePathTosrc(String path) {
+        if (path.contains("src/Music")) {
+            String[] urlSplit = path.split("/");
+            String newURL = urlSplit[urlSplit.length - 3] + "/" + urlSplit[urlSplit.length - 2] + "/" + urlSplit[urlSplit.length - 1];
+            return newURL;
+        }
+        return null;
     }
 
 }
