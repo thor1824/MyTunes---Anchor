@@ -5,7 +5,6 @@
  */
 package mytunes.DAL.DB;
 
-import mytunes.DAL.ServerConnect;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,7 +34,6 @@ public class SongDAO {
         Connection con = sc.getConnection();
 
         PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        System.out.println("3");
 
         st.setString(1, title);
         st.setString(5, filePath);
@@ -44,7 +42,7 @@ public class SongDAO {
         st.setString(3, genre);
 
         int rowsAffected = st.executeUpdate();
-        System.out.println("nej!");
+
         ResultSet rs = st.getGeneratedKeys();
 
         int id = 0;

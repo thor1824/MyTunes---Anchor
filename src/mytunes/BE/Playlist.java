@@ -7,6 +7,8 @@ package mytunes.BE;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -16,12 +18,12 @@ public class Playlist {
 
     private String title;
     private int id;
-    private List<Song> songs;
+    private ObservableList<Song> songs;
 
     public Playlist(String title, int id) {
         this.title = title;
         this.id = id;
-        songs = new ArrayList<>();
+        songs = FXCollections.observableArrayList();
     }
 
     /**
@@ -38,7 +40,7 @@ public class Playlist {
      *
      * @return the value of songs
      */
-    public List<Song> getSongs() {
+    public ObservableList<Song> getSongs() {
         return songs;
     }
 

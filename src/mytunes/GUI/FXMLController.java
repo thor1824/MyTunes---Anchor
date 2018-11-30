@@ -52,7 +52,9 @@ import javafx.util.Duration;
 import mytunes.BE.Song;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import mytunes.BE.Playlist;
@@ -93,8 +95,6 @@ public class FXMLController implements Initializable {
     @FXML
     private Label lbltime;
     @FXML
-    private Button btnEdit;
-    @FXML
     private ProgressBar songProg;
     @FXML
     private MediaView mview;
@@ -103,9 +103,13 @@ public class FXMLController implements Initializable {
     private MediaPlayer mPlayer;
     private MyTunesModel mtModel;
     private int paused = 1;
+    private ObservableList<Playlist> allplaylist;
+    private ObservableList<Song> allSongs;
     private ObservableList<Song> activePlaylist;
     private Song activeSong;
     private Duration duration;
+    @FXML
+    private Label mLibrary;
 
     /**
      * Initializes the controller class.
@@ -138,82 +142,182 @@ public class FXMLController implements Initializable {
         durations.setPrefWidth(80);
         tbvSongs.getColumns().add(durations);
 
+        // slider
+        sldVol.setValue(50);
+
         //other init
         try {
             mtModel = new MyTunesModel();
-            String path = new File("src/Music/Dee_Yan-Key_-_01_-_That_aint_Chopin.mp3").getAbsolutePath();
-            path.replace("\\", "/").replaceAll(" ", "%20");
-            Media media = new Media(new File(path).toURI().toString());
-            mPlayer = new MediaPlayer(media);
-            activePlaylist = mtModel.getAllSong();
-            //activeSong = activePlaylist.get(0);
 
+            allSongs = mtModel.getAllSong();
+            activePlaylist = allSongs;
             tbvSongs.setItems(activePlaylist);
-            LstPlaylist.setItems(mtModel.getAllPlaylists());
+
+            allplaylist = mtModel.getAllPlaylists();
+            LstPlaylist.setItems(allplaylist);
+
+            if (activePlaylist.size() > 0) {
+                activeSong = activePlaylist.get(7);
+                setSongElements(activeSong);
+            }
 
         } catch (SQLException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //timer
-        //slider
-        sldVol.setValue(50);
-        
-        //ContextMenu
-                // Create ContextMenu
-        ContextMenu contextMenu = new ContextMenu();
- 
-        MenuItem item1 = new MenuItem("edit Song info");
-        item1.setOnAction(new EventHandler<ActionEvent>() {
-                  
+        // timer
+        // ContextMenu
+        // Create cmSong
+        ContextMenu cmSong = new ContextMenu();
+
+        MenuItem playSong = new MenuItem("Play Song");
+        playSong.setOnAction(new EventHandler<ActionEvent>() {
+
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("hej");
-                
-                try
-                {
-                    setSongToEdit();
-                } 
-                catch (IOException ex)
-                {
+                Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                playSong(song);
+            }
+        });
+        MenuItem editSong = new MenuItem("edit Song info");
+        editSong.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    editSong();
+                } catch (IOException ex) {
                     Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }          
+            }
         });
-        MenuItem item2 = new MenuItem("add to playlist");
-        item2.setOnAction(new EventHandler<ActionEvent>() {
- 
+        Menu addtoPlaylist = new Menu("add to playlist");
+        genratePlaylistMenuItems(addtoPlaylist);
+
+        // Create cmPlaylist
+        ContextMenu cmPlaylist = new ContextMenu();
+
+        MenuItem plChoose = new MenuItem("Choose Playlist");
+        plChoose.setOnAction(new EventHandler<ActionEvent>() {
+
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("ho");
+                Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
+                changeMusicList(playlist.getSongs());
             }
         });
- 
-        // Add MenuItem to ContextMenu
-        contextMenu.getItems().addAll(item1, item2);
-       
-        // When user right-click on Circle
+
+        MenuItem plDelete = new MenuItem("Delete Playlist");
+        plDelete.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
+                try {
+                    mtModel.deletePlayliste(playlist);
+                } catch (SQLException ex) {
+                    Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        MenuItem plEdit = new MenuItem("Edit Playlist");
+        plEdit.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
+                editPlaylist(null);
+            }
+        });
+
+        // Add MenuItem to ContextMenus
+        cmSong.getItems().addAll(playSong, editSong, addtoPlaylist);
+        cmPlaylist.getItems().addAll(plChoose, plDelete, plEdit);
+
+        // Right Click
+        // When user right-click on a Song
         tbvSongs.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
- 
+
             @Override
             public void handle(ContextMenuEvent event) {
- 
-                contextMenu.show(tbvSongs, event.getScreenX(), event.getScreenY());
+                cmPlaylist.hide();
+                cmSong.show(tbvSongs, event.getScreenX(), event.getScreenY());
             }
         });
-        
-        //Double click on Song to play
+
+        // When user right-click on a Playlist
+        LstPlaylist.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+
+            @Override
+            public void handle(ContextMenuEvent event) {
+                cmSong.hide();
+                cmPlaylist.show(tbvSongs, event.getScreenX(), event.getScreenY());
+            }
+        });
+
+        // Double-click
+        // Double-click on Song to play
         tbvSongs.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    if (mouseEvent.getClickCount() == 2) {
+                    if (mouseEvent.getClickCount() == 2 && tbvSongs.getSelectionModel().getSelectedItem() != null) {
                         Song song = tbvSongs.getSelectionModel().getSelectedItem();
                         playSong(song);
+                        tbvSongs.getSelectionModel().clearSelection();
+
                     }
                 }
             }
         });
+
+        // Double-click on Playlist to set Active
+        LstPlaylist.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    if (mouseEvent.getClickCount() == 2) {
+                        Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
+                        changeMusicList(playlist.getSongs());
+
+                    }
+                }
+            }
+        });
+
+        // Double-click on Music Library to see all songs
+        mLibrary.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    if (mouseEvent.getClickCount() == 2) {
+                        changeMusicList(allSongs);
+
+                    }
+                }
+            }
+        });
+
+    }
+
+    private void editSong() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/EditSongInfo.fxml"));
+
+        EditSongInfoController editCon = loader.getController();
+        editCon.setMtModel(mtModel);
+        editCon.setSongInfo(tbvSongs.getSelectionModel().getSelectedItem());
+
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Edit song info");
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
+    private void changeMusicList(ObservableList list) {
+        activePlaylist = list;
+        tbvSongs.setItems(activePlaylist);
     }
 
     @FXML
@@ -246,21 +350,26 @@ public class FXMLController implements Initializable {
         }
     }
 
-    private void setSongToEdit() throws IOException
-    {
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/EditSongInfo.fxml"));
-            
-            EditSongInfoController editCon = loader.getController();
-            editCon.setMtModel(mtModel);
-            editCon.setSongInfo(tbvSongs.getSelectionModel().getSelectedItem());
-            
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Edit song info");
-            stage.setScene(new Scene(root));
-            stage.show();
+    private void genratePlaylistMenuItems(Menu menu) {
+        menu.getItems().clear();
+        for (Playlist playlist : allplaylist) {
+            MenuItem playlistItem = new MenuItem(playlist.getTitle());
+            playlistItem.setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(ActionEvent event) {
+                    Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                    try {
+                        mtModel.addSongToPlaylist(song, playlist);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+            menu.getItems().add(playlistItem);
+        }
     }
-      
+
     @FXML
     private void playSongBtn(MouseEvent event) {
 
@@ -276,14 +385,14 @@ public class FXMLController implements Initializable {
     }
 
     private void mediaPlay() {
-        Image pause = new Image("Pics/PauseBtn.png");
+        Image pause = new Image("Pics/nye icons/icons8-pause-30.png");
         btnPlay.setImage(pause);
         mPlayer.play();
         paused = 0;
     }
 
     private void mediaPause() {
-        Image play = new Image("Pics/Playbtn.png");
+        Image play = new Image("Pics/nye icons/icons8-play-30.png");
         btnPlay.setImage(play);
         mPlayer.pause();
         paused = 1;
@@ -314,6 +423,7 @@ public class FXMLController implements Initializable {
 
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(new ExtensionFilter("mp3 files", "*.mp3"));
+        fc.setInitialDirectory(new File("src"));
         File addedFile = fc.showOpenDialog(null);
         try {
 
@@ -376,6 +486,13 @@ public class FXMLController implements Initializable {
                 updateValues();
             }
         });
+        sldProg.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov,
+                    Number old_val, Number new_val) {
+                songProg.setProgress(new_val.doubleValue() / 100);
+            }
+        });
+
     }
 
     private void updateTimer() {
@@ -417,16 +534,26 @@ public class FXMLController implements Initializable {
         String filePath = addedFile.getPath();
         System.out.println(filePath);
         String title = metadata.get("title");
+
         String artist = metadata.get("xmpDM:artist");
         double duration = Double.parseDouble(metadata.get("xmpDM:duration"));
         String genre = metadata.get("xmpDM:genre");
-        filePath = formatePathTosrc(filePath);
-        mtModel.createSong(filePath, title, artist, duration, genre);
+        boolean added = mtModel.createSong(filePath, title, artist, duration, genre);
+        if (added) {
+            System.out.println("Song added to Library");
+        } else {
+            System.out.println(title + ": already exsist");
+        }
     }
 
     private void playSong(Song song) {
         mPlayer.stop();
         activeSong = song;
+        setSongElements(song);
+        mediaPlay();
+    }
+
+    private void setSongElements(Song song) {
         String path = new File(song.getFilePath()).getAbsolutePath();
         path.replace("\\", "/").replaceAll(" ", "%20");
         Media media = new Media(new File(path).toURI().toString());
@@ -449,7 +576,12 @@ public class FXMLController implements Initializable {
         updateValues();
         updateSlide();
         updateTimer();
-        mediaPlay();
+        mPlayer.setOnEndOfMedia(new Runnable() {
+        @Override public void run() {
+            NextSongBtn(null);
+        }
+      });
+
     }
 
     private static String formatTime(Duration elapsed, Duration duration) {
@@ -491,30 +623,33 @@ public class FXMLController implements Initializable {
         }
     }
 
-    @FXML
     private void editPlaylist(ActionEvent event) {
-        Parent root;
+
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("mytunes/GUI/EditPlaylist.fxml"));
+
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(("mytunes/GUI/EditPlaylist.fxml")));
+            
+            Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Edit Playlist");
-            stage.setScene(new Scene(root, 450, 176));
+            stage.setScene(new Scene(root));
             stage.show();
+            
+            EditPlaylistController editCon = loader.getController();
+            editCon.setMtModel(mtModel);
+            editCon.setPlaylist(LstPlaylist.getSelectionModel().getSelectedItem());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private String formatePathTosrc(String path) {
-        path.replace("\\", "/").replaceAll(" ", "%20");
-        System.out.println(path);
-        if (path.contains("src\\Music")) {
-            System.out.println("hej");
-            String[] urlSplit = path.split("src");
-            String newURL = "src" + urlSplit[1];
-            return newURL;
-        }
-        return path;
+    @FXML
+    private void jumpTo(MouseEvent event) {
+        
+        Duration jumpToTime = new Duration(duration.toMillis()/100 * sldProg.getValue());
+        mPlayer.seek(jumpToTime);
+        
     }
 
 }

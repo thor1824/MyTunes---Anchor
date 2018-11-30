@@ -66,6 +66,7 @@ public class EditSongInfoController implements Initializable
         txtSongEditTitle.setText(songInfo.getTitle());
         txtSongEditArtist.setText(songInfo.getArtist());
         txtSongEditGenre.setText(songInfo.getGenre());
+        txtFilePath.setText(songInfo.getFilePath());
     }    
 
     @FXML

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -10,6 +9,7 @@
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -17,12 +17,13 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.media.MediaView?>
+<?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.FXMLController">
+<VBox prefHeight="863.0" prefWidth="937.0" stylesheets="@Layout.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.FXMLController">
    <children>
-      <MenuBar prefHeight="26.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
+      <MenuBar prefHeight="26.0" prefWidth="800.0" style="-fx-border-color: black; -fx-background-color: #1a1a1a;" stylesheets="@Layout.css" VBox.vgrow="ALWAYS">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" style="fx-text-fill: palegreen;" text="File">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#menuAddSong" text="Add Song" />
                   <MenuItem mnemonicParsing="false" onAction="#menuAddAlbum" text="Add Album" />
@@ -49,40 +50,101 @@
          <children>
             <VBox minWidth="200.0" prefHeight="600.0" prefWidth="200.0" HBox.hgrow="NEVER">
                <children>
-                  <MediaView fx:id="mview" />
-                  <ListView fx:id="LstPlaylist" prefHeight="416.0" prefWidth="178.0" VBox.vgrow="ALWAYS" />
-                  <AnchorPane minHeight="192.0" minWidth="174.0" prefHeight="192.0" prefWidth="174.0" VBox.vgrow="NEVER">
+                  <AnchorPane maxHeight="115.0" maxWidth="200.0" minHeight="115.0" minWidth="200.0" prefHeight="195.0" prefWidth="200.0" style="-fx-background-color: #1a1a1a; -fx-border-color: black;" VBox.vgrow="NEVER">
                      <children>
-                        <Slider fx:id="sldVol" layoutX="27.0" layoutY="167.0" min="1.0" onMouseClicked="#volSlider" onMouseDragged="#volSlider" />
-                        <Label fx:id="lblPlaying" alignment="CENTER" contentDisplay="CENTER" layoutX="-1.0" layoutY="69.0" prefHeight="17.0" prefWidth="200.0" text="h" textAlignment="CENTER" />
-                        <ImageView fx:id="btnPlay" fitHeight="42.0" fitWidth="42.0" layoutX="75.0" layoutY="104.0" onMouseClicked="#playSongBtn">
-                           <image>
-                              <Image url="@../../Pics/Playbtn.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="btnNext" fitHeight="42.0" fitWidth="42.0" layoutX="125.0" layoutY="104.0" onMouseClicked="#NextSongBtn">
-                           <image>
-                              <Image url="@../../Pics/playnext%20song.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="btnPrev" fitHeight="42.0" fitWidth="42.0" layoutX="27.0" layoutY="104.0" onMouseClicked="#prevSongBtn">
-                           <image>
-                              <Image url="@../../Pics/playprev%20song.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="10.0" fitWidth="8.0" layoutX="14.0" layoutY="169.0">
-                           <image>
-                              <Image url="@../../Pics/Slukket%20Speaker.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="12.0" fitWidth="12.0" layoutX="167.0" layoutY="168.0">
-                           <image>
-                              <Image url="@../../Pics/Tændt%20speaker.png" />
-                           </image>
-                        </ImageView>
-                        <Button fx:id="btnEdit" layoutX="108.0" layoutY="25.0" mnemonicParsing="false" onAction="#editPlaylist" text="Edit Playlist" />
+                        <Label fx:id="mLibrary" layoutX="9.0" layoutY="14.0" prefHeight="17.0" prefWidth="182.0" text="- Music Library" textFill="#00b300">
+                           <font>
+                              <Font name="Monospaced Bold" size="12.0" />
+                           </font></Label>
+                        <Label layoutX="9.0" layoutY="91.0" text="- Playlists">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                   </AnchorPane>
+                  <ListView fx:id="LstPlaylist" maxHeight="2000.0" maxWidth="2000.0" prefHeight="372.0" prefWidth="200.0" style="-fx-background-color: #404040; -fx-border-color: black;" VBox.vgrow="ALWAYS" />
+                  <AnchorPane minHeight="188.0" minWidth="174.0" prefHeight="188.0" prefWidth="200.0" style="-fx-background-color: #666666;" VBox.vgrow="NEVER">
+                     <children>
+                        <VBox layoutY="-21.0" prefHeight="212.0" prefWidth="200.0" style="-fx-background-color: #1a1a1a; -fx-border-color: black;">
+                           <children>
+                              <ImageView fitHeight="108.0" fitWidth="112.0" pickOnBounds="true" preserveRatio="true">
+                                 <VBox.margin>
+                                    <Insets left="45.0" top="12.0" />
+                                 </VBox.margin>
+                                 <image>
+                                    <Image url="@../../Pics/nye%20icons/icons8-microsoft-zune-32.png" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="lblPlaying" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="200.0" textAlignment="CENTER" textFill="PALEGREEN">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Label>
+                              <HBox prefHeight="46.0" prefWidth="200.0">
+                                 <children>
+                                    <ImageView fx:id="btnPrev" fitHeight="42.0" fitWidth="42.0" onMouseClicked="#prevSongBtn" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../Pics/nye%20icons/icons8-fast-forward-30.png" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="19.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                    <ImageView fx:id="btnPlay" fitHeight="42.0" fitWidth="42.0" onMouseClicked="#playSongBtn" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../Pics/nye%20icons/icons8-play-30.png" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="15.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                    <ImageView fx:id="btnNext" fitHeight="42.0" fitWidth="42.0" onMouseClicked="#NextSongBtn" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../Pics/nye%20icons/icons8-fast-forward-100.png" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="15.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox prefHeight="27.0" prefWidth="200.0">
+                                 <children>
+                                    <ImageView fitHeight="10.0" fitWidth="8.0" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../Pics/nye%20icons/icons8-low-volume-filled-50.png" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="15.0" top="7.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                    <Slider fx:id="sldVol" min="1.0" onMouseClicked="#volSlider" onMouseDragged="#volSlider">
+                                       <HBox.margin>
+                                          <Insets left="6.0" top="5.0" />
+                                       </HBox.margin>
+                                       <effect>
+                                          <InnerShadow />
+                                       </effect>
+                                    </Slider>
+                                    <ImageView fitHeight="16.0" fitWidth="17.0" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../Pics/nye%20icons/icons8-voice-filled-50.png" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="1.0" top="4.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+                  <MediaView fx:id="mview" />
                </children>
                <HBox.margin>
                   <Insets />
@@ -90,18 +152,38 @@
             </VBox>
             <VBox prefHeight="600.0" prefWidth="502.0" HBox.hgrow="ALWAYS">
                <children>
-                  <TableView fx:id="tbvSongs" prefHeight="527.0" VBox.vgrow="ALWAYS" />
-                  <AnchorPane prefHeight="74.0" prefWidth="600.0" VBox.vgrow="NEVER">
+                  <TableView fx:id="tbvSongs" maxHeight="2000.0" maxWidth="2000.0" prefHeight="701.0" prefWidth="874.0" style="-fx-background-color: #404040; -fx-border-color: black;" VBox.vgrow="ALWAYS" />
+                  <HBox maxHeight="50.0" prefHeight="50.0" prefWidth="706.0" style="-fx-background-color: #1a1a1a; -fx-border-color: black;" VBox.vgrow="NEVER">
                      <children>
-                        <Label fx:id="lbltime" layoutX="7.0" layoutY="44.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="17.0" prefWidth="126.0" />
-                        <StackPane layoutX="140.0" prefHeight="105.0" prefWidth="460.0">
+                        <Label fx:id="lbltime" alignment="CENTER_RIGHT" contentDisplay="RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="17.0" prefWidth="126.0" textAlignment="RIGHT" textFill="PALEGREEN" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets left="11.0" top="17.0" />
+                           </HBox.margin>
+                        </Label>
+                        <StackPane maxHeight="100.0" prefHeight="51.0" prefWidth="569.0" stylesheets="@slider%20progress.css" HBox.hgrow="ALWAYS">
                            <children>
-                              <ProgressBar fx:id="songProg" prefHeight="12.0" prefWidth="532.0" progress="0.0" />
-                              <Slider fx:id="sldProg" nodeOrientation="LEFT_TO_RIGHT" prefHeight="19.0" prefWidth="358.0" style="-fx-background-color: null;" />
+                              <ProgressBar fx:id="songProg" maxHeight="8.0" maxWidth="2000.0" prefHeight="5.0" prefWidth="579.0" progress="0.0" stylesheets="@slider%20progress.css" StackPane.alignment="CENTER">
+                                 <StackPane.margin>
+                                    <Insets left="5.0" right="5.0" />
+                                 </StackPane.margin>
+                                 <effect>
+                                    <InnerShadow />
+                                 </effect>
+                              </ProgressBar>
+                              <Slider fx:id="sldProg" minWidth="20.0" nodeOrientation="LEFT_TO_RIGHT" onMousePressed="#jumpTo" prefHeight="56.0" prefWidth="575.0" style="-fx-background-color: null;" stylesheets="@slider%20progress.css" StackPane.alignment="CENTER">
+                                 <effect>
+                                    <InnerShadow />
+                                 </effect></Slider>
                            </children>
+                           <padding>
+                              <Insets top="2.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets bottom="17.0" left="13.0" right="22.0" top="17.0" />
+                           </HBox.margin>
                         </StackPane>
                      </children>
-                  </AnchorPane>
+                  </HBox>
                </children>
             </VBox>
          </children>

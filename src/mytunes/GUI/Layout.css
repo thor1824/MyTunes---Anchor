@@ -1,0 +1,192 @@
+.menu-bar {
+    -fx-background-color: #333333;
+
+    -fx-text-fill: #00cc00;
+    -fx-font-family: "Arial";
+}
+
+.menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
+    -fx-background: -fx-accent;
+    -fx-background-color:  #333333;
+
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+
+
+.menu-item {
+    -fx-font-family: "Arial";
+    -fx-background-color: #333333 ;
+    -fx-padding: 0em 0em 0em 0em;
+    -fx-text-fill: #00cc00;
+}
+
+.menu .label{
+    -fx-font-family: "Arial";
+    -fx-text-fill: #00cc00;
+}
+
+
+.menu-item .label{
+    -fx-font-family: "Arial";
+    -fx-text-fill: #00cc00;
+}
+
+.context-menu {
+
+    -fx-background-color: #333333;
+    -fx-background-insets: 0, 1, 2;
+    -fx-padding: 0.333333em 0.083333em 0.666667em 0.083333em; /* 4 1 8 1 */
+
+}
+
+.table-view{
+    -fx-background-color: transparent;
+}
+
+.table-view:focused{
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background{
+    -fx-background-color: linear-gradient(#131313 0%, #424141 100%);
+}
+
+.table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-font-family: "Arial";
+    -fx-text-fill: #00cc00;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .table-cell{
+    -fx-font-family: "Arial";
+    -fx-text-fill: #00cc00;
+}
+
+.table-row-cell{
+    -fx-background-color: #4d4d4d;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;  
+    -fx-table-cell-border-color:transparent;
+}
+
+.table-row-cell:odd{
+    -fx-background-color:  #404040;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;     
+}
+
+.table-row-cell:selected {
+    -fx-font-family: "Arial";
+    -fx-text-fill: white;
+    -fx-background-color: green;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
+.table-view > .virtual-flow > .scroll-bar:vertical,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track-background, 
+.table-view > .virtual-flow > .scroll-bar:horizontal,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .filler{
+    -fx-background-color: linear-gradient(#131313 0%, #424141 100%);
+}
+
+
+
+.table-view > .virtual-flow > .scroll-bar > .increment-button, 
+.table-view > .virtual-flow > .scroll-bar > .decrement-button {
+    -fx-opacity: 0;
+}
+
+
+
+
+
+
+.list-cell {
+    -fx-text-fill: #00cc00 ;
+    -fx-background-color:  #616161;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.5em;  
+}
+
+.list-cell:odd {
+    -fx-background-color:  #424242;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.5em;   
+}
+
+.list-cell:selected{
+    -fx-background-color: green;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
+.label {
+
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #00cc00;
+    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}
+
+
+
+
+
+#edittxt {
+    -fx-font-family: "Arial";
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #00cc00;
+    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}
+
+.text-field {
+    -fx-font-family: "Arial";
+    -fx-background-color:  #404040;
+    -fx-background-insets: 0 -1 -1 -1, 0 0 0 0, 0 -1 3 -1;
+    -fx-text-fill: #00cc00;
+}
+
+.text-field:focused {
+    -fx-font-family: "Arial";
+    -fx-background-color:  #404040;
+    -fx-background-insets: 0 -1 -1 -1, 0 0 0 0, 0 -1 3 -1;
+    -fx-text-fill: #00cc00;
+}
+.text
+{
+    -fx-text-fill: #00cc00;
+
+}
+.button {
+    -fx-background-color: 
+        #090a0c,
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 5,4,3,5;
+    -fx-background-insets: 0,1,2,0;
+    -fx-text-fill: #00cc00;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-font-weight: bold;
+    -fx-font-family: "Arial";
+    -fx-text-fill: linear-gradient(#00cc00, #00cc00);
+    -fx-font-size: 12px;
+    -fx-padding: 10 20 10 20;
+}
+.button Text {
+    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}

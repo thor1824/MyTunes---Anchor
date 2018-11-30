@@ -66,6 +66,8 @@ public class PlaylistDAO {
         st.setInt(1, song.getId());
         st.setInt(2, playlist.getId());
         
+        int rowsAffected = st.executeUpdate();
+        
     }
 
     public void deletePlayliste(Playlist playlist) throws SQLServerException, SQLException {
@@ -89,27 +91,31 @@ public class PlaylistDAO {
             int id = rs.getInt("PlaylistID");
             String title = rs.getNString("Title");
             Playlist playlist = new Playlist(title, id);
-            getSongFromPlaylist(id);
+            getSongFromPlaylist(playlist);
                 
             playlists.add(playlist);
         }
         return playlists;
     }
 
-    public void getSongFromPlaylist(int id) throws SQLException {
+    public void getSongFromPlaylist(Playlist playlist) throws SQLException {
         Connection con = server.getConnection();
         Statement st = con.createStatement();
         ResultSet resultSet = st.executeQuery("SELECT * "
                 + "FROM Song "
-                + "LEFT JOIN Song_Playlist ON Song.SongID = Song_Playlist.SongID "
-                + "WHERE PlaylistID = " + id
+                + "RIGHT JOIN Song_Playlist ON Song.SongID = Song_Playlist.SongID "
+                + "WHERE PlaylistID = " + playlist.getId()
         );
         while  (resultSet.next()){
-            File file = new File(resultSet.getNString("Path"));
-            int songID = resultSet.getInt("SongID");
-            String songTitle = resultSet.getNString("Title");
-            // Song song = new Song(file, songTitle, songID);
-            //playlist.addToPlaylist(song);
+            int id = resultSet.getInt("SongID");
+            double duration = resultSet.getDouble("Duration");
+            String title = resultSet.getNString("Title");
+            String path = resultSet.getNString("Path");
+            String genre = resultSet.getNString("Genre");
+            String artist = resultSet.getNString("Artist");
+                    
+            Song song = new Song(path, title, id, artist, duration, genre);
+            playlist.addToPlaylist(song);
         }
     }
 
