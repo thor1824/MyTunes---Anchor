@@ -13,13 +13,13 @@ import java.io.File;
  */
 public class Song {
 
-    private static String filePath;
-    private static String Title;
-    private static File file;
-    private static int id;
-    private static String artist;
-    private static double duration;
-    private static String genre;
+    private String filePath;
+    private String Title;
+    private File file;
+    private int id;
+    private String artist;
+    private double duration;
+    private String genre;
 
     /**
      * Get the value of genre

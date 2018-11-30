@@ -67,4 +67,11 @@ public class Playlist {
     public void deleteFromPlaylist(int index) {
         songs.remove(index);
     }
+
+    @Override
+    public String toString() {
+        return title;
+    }
+    
+    
 }

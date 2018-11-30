@@ -26,7 +26,6 @@ import java.io.InputStream;
 import static java.lang.Math.floor;
 import static java.lang.String.format;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -52,6 +51,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import mytunes.BE.Song;
 import javafx.beans.Observable;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
 import mytunes.BE.Playlist;
 
 import org.apache.tika.exception.TikaException;
@@ -84,8 +87,6 @@ public class FXMLController implements Initializable {
     @FXML
     private Label lblPlaying;
     @FXML
-    private Button btnNewPlaylist;
-    @FXML
     private TableView<Song> tbvSongs;
     @FXML
     private Slider sldProg;
@@ -102,7 +103,7 @@ public class FXMLController implements Initializable {
     private MediaPlayer mPlayer;
     private MyTunesModel mtModel;
     private int paused = 1;
-    private List<Song> activePlaylist;
+    private ObservableList<Song> activePlaylist;
     private Song activeSong;
     private Duration duration;
 
@@ -144,23 +145,55 @@ public class FXMLController implements Initializable {
             path.replace("\\", "/").replaceAll(" ", "%20");
             Media media = new Media(new File(path).toURI().toString());
             mPlayer = new MediaPlayer(media);
-            activeSong = activePlaylist.get(0);
             activePlaylist = mtModel.getAllSong();
-            tbvSongs.getItems().addAll(activePlaylist);
+            //activeSong = activePlaylist.get(0);
+
+            tbvSongs.setItems(activePlaylist);
             LstPlaylist.setItems(mtModel.getAllPlaylists());
-           
+
         } catch (SQLException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
 
         //timer
-        updateTimer();
-
         //slider
-        updateSlide();
-
-        //Event init
+        sldVol.setValue(50);
+        
+        //ContextMenu
+                // Create ContextMenu
+        ContextMenu contextMenu = new ContextMenu();
+ 
+        MenuItem item1 = new MenuItem("edit Song info");
+        item1.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("hej");
+            }
+        });
+        MenuItem item2 = new MenuItem("add to playlist");
+        item2.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("ho");
+            }
+        });
+ 
+        // Add MenuItem to ContextMenu
+        contextMenu.getItems().addAll(item1, item2);
+ 
+        // When user right-click on Circle
+        tbvSongs.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+ 
+            @Override
+            public void handle(ContextMenuEvent event) {
+ 
+                contextMenu.show(tbvSongs, event.getScreenX(), event.getScreenY());
+            }
+        });
+        
+        //Double click on Song to play
         tbvSongs.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -187,18 +220,18 @@ public class FXMLController implements Initializable {
     @FXML
     private void newPlaylistBtn(ActionEvent event) {
         try {
-            
+
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/AddPlaylist.fxml"));
-            
+
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Create Playlist");
             stage.setScene(new Scene(root, 450, 176));
             stage.show();
-            
+
             AddPlaylistController addCon = loader.getController();
             addCon.setMtModel(mtModel);
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -206,23 +239,30 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void playSongBtn(MouseEvent event) {
-        Image pause = new Image("Pics/PauseBtn.png");
-        Image play = new Image("Pics/Playbtn.png");
 
         switch (paused) {
             case 0:
-                btnPlay.setImage(play);
-                mPlayer.pause();
-                paused = 1;
+                mediaPause();
                 break;
             case 1:
-
-                btnPlay.setImage(pause);
-                playSong(null);
-                paused = 0;
+                mediaPlay();
                 break;
 
         }
+    }
+
+    private void mediaPlay() {
+        Image pause = new Image("Pics/PauseBtn.png");
+        btnPlay.setImage(pause);
+        mPlayer.play();
+        paused = 0;
+    }
+
+    private void mediaPause() {
+        Image play = new Image("Pics/Playbtn.png");
+        btnPlay.setImage(play);
+        mPlayer.pause();
+        paused = 1;
     }
 
     @FXML
@@ -238,7 +278,7 @@ public class FXMLController implements Initializable {
     @FXML
     private void prevSongBtn(MouseEvent event) {
         int previousIndex = activePlaylist.indexOf(activeSong) - 1;
-        if (previousIndex > 0) {
+        if (previousIndex < 0) {
             previousIndex = activePlaylist.size() - 1;
         }
         activeSong = activePlaylist.get(previousIndex);
@@ -350,7 +390,8 @@ public class FXMLController implements Initializable {
         parser.parse(input, handler, metadata, parseCtx);
         input.close();
 
-        String filePath = addedFile.getAbsolutePath();
+        String filePath = addedFile.getPath();
+        System.out.println(filePath);
         String title = metadata.get("title");
         String artist = metadata.get("xmpDM:artist");
         double duration = Double.parseDouble(metadata.get("xmpDM:duration"));
@@ -365,22 +406,26 @@ public class FXMLController implements Initializable {
         String path = new File(song.getFilePath()).getAbsolutePath();
         path.replace("\\", "/").replaceAll(" ", "%20");
         Media media = new Media(new File(path).toURI().toString());
+
         mPlayer = new MediaPlayer(media);
-        updateValues();
+
         mview = new MediaView(mPlayer);
 
         mPlayer.setOnReady(new Runnable() {
             @Override
             public void run() {
-                updateSlide();
-                updateTimer();
+
                 mview.setMediaPlayer(mPlayer);
-                mPlayer.play();
+
             }
         });
 
         lblPlaying.setText(song.getTitle());
         volSlider(null);
+        updateValues();
+        updateSlide();
+        updateTimer();
+        mediaPlay();
     }
 
     private static String formatTime(Duration elapsed, Duration duration) {
@@ -435,14 +480,17 @@ public class FXMLController implements Initializable {
             e.printStackTrace();
         }
     }
-    
+
     private String formatePathTosrc(String path) {
-        if (path.contains("src/Music")) {
-            String[] urlSplit = path.split("/");
-            String newURL = urlSplit[urlSplit.length - 3] + "/" + urlSplit[urlSplit.length - 2] + "/" + urlSplit[urlSplit.length - 1];
+        path.replace("\\", "/").replaceAll(" ", "%20");
+        System.out.println(path);
+        if (path.contains("src\\Music")) {
+            System.out.println("hej");
+            String[] urlSplit = path.split("src");
+            String newURL = "src" + urlSplit[1];
             return newURL;
         }
-        return null;
+        return path;
     }
 
 }

@@ -24,7 +24,7 @@ import mytunes.DAL.ServerConnect;
 public class SongDAO {
 
     ServerConnect sc;
-    
+
     public SongDAO() {
         sc = new ServerConnect();
     }
@@ -63,7 +63,7 @@ public class SongDAO {
         String sql = "UPDATE Song SET Title = ?, Artist = ?, Path = ? WHERE SongID =" + song.getId();
 
         Connection con = sc.getConnection();
-        
+
 //        Statement st = con.createStatement(); // hurtiger metode jo flere Sange vi har
 //        ResultSet rs = st.executeQuery("SELECT * FROM Song Where SongID = " + song.getId());
 //        rs.next();
@@ -73,7 +73,6 @@ public class SongDAO {
 //        String artist = rs.getNString("Artist");
 //        double duration = rs.getDouble("Duration");
 //        Song oldSong = new Song(path, title, id, artist, duration);
-
         PreparedStatement pst = con.prepareStatement(sql);
 
         pst.setString(1, song.getTitle());
@@ -105,16 +104,19 @@ public class SongDAO {
         ResultSet rs = st.executeQuery("SELECT * FROM Song");
 
         while (rs.next()) {
-            int id = rs.getInt("PlaylistID");
+            int id = rs.getInt("SongID");
             String title = rs.getNString("Title");
             String path = rs.getNString("Path");
             String artist = rs.getNString("Artist");
             double duration = rs.getDouble("Duration");
             String genre = rs.getString("genre");
-            
+
             Song song = new Song(path, title, id, artist, duration, genre);
+
             songs.add(song);
+
         }
+
         return songs;
     }
 

@@ -26,11 +26,16 @@
             <items>
               <MenuItem mnemonicParsing="false" onAction="#menuAddSong" text="Add Song" />
                   <MenuItem mnemonicParsing="false" onAction="#menuAddAlbum" text="Add Album" />
+                  <Menu mnemonicParsing="false" text="Unspecified Menu">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                    </items>
+                  </Menu>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem mnemonicParsing="false" onAction="#newPlaylistBtn" text="Add Playlist" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -42,15 +47,14 @@
       </MenuBar>
       <HBox prefHeight="600.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox prefHeight="600.0" prefWidth="200.0" HBox.hgrow="NEVER">
+            <VBox minWidth="200.0" prefHeight="600.0" prefWidth="200.0" HBox.hgrow="NEVER">
                <children>
                   <MediaView fx:id="mview" />
                   <ListView fx:id="LstPlaylist" prefHeight="416.0" prefWidth="178.0" VBox.vgrow="ALWAYS" />
                   <AnchorPane minHeight="192.0" minWidth="174.0" prefHeight="192.0" prefWidth="174.0" VBox.vgrow="NEVER">
                      <children>
                         <Slider fx:id="sldVol" layoutX="27.0" layoutY="167.0" min="1.0" onMouseClicked="#volSlider" onMouseDragged="#volSlider" />
-                        <Label fx:id="lblPlaying" layoutX="83.0" layoutY="69.0" text="Label" />
-                        <Button fx:id="btnNewPlaylist" layoutX="8.0" layoutY="25.0" mnemonicParsing="false" onAction="#newPlaylistBtn" text="New Playlist" />
+                        <Label fx:id="lblPlaying" alignment="CENTER" contentDisplay="CENTER" layoutX="-1.0" layoutY="69.0" prefHeight="17.0" prefWidth="200.0" text="h" textAlignment="CENTER" />
                         <ImageView fx:id="btnPlay" fitHeight="42.0" fitWidth="42.0" layoutX="75.0" layoutY="104.0" onMouseClicked="#playSongBtn">
                            <image>
                               <Image url="@../../Pics/Playbtn.png" />
@@ -89,7 +93,7 @@
                   <TableView fx:id="tbvSongs" prefHeight="527.0" VBox.vgrow="ALWAYS" />
                   <AnchorPane prefHeight="74.0" prefWidth="600.0" VBox.vgrow="NEVER">
                      <children>
-                        <Label fx:id="lbltime" layoutX="7.0" layoutY="44.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="17.0" prefWidth="126.0" text="Label" />
+                        <Label fx:id="lbltime" layoutX="7.0" layoutY="44.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="17.0" prefWidth="126.0" />
                         <StackPane layoutX="140.0" prefHeight="105.0" prefWidth="460.0">
                            <children>
                               <ProgressBar fx:id="songProg" prefHeight="12.0" prefWidth="532.0" progress="0.0" />
