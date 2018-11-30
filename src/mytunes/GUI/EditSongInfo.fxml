@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane id="AnchorPane" prefHeight="335.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.EditSongInfoController">
+   <children>
+      <Button fx:id="btnOkEditSong" layoutX="174.0" layoutY="269.0" mnemonicParsing="false" onAction="#btnOkEdit" prefWidth="115.0" text="Ok" />
+      <Button fx:id="btnCancelEditSong" layoutX="312.0" layoutY="269.0" mnemonicParsing="false" onAction="#btnCancelEdit" prefWidth="115.0" text="Cancel" />
+      <Button fx:id="btnOpenFile" layoutX="449.0" layoutY="213.0" mnemonicParsing="false" onAction="#btnOpenFile" prefHeight="31.0" prefWidth="128.0" text="Choose file path" />
+      <TextField fx:id="txtSongEditTitle" layoutX="115.0" layoutY="69.0" onAction="#txtSongTitleEdit" prefHeight="31.0" prefWidth="312.0" />
+      <Text layoutX="251.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Edit songs info" />
+      <TextField fx:id="txtSongEditArtist" layoutX="115.0" layoutY="119.0" onAction="#txtSongArtistEdit" prefHeight="31.0" prefWidth="312.0" />
+      <TextField fx:id="txtSongEditGenre" layoutX="115.0" layoutY="166.0" onAction="#txtSongGenreEdit" prefHeight="31.0" prefWidth="312.0" />
+      <Text layoutX="31.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Song title" />
+      <Text layoutX="31.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Song Artist" wrappingWidth="73.2421875" />
+      <Text layoutX="31.0" layoutY="187.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Song Genre" />
+      <TextField fx:id="txtFilePath" layoutX="116.0" layoutY="213.0" onAction="#txtFilePathEdit" prefHeight="31.0" prefWidth="312.0" />
+      <Text layoutX="31.0" layoutY="234.0" strokeType="OUTSIDE" strokeWidth="0.0" text="File Path" />
+   </children>
+</AnchorPane>

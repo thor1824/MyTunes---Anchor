@@ -165,11 +165,20 @@ public class FXMLController implements Initializable {
  
         MenuItem item1 = new MenuItem("edit Song info");
         item1.setOnAction(new EventHandler<ActionEvent>() {
- 
+                  
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("hej");
-            }
+                
+                try
+                {
+                    setSongToEdit();
+                } 
+                catch (IOException ex)
+                {
+                    Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }          
         });
         MenuItem item2 = new MenuItem("add to playlist");
         item2.setOnAction(new EventHandler<ActionEvent>() {
@@ -182,7 +191,7 @@ public class FXMLController implements Initializable {
  
         // Add MenuItem to ContextMenu
         contextMenu.getItems().addAll(item1, item2);
- 
+       
         // When user right-click on Circle
         tbvSongs.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
  
@@ -237,6 +246,21 @@ public class FXMLController implements Initializable {
         }
     }
 
+    private void setSongToEdit() throws IOException
+    {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/EditSongInfo.fxml"));
+            
+            EditSongInfoController editCon = loader.getController();
+            editCon.setMtModel(mtModel);
+            editCon.setSongInfo(tbvSongs.getSelectionModel().getSelectedItem());
+            
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Edit song info");
+            stage.setScene(new Scene(root));
+            stage.show();
+    }
+      
     @FXML
     private void playSongBtn(MouseEvent event) {
 
