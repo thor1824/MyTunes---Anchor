@@ -47,13 +47,23 @@
                <children>
                   <AnchorPane maxHeight="115.0" maxWidth="200.0" minHeight="115.0" minWidth="200.0" prefHeight="195.0" prefWidth="200.0" style="-fx-background-color: #1a1a1a; -fx-border-color: black;" VBox.vgrow="NEVER">
                      <children>
-                        <Label fx:id="mLibrary" layoutX="9.0" layoutY="14.0" prefHeight="17.0" prefWidth="182.0" text="- Music Library" textFill="#00b300">
+                        <Label fx:id="mLibrary" layoutX="33.0" layoutY="5.0" prefHeight="17.0" prefWidth="161.0" text="- Music Library" textFill="#00b300">
                            <font>
                               <Font name="Monospaced Bold" size="12.0" />
                            </font></Label>
-                        <Label layoutX="9.0" layoutY="91.0" text="- Playlists">
+                        <Label layoutX="8.0" layoutY="91.0" text="Playlists:">
                            <font>
                               <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="mLibrary1" layoutX="33.0" layoutY="58.0" prefHeight="17.0" prefWidth="161.0" text="- something else" textFill="#00b300">
+                           <font>
+                              <Font name="Monospaced Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="mLibrary2" layoutX="33.0" layoutY="32.0" prefHeight="17.0" prefWidth="161.0" text="- something else" textFill="#00b300">
+                           <font>
+                              <Font name="Monospaced Bold" size="12.0" />
                            </font>
                         </Label>
                      </children>

@@ -264,6 +264,7 @@ public class MyTunesController implements Initializable {
             @Override
             public void handle(ContextMenuEvent event) {
                 cmPlaylist.hide();
+                cmSong.setMinWidth(100);
                 cmSong.show(tbvSongs, event.getScreenX(), event.getScreenY());
             }
         });
