@@ -22,9 +22,10 @@ public final class OwsMain extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/mytunes/GUI/FXML.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/mytunes/GUI/View/MyTunes.FXML"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setTitle("MyTunes");
         stage.show();
     }
 

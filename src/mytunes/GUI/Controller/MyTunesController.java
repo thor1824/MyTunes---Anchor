@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mytunes.GUI;
+package mytunes.GUI.Controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -58,6 +58,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import mytunes.BE.Playlist;
+import mytunes.GUI.Model.MyTunesModel;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -73,7 +74,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Nijas Hansen
  */
-public class FXMLController implements Initializable {
+public class MyTunesController implements Initializable {
 
     //FXML
     @FXML
@@ -142,6 +143,8 @@ public class FXMLController implements Initializable {
         durations.setPrefWidth(80);
         tbvSongs.getColumns().add(durations);
 
+        tbvSongs.setPlaceholder(new Label("Playlist is Empty"));
+
         // slider
         sldVol.setValue(50);
 
@@ -162,7 +165,7 @@ public class FXMLController implements Initializable {
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // timer
@@ -179,7 +182,8 @@ public class FXMLController implements Initializable {
                 playSong(song);
             }
         });
-        MenuItem editSong = new MenuItem("edit Song info");
+        
+        MenuItem editSong = new MenuItem("Edit Song");
         editSong.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -187,10 +191,28 @@ public class FXMLController implements Initializable {
                 try {
                     editSong();
                 } catch (IOException ex) {
-                    Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
+        
+        MenuItem deleteSong = new MenuItem("");
+        deleteSong.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+
+                Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                System.out.println("he");
+                try {
+                    mtModel.deleteSong(song);
+                } catch (SQLException ex) {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        });
+        
         Menu addtoPlaylist = new Menu("add to playlist");
         genratePlaylistMenuItems(addtoPlaylist);
 
@@ -216,7 +238,7 @@ public class FXMLController implements Initializable {
                 try {
                     mtModel.deletePlayliste(playlist);
                 } catch (SQLException ex) {
-                    Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
@@ -232,7 +254,7 @@ public class FXMLController implements Initializable {
         });
 
         // Add MenuItem to ContextMenus
-        cmSong.getItems().addAll(playSong, editSong, addtoPlaylist);
+        cmSong.getItems().addAll(playSong, editSong, deleteSong, addtoPlaylist);
         cmPlaylist.getItems().addAll(plChoose, plDelete, plEdit);
 
         // Right Click
@@ -302,7 +324,7 @@ public class FXMLController implements Initializable {
     }
 
     private void editSong() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/EditSongInfo.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/EditSongInfo.fxml"));
 
         EditSongInfoController editCon = loader.getController();
         editCon.setMtModel(mtModel);
@@ -334,7 +356,7 @@ public class FXMLController implements Initializable {
     private void newPlaylistBtn(ActionEvent event) {
         try {
 
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/AddPlaylist.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/AddPlaylist.fxml"));
 
             Parent root = loader.load();
             Stage stage = new Stage();
@@ -362,7 +384,7 @@ public class FXMLController implements Initializable {
                     try {
                         mtModel.addSongToPlaylist(song, playlist);
                     } catch (SQLException ex) {
-                        Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             });
@@ -385,14 +407,14 @@ public class FXMLController implements Initializable {
     }
 
     private void mediaPlay() {
-        Image pause = new Image("Pics/nye icons/icons8-pause-30.png");
+        Image pause = new Image("mytunes/GUI/View/Resouces/icons/icons8-pause-30.png");
         btnPlay.setImage(pause);
         mPlayer.play();
         paused = 0;
     }
 
     private void mediaPause() {
-        Image play = new Image("Pics/nye icons/icons8-play-30.png");
+        Image play = new Image("mytunes/GUI/View/Resouces/icons/icons8-play-30.png");
         btnPlay.setImage(play);
         mPlayer.pause();
         paused = 1;
@@ -577,10 +599,11 @@ public class FXMLController implements Initializable {
         updateSlide();
         updateTimer();
         mPlayer.setOnEndOfMedia(new Runnable() {
-        @Override public void run() {
-            NextSongBtn(null);
-        }
-      });
+            @Override
+            public void run() {
+                NextSongBtn(null);
+            }
+        });
 
     }
 
@@ -627,14 +650,14 @@ public class FXMLController implements Initializable {
 
         try {
 
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(("mytunes/GUI/EditPlaylist.fxml")));
-            
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(("mytunes/GUI/View/EditPlaylist.fxml")));
+
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Edit Playlist");
             stage.setScene(new Scene(root));
             stage.show();
-            
+
             EditPlaylistController editCon = loader.getController();
             editCon.setMtModel(mtModel);
             editCon.setPlaylist(LstPlaylist.getSelectionModel().getSelectedItem());
@@ -646,10 +669,10 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void jumpTo(MouseEvent event) {
-        
-        Duration jumpToTime = new Duration(duration.toMillis()/100 * sldProg.getValue());
+
+        Duration jumpToTime = new Duration(duration.toMillis() / 100 * sldProg.getValue());
         mPlayer.seek(jumpToTime);
-        
+
     }
 
 }

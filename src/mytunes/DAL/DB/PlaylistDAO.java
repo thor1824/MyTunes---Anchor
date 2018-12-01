@@ -56,6 +56,8 @@ public class PlaylistDAO {
 
     }
     
+    
+    
     public void addSongToPlaylist(Song song, Playlist playlist) throws SQLServerException, SQLException
     {
         Connection con = server.getConnection();
@@ -76,6 +78,10 @@ public class PlaylistDAO {
         Statement statement = con.createStatement();
         statement.execute(
                 "DELETE FROM Playlist WHERE PlaylistID = "
+                + playlist.getId()
+        );
+        statement.execute(
+                "DELETE FROM Song_Playlist WHERE PlaylistID = "
                 + playlist.getId()
         );
 
@@ -125,14 +131,6 @@ public class PlaylistDAO {
 
         Connection con = server.getConnection();
         
-//        Statement st = con.createStatement();
-//        
-//        ResultSet rs = st.executeQuery("SELECT * FROM Playlist WHER PlaylistID = " + playlist.getId());
-//        rs.next();
-//        int id = rs.getInt("PlaylistID");
-//        String name = rs.getNString("Name");
-//        Playli
-        
         PreparedStatement pst = con.prepareStatement(sql);
 
         pst.setString(1, playlist.getTitle());
@@ -144,6 +142,10 @@ public class PlaylistDAO {
         }
         return false;
 
+    }
+
+    public void deleteFromPlayist(Song song, Playlist playlist) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

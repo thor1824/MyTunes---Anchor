@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mytunes.GUI;
+package mytunes.GUI.Controller;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mytunes.DAL.DB.PlaylistDAO;
+import mytunes.GUI.Model.MyTunesModel;
 
 /**
  * FXML Controller class

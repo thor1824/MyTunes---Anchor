@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mytunes.GUI;
+package mytunes.GUI.Controller;
 
 import java.io.File;
 import java.net.URL;
@@ -18,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import mytunes.BE.Song;
+import mytunes.GUI.Model.MyTunesModel;
 
 /**
  * FXML Controller class

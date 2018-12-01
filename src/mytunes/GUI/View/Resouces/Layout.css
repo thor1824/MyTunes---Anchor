@@ -3,6 +3,8 @@
 
     -fx-text-fill: #00cc00;
     -fx-font-family: "Arial";
+    -fx-font-smoothing-type: lcd;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
 }
 
 .menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
@@ -10,6 +12,8 @@
     -fx-background-color:  #333333;
 
     -fx-text-fill: -fx-selection-bar-text;
+    -fx-font-smoothing-type: lcd;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
 }
 
 
@@ -19,17 +23,23 @@
     -fx-background-color: #333333 ;
     -fx-padding: 0em 0em 0em 0em;
     -fx-text-fill: #00cc00;
+    -fx-font-smoothing-type: lcd;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
 }
 
 .menu .label{
     -fx-font-family: "Arial";
     -fx-text-fill: #00cc00;
+    -fx-font-smoothing-type: lcd;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
 }
 
 
 .menu-item .label{
     -fx-font-family: "Arial";
     -fx-text-fill: #00cc00;
+    -fx-font-smoothing-type: lcd;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
 }
 
 .context-menu {
@@ -56,6 +66,8 @@
     -fx-background-color: transparent;
     -fx-font-family: "Arial";
     -fx-text-fill: #00cc00;
+    -fx-font-smoothing-type: lcd;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
 }
 
 .table-view .column-header {
@@ -65,6 +77,8 @@
 .table-view .table-cell{
     -fx-font-family: "Arial";
     -fx-text-fill: #00cc00;
+    -fx-font-smoothing-type: lcd;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
 }
 
 .table-row-cell{
@@ -77,13 +91,14 @@
 .table-row-cell:odd{
     -fx-background-color:  #404040;
     -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;     
+    -fx-padding: 0.0em;  
+    
 }
 
 .table-row-cell:selected {
     -fx-font-family: "Arial";
     -fx-text-fill: white;
-    -fx-background-color: green;
+    -fx-background-color: #5c705c;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
 }
@@ -115,9 +130,14 @@
 
 .list-cell {
     -fx-text-fill: #00cc00 ;
+    -fx-font-family: "Arial";
+    -fx-font-smoothing-type: lcd;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
     -fx-background-color:  #616161;
     -fx-background-insets: 0, 0 0 1 0;
+    -fx-font-weight: bold;
     -fx-padding: 0.5em;  
+    
 }
 
 .list-cell:odd {
@@ -127,9 +147,18 @@
 }
 
 .list-cell:selected{
-    -fx-background-color: green;
+    -fx-background-color: #5c705c;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
+    
+}
+
+.list-cell .text {
+    -fx-text-fill: #00cc00 ;
+    -fx-font-family: "Arial";
+    -fx-font-smoothing-type: lcd;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
+    
 }
 
 .label {
@@ -138,7 +167,9 @@
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #00cc00;
-    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,20) , 1,0,1,0 );
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
+    -fx-font-smoothing-type: lcd;
 }
 
 
@@ -151,24 +182,31 @@
     -fx-font-weight: bold;
     -fx-text-fill: #00cc00;
     -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
+    -fx-font-smoothing-type: lcd;
 }
 
 .text-field {
     -fx-font-family: "Arial";
     -fx-background-color:  #404040;
     -fx-background-insets: 0 -1 -1 -1, 0 0 0 0, 0 -1 3 -1;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
     -fx-text-fill: #00cc00;
+    -fx-font-smoothing-type: lcd;
 }
 
 .text-field:focused {
     -fx-font-family: "Arial";
     -fx-background-color:  #404040;
     -fx-background-insets: 0 -1 -1 -1, 0 0 0 0, 0 -1 3 -1;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.5) , 3, 0.0 , 0 , 2 );
     -fx-text-fill: #00cc00;
+    -fx-font-smoothing-type: lcd;
 }
 .text
 {
     -fx-text-fill: #00cc00;
+    -fx-font-smoothing-type: lcd;
 
 }
 .button {
@@ -186,7 +224,8 @@
     -fx-text-fill: linear-gradient(#00cc00, #00cc00);
     -fx-font-size: 12px;
     -fx-padding: 10 20 10 20;
+    -fx-font-smoothing-type: lcd;
 }
 .button Text {
-    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.5) , 0,0,0,1 );
 }

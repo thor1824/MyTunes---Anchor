@@ -62,4 +62,8 @@ public class MyTunesManager {
         return songDAO.createSong(filePath, title, artist, duration, genre);
     }
 
+    public void deleteFromPlayist(Song song, Playlist playlist) {
+        playlistDAO.deleteFromPlayist(song, playlist);
+    }
+
 }

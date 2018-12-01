@@ -19,19 +19,14 @@
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="863.0" prefWidth="937.0" stylesheets="@Layout.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.FXMLController">
+<VBox prefHeight="863.0" prefWidth="937.0" stylesheets="@Resouces/Layout.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.Controller.MyTunesController">
    <children>
-      <MenuBar prefHeight="26.0" prefWidth="800.0" style="-fx-border-color: black; -fx-background-color: #1a1a1a;" stylesheets="@Layout.css" VBox.vgrow="ALWAYS">
+      <MenuBar prefHeight="26.0" prefWidth="800.0" style="-fx-border-color: black; -fx-background-color: #1a1a1a;" VBox.vgrow="ALWAYS">
         <menus>
           <Menu mnemonicParsing="false" style="fx-text-fill: palegreen;" text="File">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#menuAddSong" text="Add Song" />
                   <MenuItem mnemonicParsing="false" onAction="#menuAddAlbum" text="Add Album" />
-                  <Menu mnemonicParsing="false" text="Unspecified Menu">
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="Action 1" />
-                    </items>
-                  </Menu>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -73,7 +68,7 @@
                                     <Insets left="45.0" top="12.0" />
                                  </VBox.margin>
                                  <image>
-                                    <Image url="@../../Pics/nye%20icons/icons8-microsoft-zune-32.png" />
+                                    <Image url="@Resouces/icons/icons8-microsoft-zune-32.png" />
                                  </image>
                               </ImageView>
                               <Label fx:id="lblPlaying" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="200.0" textAlignment="CENTER" textFill="PALEGREEN">
@@ -85,7 +80,7 @@
                                  <children>
                                     <ImageView fx:id="btnPrev" fitHeight="42.0" fitWidth="42.0" onMouseClicked="#prevSongBtn" preserveRatio="true">
                                        <image>
-                                          <Image url="@../../Pics/nye%20icons/icons8-fast-forward-30.png" />
+                                          <Image url="@Resouces/icons/icons8-fast-forward-30.png" />
                                        </image>
                                        <HBox.margin>
                                           <Insets left="19.0" />
@@ -93,7 +88,7 @@
                                     </ImageView>
                                     <ImageView fx:id="btnPlay" fitHeight="42.0" fitWidth="42.0" onMouseClicked="#playSongBtn" preserveRatio="true">
                                        <image>
-                                          <Image url="@../../Pics/nye%20icons/icons8-play-30.png" />
+                                          <Image url="@Resouces/icons/icons8-play-30.png" />
                                        </image>
                                        <HBox.margin>
                                           <Insets left="15.0" />
@@ -101,7 +96,7 @@
                                     </ImageView>
                                     <ImageView fx:id="btnNext" fitHeight="42.0" fitWidth="42.0" onMouseClicked="#NextSongBtn" preserveRatio="true">
                                        <image>
-                                          <Image url="@../../Pics/nye%20icons/icons8-fast-forward-100.png" />
+                                          <Image url="@Resouces/icons/icons8-fast-forward-100.png" />
                                        </image>
                                        <HBox.margin>
                                           <Insets left="15.0" />
@@ -116,7 +111,7 @@
                                  <children>
                                     <ImageView fitHeight="10.0" fitWidth="8.0" preserveRatio="true">
                                        <image>
-                                          <Image url="@../../Pics/nye%20icons/icons8-low-volume-filled-50.png" />
+                                          <Image url="@Resouces/icons/icons8-low-volume-filled-50.png" />
                                        </image>
                                        <HBox.margin>
                                           <Insets left="15.0" top="7.0" />
@@ -132,7 +127,7 @@
                                     </Slider>
                                     <ImageView fitHeight="16.0" fitWidth="17.0" preserveRatio="true">
                                        <image>
-                                          <Image url="@../../Pics/nye%20icons/icons8-voice-filled-50.png" />
+                                          <Image url="@Resouces/icons/icons8-voice-filled-50.png" />
                                        </image>
                                        <HBox.margin>
                                           <Insets left="1.0" top="4.0" />
@@ -160,9 +155,9 @@
                               <Insets left="11.0" top="17.0" />
                            </HBox.margin>
                         </Label>
-                        <StackPane maxHeight="100.0" prefHeight="51.0" prefWidth="569.0" stylesheets="@slider%20progress.css" HBox.hgrow="ALWAYS">
+                        <StackPane maxHeight="100.0" prefHeight="51.0" prefWidth="569.0" stylesheets="@Resouces/slider%20progress.css" HBox.hgrow="ALWAYS">
                            <children>
-                              <ProgressBar fx:id="songProg" maxHeight="8.0" maxWidth="2000.0" prefHeight="5.0" prefWidth="579.0" progress="0.0" stylesheets="@slider%20progress.css" StackPane.alignment="CENTER">
+                              <ProgressBar fx:id="songProg" maxHeight="8.0" maxWidth="2000.0" prefHeight="5.0" prefWidth="579.0" progress="0.0" StackPane.alignment="CENTER">
                                  <StackPane.margin>
                                     <Insets left="5.0" right="5.0" />
                                  </StackPane.margin>
@@ -170,7 +165,7 @@
                                     <InnerShadow />
                                  </effect>
                               </ProgressBar>
-                              <Slider fx:id="sldProg" minWidth="20.0" nodeOrientation="LEFT_TO_RIGHT" onMousePressed="#jumpTo" prefHeight="56.0" prefWidth="575.0" style="-fx-background-color: null;" stylesheets="@slider%20progress.css" StackPane.alignment="CENTER">
+                              <Slider fx:id="sldProg" minWidth="20.0" nodeOrientation="LEFT_TO_RIGHT" onMousePressed="#jumpTo" prefHeight="56.0" prefWidth="575.0" StackPane.alignment="CENTER">
                                  <effect>
                                     <InnerShadow />
                                  </effect></Slider>

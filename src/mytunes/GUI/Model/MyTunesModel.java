@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mytunes.GUI;
+package mytunes.GUI.Model;
 
 import java.sql.SQLException;
 import javafx.beans.Observable;
@@ -49,6 +49,11 @@ public class MyTunesModel {
     public void updatePlaylists() throws SQLException
     {
         playlists.setAll(logiclayer.getAllPlaylits());
+    }
+    
+    public void deleteFromPlayist(Song song, Playlist playlist)
+    {
+        logiclayer.deleteFromPlayist(song, playlist);
     }
     
     public void addSongToPlaylist(Song song, Playlist playlist) throws SQLException
@@ -115,13 +120,12 @@ public class MyTunesModel {
     }
     
     public void deleteSong(Song song) throws SQLException {
+        System.out.println("hej");
         logiclayer.deleteSong(song);
+        
         songs.remove(song);
-        for (Playlist playlist : playlists) {
-            if (playlist.getSongs().contains(song)) {
-                playlist.getSongs().remove(song);
-            }
-        }
+        updatePlaylists();
+        
     }
     
     public void deletePlayliste(Playlist playlist) throws SQLException {

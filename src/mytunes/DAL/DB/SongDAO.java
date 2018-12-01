@@ -62,15 +62,6 @@ public class SongDAO {
 
         Connection con = sc.getConnection();
 
-//        Statement st = con.createStatement(); // hurtiger metode jo flere Sange vi har
-//        ResultSet rs = st.executeQuery("SELECT * FROM Song Where SongID = " + song.getId());
-//        rs.next();
-//        int id = rs.getInt("SongID");
-//        String title = rs.getNString("Title");
-//        String path = rs.getNString("Path");
-//        String artist = rs.getNString("Artist");
-//        double duration = rs.getDouble("Duration");
-//        Song oldSong = new Song(path, title, id, artist, duration);
         PreparedStatement pst = con.prepareStatement(sql);
 
         pst.setString(1, song.getTitle());
@@ -90,9 +81,14 @@ public class SongDAO {
 
         Statement statement = con.createStatement();
         statement.execute(
-                "DELETE FROM Playlist WHERE PlaylistID = "
+                "DELETE FROM Song_Playlist WHERE SongID = "
                 + song.getId()
         );
+        statement.execute(
+                "DELETE FROM Song WHERE SongID = "
+                + song.getId()
+        );
+        
     }
 
     public List<Song> getAllSong() throws SQLServerException, SQLException {

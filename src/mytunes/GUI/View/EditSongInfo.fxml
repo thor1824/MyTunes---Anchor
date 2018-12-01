@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" prefHeight="335.0" prefWidth="600.0" style="-fx-background-color: #1a1a1a;" stylesheets="@Layout.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.EditSongInfoController">
+<AnchorPane id="AnchorPane" prefHeight="335.0" prefWidth="600.0" style="-fx-background-color: #1a1a1a;" stylesheets="@Resouces/Layout.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.Controller.EditSongInfoController">
    <children>
       <Button fx:id="btnOkEditSong" layoutX="147.0" layoutY="269.0" mnemonicParsing="false" onAction="#btnOkEdit" prefWidth="115.0" text="Change Info" />
       <Button fx:id="btnCancelEditSong" layoutX="313.0" layoutY="269.0" mnemonicParsing="false" onAction="#btnCancelEdit" prefWidth="115.0" text="Cancel" />
