@@ -99,18 +99,24 @@ public class MyTunesController implements Initializable {
     private ProgressBar songProg;
     @FXML
     private MediaView mview;
+    @FXML
+    private Label mLibrary;
 
     //other
     private MediaPlayer mPlayer;
     private MyTunesModel mtModel;
-    private int paused = 1;
+    private final int PAUSED = 0;
+    private final int PLAYING = 1;
+    private int state = PAUSED;
+    private boolean onPlaylist = false;
     private ObservableList<Playlist> allplaylist;
     private ObservableList<Song> allSongs;
-    private ObservableList<Song> activePlaylist;
+    private ObservableList<Song> activeObvPlaylist;
+    private Playlist activePlaylist;
     private Song activeSong;
     private Duration duration;
-    @FXML
-    private Label mLibrary;
+    
+    
 
     /**
      * Initializes the controller class.
@@ -153,14 +159,14 @@ public class MyTunesController implements Initializable {
             mtModel = new MyTunesModel();
 
             allSongs = mtModel.getAllSong();
-            activePlaylist = allSongs;
-            tbvSongs.setItems(activePlaylist);
+            activeObvPlaylist = allSongs;
+            tbvSongs.setItems(activeObvPlaylist);
 
             allplaylist = mtModel.getAllPlaylists();
             LstPlaylist.setItems(allplaylist);
 
-            if (activePlaylist.size() > 0) {
-                activeSong = activePlaylist.get(7);
+            if (activeObvPlaylist.size() > 0) {
+                activeSong = activeObvPlaylist.get(7);
                 setSongElements(activeSong);
             }
 
@@ -196,7 +202,7 @@ public class MyTunesController implements Initializable {
             }
         });
         
-        MenuItem deleteSong = new MenuItem("");
+        MenuItem deleteSong = new MenuItem("Delete Song From Library");
         deleteSong.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -213,8 +219,11 @@ public class MyTunesController implements Initializable {
             }
         });
         
-        Menu addtoPlaylist = new Menu("add to playlist");
-        genratePlaylistMenuItems(addtoPlaylist);
+        
+        
+        Menu addtoPlaylist = new Menu("Add to: ");
+        Menu deleteFromPlaylist = new Menu("Delete From: ");
+        genratePlaylistMenuItems(addtoPlaylist, deleteFromPlaylist);
 
         // Create cmPlaylist
         ContextMenu cmPlaylist = new ContextMenu();
@@ -254,7 +263,7 @@ public class MyTunesController implements Initializable {
         });
 
         // Add MenuItem to ContextMenus
-        cmSong.getItems().addAll(playSong, editSong, deleteSong, addtoPlaylist);
+        cmSong.getItems().addAll(playSong, editSong, deleteSong, addtoPlaylist, deleteFromPlaylist);
         cmPlaylist.getItems().addAll(plChoose, plDelete, plEdit);
 
         // Right Click
@@ -265,6 +274,10 @@ public class MyTunesController implements Initializable {
             public void handle(ContextMenuEvent event) {
                 cmPlaylist.hide();
                 cmSong.setMinWidth(100);
+                if(onPlaylist){
+                
+                } else {}
+                    
                 cmSong.show(tbvSongs, event.getScreenX(), event.getScreenY());
             }
         });
@@ -302,6 +315,7 @@ public class MyTunesController implements Initializable {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
                         Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
+                        activePlaylist = playlist;
                         changeMusicList(playlist.getSongs());
 
                     }
@@ -316,7 +330,7 @@ public class MyTunesController implements Initializable {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
                         changeMusicList(allSongs);
-
+                        onPlaylist = false;
                     }
                 }
             }
@@ -339,8 +353,9 @@ public class MyTunesController implements Initializable {
     }
 
     private void changeMusicList(ObservableList list) {
-        activePlaylist = list;
-        tbvSongs.setItems(activePlaylist);
+        activeObvPlaylist = list;
+        tbvSongs.setItems(activeObvPlaylist);
+        onPlaylist = true;
     }
 
     @FXML
@@ -373,11 +388,13 @@ public class MyTunesController implements Initializable {
         }
     }
 
-    private void genratePlaylistMenuItems(Menu menu) {
-        menu.getItems().clear();
+    private void genratePlaylistMenuItems(Menu menuAdd, Menu menuDelete) {
+        menuAdd.getItems().clear();
         for (Playlist playlist : allplaylist) {
-            MenuItem playlistItem = new MenuItem(playlist.getTitle());
-            playlistItem.setOnAction(new EventHandler<ActionEvent>() {
+            String title = playlist.getTitle();
+            MenuItem playlistAdd = new MenuItem(title);
+            
+            playlistAdd.setOnAction(new EventHandler<ActionEvent>() {
 
                 @Override
                 public void handle(ActionEvent event) {
@@ -389,19 +406,32 @@ public class MyTunesController implements Initializable {
                     }
                 }
             });
-            menu.getItems().add(playlistItem);
+            menuAdd.getItems().add(playlistAdd);
+            
+            MenuItem playlistdelete= new MenuItem(title);
+            playlistdelete.setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(ActionEvent event) {
+                    Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                    mtModel.deleteFromPlayist(song, playlist);
+                    
+                }
+            });
+            menuDelete.getItems().add(playlistdelete);
         }
     }
 
     @FXML
     private void playSongBtn(MouseEvent event) {
 
-        switch (paused) {
-            case 0:
-                mediaPause();
-                break;
-            case 1:
+        switch (state) {
+            case PAUSED:
                 mediaPlay();
+                
+                break;
+            case PLAYING:
+                mediaPause();
                 break;
 
         }
@@ -411,33 +441,35 @@ public class MyTunesController implements Initializable {
         Image pause = new Image("mytunes/GUI/View/Resouces/icons/icons8-pause-30.png");
         btnPlay.setImage(pause);
         mPlayer.play();
-        paused = 0;
+        state = PLAYING;
+        
     }
 
     private void mediaPause() {
         Image play = new Image("mytunes/GUI/View/Resouces/icons/icons8-play-30.png");
         btnPlay.setImage(play);
         mPlayer.pause();
-        paused = 1;
+        state = PAUSED;
+        
     }
 
     @FXML
     private void NextSongBtn(MouseEvent event) {
-        int nextIndex = activePlaylist.indexOf(activeSong) + 1;
-        if ((activePlaylist.size() - 1) < nextIndex) {
+        int nextIndex = activeObvPlaylist.indexOf(activeSong) + 1;
+        if ((activeObvPlaylist.size() - 1) < nextIndex) {
             nextIndex = 0;
         }
-        activeSong = activePlaylist.get(nextIndex);
+        activeSong = activeObvPlaylist.get(nextIndex);
         playSong(activeSong);
     }
 
     @FXML
     private void prevSongBtn(MouseEvent event) {
-        int previousIndex = activePlaylist.indexOf(activeSong) - 1;
+        int previousIndex = activeObvPlaylist.indexOf(activeSong) - 1;
         if (previousIndex < 0) {
-            previousIndex = activePlaylist.size() - 1;
+            previousIndex = activeObvPlaylist.size() - 1;
         }
-        activeSong = activePlaylist.get(previousIndex);
+        activeSong = activeObvPlaylist.get(previousIndex);
         playSong(activeSong);
     }
 
