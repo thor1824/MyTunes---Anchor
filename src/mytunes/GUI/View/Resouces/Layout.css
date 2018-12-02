@@ -107,10 +107,17 @@
 .table-row-cell:selected {
     -fx-font-family: "Arial";
     -fx-text-fill: white;
-    -fx-background-color: #b3daff
-;
+    -fx-background-color: #b3daff;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
+}
+
+.table-view:focused {
+  -fx-background-color: red /* or transparent or other preferred color */,-fx-box-border,-fx-control-inner-background;
+  -fx-background-insets: -1.4, 0, 1;
+  -fx-background-radius: 1.4, 0, 0;
+  /*....*/
+  -fx-padding: 1; /* 0.083333em; */
 }
 
 .table-view > .virtual-flow > .scroll-bar:vertical,
@@ -157,7 +164,7 @@
 }*/
 
 .list-cell:selected{
-    -fx-background-color: #5c705c;
+    -fx-background-color: #b3daff;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
     

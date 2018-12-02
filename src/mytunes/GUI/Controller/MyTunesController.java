@@ -26,6 +26,7 @@ import java.io.InputStream;
 import static java.lang.Math.floor;
 import static java.lang.String.format;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -115,8 +116,17 @@ public class MyTunesController implements Initializable {
     private Playlist activePlaylist;
     private Song activeSong;
     private Duration duration;
-    
-    
+    private final int SHUFFLE_ON = 1;
+    private final int SHUFFLE_OFF = 0;
+    private int shuffleState = SHUFFLE_OFF;
+    @FXML
+    private Label mLibrary1;
+    @FXML
+    private Label mLibrary2;
+    @FXML
+    private ImageView btnShuffle;
+    @FXML
+    private ImageView btnRepeat;
 
     /**
      * Initializes the controller class.
@@ -188,7 +198,7 @@ public class MyTunesController implements Initializable {
                 playSong(song);
             }
         });
-        
+
         MenuItem editSong = new MenuItem("Edit Song");
         editSong.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -201,7 +211,7 @@ public class MyTunesController implements Initializable {
                 }
             }
         });
-        
+
         MenuItem deleteSong = new MenuItem("Delete Song From Library");
         deleteSong.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -218,9 +228,7 @@ public class MyTunesController implements Initializable {
 
             }
         });
-        
-        
-        
+
         Menu addtoPlaylist = new Menu("Add to: ");
         Menu deleteFromPlaylist = new Menu("Delete From: ");
         genratePlaylistMenuItems(addtoPlaylist, deleteFromPlaylist);
@@ -274,10 +282,11 @@ public class MyTunesController implements Initializable {
             public void handle(ContextMenuEvent event) {
                 cmPlaylist.hide();
                 cmSong.setMinWidth(100);
-                if(onPlaylist){
-                
-                } else {}
-                    
+                if (onPlaylist) {
+
+                } else {
+                }
+
                 cmSong.show(tbvSongs, event.getScreenX(), event.getScreenY());
             }
         });
@@ -300,6 +309,9 @@ public class MyTunesController implements Initializable {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2 && tbvSongs.getSelectionModel().getSelectedItem() != null) {
                         Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                        int focusIndex =tbvSongs.getSelectionModel().getSelectedIndex();
+                        tbvSongs.getFocusModel().focus(focusIndex);
+                        tbvSongs.requestFocus();
                         playSong(song);
                         tbvSongs.getSelectionModel().clearSelection();
 
@@ -393,7 +405,7 @@ public class MyTunesController implements Initializable {
         for (Playlist playlist : allplaylist) {
             String title = playlist.getTitle();
             MenuItem playlistAdd = new MenuItem(title);
-            
+
             playlistAdd.setOnAction(new EventHandler<ActionEvent>() {
 
                 @Override
@@ -407,15 +419,15 @@ public class MyTunesController implements Initializable {
                 }
             });
             menuAdd.getItems().add(playlistAdd);
-            
-            MenuItem playlistdelete= new MenuItem(title);
+
+            MenuItem playlistdelete = new MenuItem(title);
             playlistdelete.setOnAction(new EventHandler<ActionEvent>() {
 
                 @Override
                 public void handle(ActionEvent event) {
                     Song song = tbvSongs.getSelectionModel().getSelectedItem();
                     mtModel.deleteFromPlayist(song, playlist);
-                    
+
                 }
             });
             menuDelete.getItems().add(playlistdelete);
@@ -428,12 +440,10 @@ public class MyTunesController implements Initializable {
         switch (state) {
             case PAUSED:
                 mediaPlay();
-                
                 break;
             case PLAYING:
                 mediaPause();
                 break;
-
         }
     }
 
@@ -442,7 +452,7 @@ public class MyTunesController implements Initializable {
         btnPlay.setImage(pause);
         mPlayer.play();
         state = PLAYING;
-        
+
     }
 
     private void mediaPause() {
@@ -450,7 +460,7 @@ public class MyTunesController implements Initializable {
         btnPlay.setImage(play);
         mPlayer.pause();
         state = PAUSED;
-        
+
     }
 
     @FXML
@@ -626,18 +636,12 @@ public class MyTunesController implements Initializable {
             }
         });
 
-        lblPlaying.setText(song.getTitle());
+        lblPlaying.setText("now Playing...  " + song.getTitle());
         volSlider(null);
         updateValues();
         updateSlide();
         updateTimer();
-        mPlayer.setOnEndOfMedia(new Runnable() {
-            @Override
-            public void run() {
-                NextSongBtn(null);
-            }
-        });
-
+        shuffleState();
     }
 
     private static String formatTime(Duration elapsed, Duration duration) {
@@ -708,4 +712,73 @@ public class MyTunesController implements Initializable {
 
     }
 
+    private void shuffleState() {
+        switch (shuffleState) {
+            case SHUFFLE_OFF:
+                mPlayer.setOnEndOfMedia(new Runnable() {
+                    @Override
+                    public void run() {
+                        NextSongBtn(null);
+                    }
+                });
+                break;
+
+            case SHUFFLE_ON:
+                mPlayer.setOnEndOfMedia(new Runnable() {
+                    @Override
+                    public void run() {
+                        Random random = new Random(System.currentTimeMillis());
+                        int nextIndex = random.nextInt(activeObvPlaylist.size());
+                        playSong(activeObvPlaylist.get(nextIndex));
+                    }
+                });
+                break;
+        }
+    }
+
+    private void repeat() {
+
+        mPlayer.setOnRepeat(null);
+    }
+
+    @FXML
+    private void btnShuffle(MouseEvent event) {
+        switch (shuffleState) {
+            case SHUFFLE_OFF:
+                
+                Image shuffleOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Ashuffle-26.png");
+                btnShuffle.setImage(shuffleOn);
+                mPlayer.setOnEndOfMedia(new Runnable() {
+                    @Override
+                    public void run() {
+                        Random random = new Random(System.currentTimeMillis());
+                        int nextIndex = random.nextInt(activeObvPlaylist.size());
+                        playSong(activeObvPlaylist.get(nextIndex));
+                    }
+                });
+                shuffleState = SHUFFLE_ON;
+                break;
+            case SHUFFLE_ON:
+                Image shuffleOff = new Image("mytunes/GUI/View/Resouces/icons/icons8-shuffle-26.png");
+                btnShuffle.setImage(shuffleOff);
+                mPlayer.setOnEndOfMedia(new Runnable() {
+                    @Override
+                    public void run() {
+                        NextSongBtn(null);
+                    }
+                });
+                shuffleState = SHUFFLE_OFF;
+                break;
+        }
+    }
+
+    @FXML
+    private void btnRepeat(MouseEvent event) {
+        mPlayer.setOnEndOfMedia(new Runnable() {
+                    @Override
+                    public void run() {
+                        NextSongBtn(null);
+                    }
+                });
+    }
 }
