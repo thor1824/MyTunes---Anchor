@@ -98,7 +98,7 @@ public class MyTunesModel {
         }
     }
     
-    public String formatePathTosrc(String path) {
+    private String formatePathTosrc(String path) {
         path.replace("\\", "/").replaceAll(" ", "%20");
         System.out.println(path);
         if (path.contains("src\\Music")) {
