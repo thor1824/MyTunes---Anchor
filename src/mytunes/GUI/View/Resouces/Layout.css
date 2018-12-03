@@ -89,8 +89,7 @@
     -fx-background-color: linear-gradient(#404040 90%, #131313 100%);
 
 /*    -fx-background-color: #4d4d4d;*/
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.2em;  
+    -fx-background-insets: 0, 0 0 1 0;  
     -fx-font-weight: bold;
     -fx-table-cell-border-color:transparent;
     -fx-stroke: white;

@@ -119,6 +119,9 @@ public class MyTunesController implements Initializable {
     private final int SHUFFLE_ON = 1;
     private final int SHUFFLE_OFF = 0;
     private int shuffleState = SHUFFLE_OFF;
+    private final int repeat_ON = 1;
+    private final int repeat_OFF = 0;
+    private int repeatState = repeat_OFF;
     @FXML
     private Label mLibrary1;
     @FXML
@@ -309,7 +312,7 @@ public class MyTunesController implements Initializable {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2 && tbvSongs.getSelectionModel().getSelectedItem() != null) {
                         Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                        int focusIndex =tbvSongs.getSelectionModel().getSelectedIndex();
+                        int focusIndex = tbvSongs.getSelectionModel().getSelectedIndex();
                         tbvSongs.getFocusModel().focus(focusIndex);
                         tbvSongs.requestFocus();
                         playSong(song);
@@ -616,6 +619,7 @@ public class MyTunesController implements Initializable {
         activeSong = song;
         setSongElements(song);
         mediaPlay();
+        
     }
 
     private void setSongElements(Song song) {
@@ -641,7 +645,7 @@ public class MyTunesController implements Initializable {
         updateValues();
         updateSlide();
         updateTimer();
-        shuffleState();
+        checkState();
     }
 
     private static String formatTime(Duration elapsed, Duration duration) {
@@ -712,7 +716,7 @@ public class MyTunesController implements Initializable {
 
     }
 
-    private void shuffleState() {
+    private void checkShuffleState() {
         switch (shuffleState) {
             case SHUFFLE_OFF:
                 mPlayer.setOnEndOfMedia(new Runnable() {
@@ -736,49 +740,71 @@ public class MyTunesController implements Initializable {
         }
     }
 
-    private void repeat() {
+    private void checkState() {
+        switch (repeatState) {
+            case repeat_OFF:
+                checkShuffleState();
+                break;
 
-        mPlayer.setOnRepeat(null);
+            case repeat_ON:
+                 mPlayer.setOnEndOfMedia(new Runnable() {
+            @Override
+            public void run() {
+                playSong(activeSong);
+            }
+        });
+                break;
+        }
     }
+
+    
+
 
     @FXML
     private void btnShuffle(MouseEvent event) {
         switch (shuffleState) {
             case SHUFFLE_OFF:
-                
+
                 Image shuffleOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Ashuffle-26.png");
                 btnShuffle.setImage(shuffleOn);
-                mPlayer.setOnEndOfMedia(new Runnable() {
-                    @Override
-                    public void run() {
-                        Random random = new Random(System.currentTimeMillis());
-                        int nextIndex = random.nextInt(activeObvPlaylist.size());
-                        playSong(activeObvPlaylist.get(nextIndex));
-                    }
-                });
+
                 shuffleState = SHUFFLE_ON;
+                checkShuffleState();
+
                 break;
             case SHUFFLE_ON:
                 Image shuffleOff = new Image("mytunes/GUI/View/Resouces/icons/icons8-shuffle-26.png");
                 btnShuffle.setImage(shuffleOff);
-                mPlayer.setOnEndOfMedia(new Runnable() {
-                    @Override
-                    public void run() {
-                        NextSongBtn(null);
-                    }
-                });
+
                 shuffleState = SHUFFLE_OFF;
+                checkShuffleState();
                 break;
         }
     }
 
     @FXML
     private void btnRepeat(MouseEvent event) {
-        mPlayer.setOnEndOfMedia(new Runnable() {
-                    @Override
-                    public void run() {
-                        NextSongBtn(null);
-                    }
-                });
+        switch (repeatState) {
+            case repeat_OFF:
+
+                Image repeatOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Arefresh-96.png");
+                btnRepeat.setImage(repeatOn);
+                
+                repeatState = repeat_ON;
+                checkState();
+                
+                break;
+                
+                case repeat_ON:
+                  Image repeatOFF = new Image ("mytunes/GUI/View/Resouces/icons/icons8-refresh-96.png");
+                  btnRepeat.setImage(repeatOFF);
+                  
+                  repeatState = repeat_OFF;
+                  checkState();
+                  
+                  break;
+
+        }
     }
+
 }
