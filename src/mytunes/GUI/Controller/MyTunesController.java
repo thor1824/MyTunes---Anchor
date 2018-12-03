@@ -58,8 +58,10 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.media.MediaException;
 import mytunes.BE.Playlist;
 import mytunes.GUI.Model.MyTunesModel;
+import mytunes.BLL.exception.MyTunesException;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -104,6 +106,7 @@ public class MyTunesController implements Initializable {
     private Label mLibrary;
 
     //other
+    private MyTunesException myTunesException;
     private MediaPlayer mPlayer;
     private MyTunesModel mtModel;
     private final int PAUSED = 0;
@@ -177,7 +180,13 @@ public class MyTunesController implements Initializable {
 
             if (activeObvPlaylist.size() > 0) {
                 activeSong = activeObvPlaylist.get(7);
-                setSongElements(activeSong);
+                try
+                {
+                    setSongElements(activeSong);
+                } catch (MyTunesException ex)
+                {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
         } catch (SQLException ex) {
@@ -195,7 +204,16 @@ public class MyTunesController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                playSong(song);
+                try
+                {
+                    playSong(song);
+                } catch (MyTunesException ex)
+                {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex)
+                {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
@@ -312,7 +330,16 @@ public class MyTunesController implements Initializable {
                         int focusIndex =tbvSongs.getSelectionModel().getSelectedIndex();
                         tbvSongs.getFocusModel().focus(focusIndex);
                         tbvSongs.requestFocus();
-                        playSong(song);
+                        try
+                        {
+                            playSong(song);
+                        } catch (MyTunesException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         tbvSongs.getSelectionModel().clearSelection();
 
                     }
@@ -464,7 +491,7 @@ public class MyTunesController implements Initializable {
     }
 
     @FXML
-    private void NextSongBtn(MouseEvent event) {
+    private void NextSongBtn(MouseEvent event) throws MyTunesException, SQLException {
         int nextIndex = activeObvPlaylist.indexOf(activeSong) + 1;
         if ((activeObvPlaylist.size() - 1) < nextIndex) {
             nextIndex = 0;
@@ -474,7 +501,7 @@ public class MyTunesController implements Initializable {
     }
 
     @FXML
-    private void prevSongBtn(MouseEvent event) {
+    private void prevSongBtn(MouseEvent event) throws MyTunesException, SQLException {
         int previousIndex = activeObvPlaylist.indexOf(activeSong) - 1;
         if (previousIndex < 0) {
             previousIndex = activeObvPlaylist.size() - 1;
@@ -611,16 +638,39 @@ public class MyTunesController implements Initializable {
         }
     }
 
-    private void playSong(Song song) {
+    private Media checkMediaPath (String file, Song song) throws MyTunesException, SQLException {
+        try
+        {
+            Media media = new Media(new File(file).toURI().toString());
+            return media;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            FileChooser filechooser = new FileChooser();
+            filechooser.setInitialDirectory(new File("src"));
+            filechooser.setTitle("Open File");
+            filechooser.getExtensionFilters().addAll(
+                           new ExtensionFilter("Audio Files", "*.wav", "*.mp3"));
+            File selectedFile = filechooser.showOpenDialog(null);
+            song.setFilePath(mtModel.formatePathTosrc(selectedFile.getAbsolutePath()));
+            mtModel.updateSong(song);
+            Media medi = new Media(selectedFile.toURI().toString());
+            return medi;
+        }
+    }
+    
+    private void playSong(Song song) throws MyTunesException, SQLException {
         mPlayer.stop();
         activeSong = song;
+        
         setSongElements(song);
         mediaPlay();
     }
 
-    private void setSongElements(Song song) {
+    private void setSongElements(Song song) throws MyTunesException, SQLException {
         String path = new File(song.getFilePath()).getAbsolutePath();
         path.replace("\\", "/").replaceAll(" ", "%20");
+        checkMediaPath(path, song);
         Media media = new Media(new File(path).toURI().toString());
 
         mPlayer = new MediaPlayer(media);
@@ -718,7 +768,16 @@ public class MyTunesController implements Initializable {
                 mPlayer.setOnEndOfMedia(new Runnable() {
                     @Override
                     public void run() {
-                        NextSongBtn(null);
+                        try
+                        {
+                            NextSongBtn(null);
+                        } catch (MyTunesException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
                 break;
@@ -729,7 +788,16 @@ public class MyTunesController implements Initializable {
                     public void run() {
                         Random random = new Random(System.currentTimeMillis());
                         int nextIndex = random.nextInt(activeObvPlaylist.size());
-                        playSong(activeObvPlaylist.get(nextIndex));
+                        try
+                        {
+                            playSong(activeObvPlaylist.get(nextIndex));
+                        } catch (MyTunesException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
                 break;
@@ -753,7 +821,16 @@ public class MyTunesController implements Initializable {
                     public void run() {
                         Random random = new Random(System.currentTimeMillis());
                         int nextIndex = random.nextInt(activeObvPlaylist.size());
-                        playSong(activeObvPlaylist.get(nextIndex));
+                        try
+                        {
+                            playSong(activeObvPlaylist.get(nextIndex));
+                        } catch (MyTunesException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
                 shuffleState = SHUFFLE_ON;
@@ -764,7 +841,16 @@ public class MyTunesController implements Initializable {
                 mPlayer.setOnEndOfMedia(new Runnable() {
                     @Override
                     public void run() {
-                        NextSongBtn(null);
+                        try
+                        {
+                            NextSongBtn(null);
+                        } catch (MyTunesException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
                 shuffleState = SHUFFLE_OFF;
@@ -777,7 +863,16 @@ public class MyTunesController implements Initializable {
         mPlayer.setOnEndOfMedia(new Runnable() {
                     @Override
                     public void run() {
-                        NextSongBtn(null);
+                        try
+                        {
+                            NextSongBtn(null);
+                        } catch (MyTunesException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
     }
