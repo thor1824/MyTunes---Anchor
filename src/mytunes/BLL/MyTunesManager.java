@@ -62,7 +62,7 @@ public class MyTunesManager {
         return songDAO.createSong(filePath, title, artist, duration, genre);
     }
 
-    public void deleteFromPlayist(Song song, Playlist playlist) {
+    public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException {
         playlistDAO.deleteFromPlayist(song, playlist);
     }
 

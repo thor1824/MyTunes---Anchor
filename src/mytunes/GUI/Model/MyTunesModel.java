@@ -48,9 +48,16 @@ public class MyTunesModel {
     public void updatePlaylists() throws SQLException {
         playlists.setAll(logiclayer.getAllPlaylits());
     }
+<<<<<<< HEAD
 
     public void deleteFromPlayist(Song song, Playlist playlist) {
 
+=======
+    
+    public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException
+    {
+        playlist.deleteFromPlaylist(playlist.getSongs().indexOf(song));
+>>>>>>> c9e15f48dc38f76b13f52d366c5486c62c42d594
         logiclayer.deleteFromPlayist(song, playlist);
 
     }

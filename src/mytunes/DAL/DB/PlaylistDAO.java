@@ -55,21 +55,24 @@ public class PlaylistDAO {
         return playlist;
 
     }
-    
-    
-    
-    public void addSongToPlaylist(Song song, Playlist playlist) throws SQLServerException, SQLException
-    {
+
+    public void addSongToPlaylist(Song song, Playlist playlist) throws SQLServerException, SQLException {
         Connection con = server.getConnection();
         String sql = "INSERT INTO Song_Playlist (SongID, PlaylistID) VALUES (?,?)";
-        
+
         PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        
+
         st.setInt(1, song.getId());
         st.setInt(2, playlist.getId());
-        
+
         int rowsAffected = st.executeUpdate();
-        
+
+        ResultSet rs = st.getGeneratedKeys();
+
+        if (rs.next()) {
+            song.setPositionID(rs.getInt(1));
+        }
+
     }
 
     public void deletePlayliste(Playlist playlist) throws SQLServerException, SQLException {
@@ -92,13 +95,13 @@ public class PlaylistDAO {
         Connection con = server.getConnection();
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM Playlist");
-        
+
         while (rs.next()) {
             int id = rs.getInt("PlaylistID");
             String title = rs.getNString("Title");
             Playlist playlist = new Playlist(title, id);
             getSongFromPlaylist(playlist);
-                
+
             playlists.add(playlist);
         }
         return playlists;
@@ -112,15 +115,17 @@ public class PlaylistDAO {
                 + "RIGHT JOIN Song_Playlist ON Song.SongID = Song_Playlist.SongID "
                 + "WHERE PlaylistID = " + playlist.getId()
         );
-        while  (resultSet.next()){
+        while (resultSet.next()) {
             int id = resultSet.getInt("SongID");
             double duration = resultSet.getDouble("Duration");
             String title = resultSet.getNString("Title");
             String path = resultSet.getNString("Path");
             String genre = resultSet.getNString("Genre");
             String artist = resultSet.getNString("Artist");
-                    
+            int position = resultSet.getInt("PositionID");
+
             Song song = new Song(path, title, id, artist, duration, genre);
+            song.setPositionID(position);
             playlist.addToPlaylist(song);
         }
     }
@@ -130,22 +135,29 @@ public class PlaylistDAO {
         String sql = "UPDATE Playlist SET Title = ? WHERE PlaylistID =" + playlist.getId();
 
         Connection con = server.getConnection();
-        
+
         PreparedStatement pst = con.prepareStatement(sql);
 
         pst.setString(1, playlist.getTitle());
 
         int rowsAffected = pst.executeUpdate();
-        
-        if (rowsAffected >= 1){
+
+        if (rowsAffected >= 1) {
             return true;
         }
         return false;
 
     }
 
-    public void deleteFromPlayist(Song song, Playlist playlist) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException {
+        Connection con = server.getConnection();
+        Statement st = con.createStatement();
+
+        st.execute(
+                "DELETE FROM Song_Playlist WHERE PlaylistID = " + playlist.getId()
+                + " AND PositionID = " + song.getPositionID()
+        );
+
     }
 
 }
