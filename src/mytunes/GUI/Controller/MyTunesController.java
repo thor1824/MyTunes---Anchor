@@ -78,8 +78,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class MyTunesController implements Initializable {
 
     //FXML
-    @FXML
-    private ListView<Playlist> LstPlaylist;
+//    @FXML
+//    private ListView<Playlist> LstPlaylist;
     @FXML
     private ImageView btnPlay;
     @FXML
@@ -110,7 +110,7 @@ public class MyTunesController implements Initializable {
     private final int PLAYING = 1;
     private int state = PAUSED;
     private boolean onPlaylist = false;
-    private ObservableList<Playlist> allplaylist;
+    private ObservableList<Playlist> allPlaylist;
     private ObservableList<Song> allSongs;
     private ObservableList<Song> activeObvPlaylist;
     private Playlist activePlaylist;
@@ -130,6 +130,11 @@ public class MyTunesController implements Initializable {
     private ImageView btnShuffle;
     @FXML
     private ImageView btnRepeat;
+    @FXML
+    private TableView<Playlist> tbvPlayllist;
+    @FXML
+    private TableColumn<Playlist, String> tbvPlaylistName;
+    
 
     /**
      * Initializes the controller class.
@@ -139,19 +144,19 @@ public class MyTunesController implements Initializable {
 
         //Collum Init
         TableColumn<Song, String> title = new TableColumn<>();
-        title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
+        title.setCellValueFactory(c -> c.getValue().getTitleProperty());
         title.setText("Title");
         title.setPrefWidth(350);
         tbvSongs.getColumns().add(title);
 
         TableColumn<Song, String> artist = new TableColumn<>();
-        artist.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getArtist()));
+        artist.setCellValueFactory(c -> c.getValue().getArtistProperty());
         artist.setText("Artist");
         artist.setPrefWidth(200);
         tbvSongs.getColumns().add(artist);
 
         TableColumn<Song, String> genrer = new TableColumn<>();
-        genrer.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getGenre()));
+        genrer.setCellValueFactory(c -> c.getValue().getGenreProperty());
         genrer.setText("Genre");
         genrer.setPrefWidth(150);
         tbvSongs.getColumns().add(genrer);
@@ -163,6 +168,7 @@ public class MyTunesController implements Initializable {
         tbvSongs.getColumns().add(durations);
 
         tbvSongs.setPlaceholder(new Label("Playlist is Empty"));
+        tbvPlaylistName.setCellValueFactory(c -> c.getValue().getTitleProperty());
 
         // slider
         sldVol.setValue(50);
@@ -175,11 +181,11 @@ public class MyTunesController implements Initializable {
             activeObvPlaylist = allSongs;
             tbvSongs.setItems(activeObvPlaylist);
 
-            allplaylist = mtModel.getAllPlaylists();
-            LstPlaylist.setItems(allplaylist);
+            allPlaylist = mtModel.getAllPlaylists();
+            tbvPlayllist.setItems(allPlaylist);
 
             if (activeObvPlaylist.size() > 0) {
-                activeSong = activeObvPlaylist.get(7);
+                activeSong = activeObvPlaylist.get(0);
                 setSongElements(activeSong);
             }
 
@@ -244,7 +250,7 @@ public class MyTunesController implements Initializable {
 
             @Override
             public void handle(ActionEvent event) {
-                Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
+                Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
                 changeMusicList(playlist.getSongs());
             }
         });
@@ -254,7 +260,7 @@ public class MyTunesController implements Initializable {
 
             @Override
             public void handle(ActionEvent event) {
-                Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
+                Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
                 try {
                     mtModel.deletePlayliste(playlist);
                 } catch (SQLException ex) {
@@ -268,7 +274,7 @@ public class MyTunesController implements Initializable {
 
             @Override
             public void handle(ActionEvent event) {
-                Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
+                Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
                 editPlaylist(null);
             }
         });
@@ -295,7 +301,7 @@ public class MyTunesController implements Initializable {
         });
 
         // When user right-click on a Playlist
-        LstPlaylist.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+        tbvPlayllist.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
 
             @Override
             public void handle(ContextMenuEvent event) {
@@ -324,12 +330,12 @@ public class MyTunesController implements Initializable {
         });
 
         // Double-click on Playlist to set Active
-        LstPlaylist.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        tbvPlayllist.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
+                        Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
                         activePlaylist = playlist;
                         changeMusicList(playlist.getSongs());
 
@@ -405,7 +411,7 @@ public class MyTunesController implements Initializable {
 
     private void genratePlaylistMenuItems(Menu menuAdd, Menu menuDelete) {
         menuAdd.getItems().clear();
-        for (Playlist playlist : allplaylist) {
+        for (Playlist playlist : allPlaylist) {
             String title = playlist.getTitle();
             MenuItem playlistAdd = new MenuItem(title);
 
@@ -619,7 +625,7 @@ public class MyTunesController implements Initializable {
         activeSong = song;
         setSongElements(song);
         mediaPlay();
-        
+
     }
 
     private void setSongElements(Song song) {
@@ -701,7 +707,7 @@ public class MyTunesController implements Initializable {
 
             EditPlaylistController editCon = loader.getController();
             editCon.setMtModel(mtModel);
-            editCon.setPlaylist(LstPlaylist.getSelectionModel().getSelectedItem());
+            editCon.setPlaylist(tbvPlayllist.getSelectionModel().getSelectedItem());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -747,18 +753,15 @@ public class MyTunesController implements Initializable {
                 break;
 
             case repeat_ON:
-                 mPlayer.setOnEndOfMedia(new Runnable() {
-            @Override
-            public void run() {
-                playSong(activeSong);
-            }
-        });
+                mPlayer.setOnEndOfMedia(new Runnable() {
+                    @Override
+                    public void run() {
+                        playSong(activeSong);
+                    }
+                });
                 break;
         }
     }
-
-    
-
 
     @FXML
     private void btnShuffle(MouseEvent event) {
@@ -789,20 +792,20 @@ public class MyTunesController implements Initializable {
 
                 Image repeatOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Arefresh-96.png");
                 btnRepeat.setImage(repeatOn);
-                
+
                 repeatState = repeat_ON;
                 checkState();
-                
+
                 break;
-                
-                case repeat_ON:
-                  Image repeatOFF = new Image ("mytunes/GUI/View/Resouces/icons/icons8-refresh-96.png");
-                  btnRepeat.setImage(repeatOFF);
-                  
-                  repeatState = repeat_OFF;
-                  checkState();
-                  
-                  break;
+
+            case repeat_ON:
+                Image repeatOFF = new Image("mytunes/GUI/View/Resouces/icons/icons8-refresh-96.png");
+                btnRepeat.setImage(repeatOFF);
+
+                repeatState = repeat_OFF;
+                checkState();
+
+                break;
 
         }
     }

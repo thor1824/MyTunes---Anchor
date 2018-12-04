@@ -5,7 +5,8 @@
  */
 package mytunes.BE;
 
-import java.io.File;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -14,12 +15,34 @@ import java.io.File;
 public class Song {
 
     private String filePath;
-    private String Title;
-    private File file;
+    private String songTitle;
+    private StringProperty titleProperty;
     private int id;
     private String artist;
+    private StringProperty artistProperty;
     private double duration;
     private String genre;
+    private StringProperty genreProperty;
+
+    public Song(String fileParth, String Title, int id, String artist, double duration, String genre) {
+        this.filePath = fileParth;
+        this.songTitle = Title;
+        titleProperty = new SimpleStringProperty(Title);
+        this.id = id;
+        this.artist = artist;
+        artistProperty = new SimpleStringProperty(artist);
+        this.duration = duration;
+        this.genre = genre;
+        genreProperty = new SimpleStringProperty(genre);
+    }
+
+    public StringProperty getArtistProperty() {
+        return artistProperty;
+    }
+
+    public StringProperty getGenreProperty() {
+        return genreProperty;
+    }
 
     /**
      * Get the value of genre
@@ -37,19 +60,8 @@ public class Song {
      */
     public void setGenre(String genre) {
         this.genre = genre;
+        genreProperty.setValue(genre);
     }
-
-
-    public Song(String fileParth, String Title, int id, String artist, double duration, String genre) {
-        this.filePath = fileParth;
-        this.Title = Title;
-        this.id = id;
-        this.artist = artist;
-        this.duration = duration;
-        this.genre = genre;
-    }
-
-    
 
     /**
      * Get the value of duration
@@ -76,6 +88,7 @@ public class Song {
      */
     public String getArtist() {
         return artist;
+
     }
 
     /**
@@ -85,6 +98,7 @@ public class Song {
      */
     public void setArtist(String artist) {
         this.artist = artist;
+        artistProperty.setValue(artist);
     }
 
     /**
@@ -106,24 +120,29 @@ public class Song {
     }
 
     /**
-     * Get the value of Title
+     * Get the value of songTitle
      *
-     * @return the value of Title
+     * @return the value of songTitle
      */
     public String getTitle() {
-        return Title;
+        return songTitle;
     }
 
     /**
-     * Set the value of Title
+     * Set the value of songTitle
      *
-     * @param Title new value of Title
+     * @param Title new value of songTitle
      */
     public void setTitle(String Title) {
-        this.Title = Title;
+        this.songTitle = Title;
+        titleProperty.setValue(Title);
     }
 
     public int getId() {
         return id;
+    }
+
+    public StringProperty getTitleProperty() {
+        return titleProperty;
     }
 }

@@ -64,6 +64,7 @@
 
 .table-view .column-header-background .label{
     -fx-background-color: transparent;
+    -fx-alignment: CENTER-LEFT;
     -fx-font-family: "Arial";
     -fx-text-fill: #3399ff;
     -fx-font-smoothing-type: lcd;

@@ -5,8 +5,8 @@
  */
 package mytunes.BE;
 
-import java.util.ArrayList;
-import java.util.List;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 public class Playlist {
 
     private String title;
+    private StringProperty titleProperty;
     private int id;
     private ObservableList<Song> songs;
 
@@ -24,6 +25,7 @@ public class Playlist {
         this.title = title;
         this.id = id;
         songs = FXCollections.observableArrayList();
+        titleProperty = new SimpleStringProperty(title);
     }
 
     /**
@@ -33,6 +35,10 @@ public class Playlist {
      */
     public int getId() {
         return id;
+    }
+
+    public StringProperty getTitleProperty() {
+        return titleProperty;
     }
 
     /**
@@ -56,10 +62,12 @@ public class Playlist {
     /**
      * Set the value of title
      *
-     * @param Title new value of title
+     * @param title new value of title
      */
-    public void setTitle(String Title) {
-        this.title = Title;
+    public void setTitle(String title) {
+        this.title = title;
+        titleProperty.setValue(title);
+        
     }
 
     public void addToPlaylist(Song song) {
