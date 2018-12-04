@@ -51,9 +51,9 @@ public class MyTunesModel {
         playlists.setAll(logiclayer.getAllPlaylits());
     }
     
-    public void deleteFromPlayist(Song song, Playlist playlist)
+    public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException
     {
-        System.out.println("not supportet yet");
+        playlist.deleteFromPlaylist(playlist.getSongs().indexOf(song));
         logiclayer.deleteFromPlayist(song, playlist);
         
     }

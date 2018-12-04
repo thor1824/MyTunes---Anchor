@@ -122,6 +122,9 @@ public class MyTunesController implements Initializable {
     private final int repeat_ON = 1;
     private final int repeat_OFF = 0;
     private int repeatState = repeat_OFF;
+    private ContextMenu cmSong;
+    private MenuItem deleteSong;
+    private MenuItem deleteSongFromPlist;
     @FXML
     private Label mLibrary1;
     @FXML
@@ -190,7 +193,7 @@ public class MyTunesController implements Initializable {
         // timer
         // ContextMenu
         // Create cmSong
-        ContextMenu cmSong = new ContextMenu();
+        cmSong = new ContextMenu();
 
         MenuItem playSong = new MenuItem("Play Song");
         playSong.setOnAction(new EventHandler<ActionEvent>() {
@@ -199,6 +202,20 @@ public class MyTunesController implements Initializable {
             public void handle(ActionEvent event) {
                 Song song = tbvSongs.getSelectionModel().getSelectedItem();
                 playSong(song);
+            }
+        });
+        
+         deleteSongFromPlist = new MenuItem("Delete song from playlist");
+        deleteSongFromPlist.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                try {
+                    mtModel.deleteFromPlayist(song, activePlaylist);
+                } catch (SQLException ex) {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
@@ -215,7 +232,7 @@ public class MyTunesController implements Initializable {
             }
         });
 
-        MenuItem deleteSong = new MenuItem("Delete Song From Library");
+        deleteSong = new MenuItem("Delete Song From Library");
         deleteSong.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -233,8 +250,7 @@ public class MyTunesController implements Initializable {
         });
 
         Menu addtoPlaylist = new Menu("Add to: ");
-        Menu deleteFromPlaylist = new Menu("Delete From: ");
-        genratePlaylistMenuItems(addtoPlaylist, deleteFromPlaylist);
+        genratePlaylistMenuItems(addtoPlaylist);
 
         // Create cmPlaylist
         ContextMenu cmPlaylist = new ContextMenu();
@@ -274,7 +290,7 @@ public class MyTunesController implements Initializable {
         });
 
         // Add MenuItem to ContextMenus
-        cmSong.getItems().addAll(playSong, editSong, deleteSong, addtoPlaylist, deleteFromPlaylist);
+        cmSong.getItems().addAll(playSong, editSong, deleteSong, addtoPlaylist);
         cmPlaylist.getItems().addAll(plChoose, plDelete, plEdit);
 
         // Right Click
@@ -317,6 +333,7 @@ public class MyTunesController implements Initializable {
                         tbvSongs.requestFocus();
                         playSong(song);
                         tbvSongs.getSelectionModel().clearSelection();
+                        
 
                     }
                 }
@@ -331,7 +348,9 @@ public class MyTunesController implements Initializable {
                     if (mouseEvent.getClickCount() == 2) {
                         Playlist playlist = LstPlaylist.getSelectionModel().getSelectedItem();
                         activePlaylist = playlist;
+                        onPlaylist = true;
                         changeMusicList(playlist.getSongs());
+                        
 
                     }
                 }
@@ -344,8 +363,9 @@ public class MyTunesController implements Initializable {
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        changeMusicList(allSongs);
                         onPlaylist = false;
+                        changeMusicList(allSongs);
+                        
                     }
                 }
             }
@@ -370,7 +390,16 @@ public class MyTunesController implements Initializable {
     private void changeMusicList(ObservableList list) {
         activeObvPlaylist = list;
         tbvSongs.setItems(activeObvPlaylist);
-        onPlaylist = true;
+        if (onPlaylist)
+        {
+            cmSong.getItems().add(deleteSongFromPlist);
+            cmSong.getItems().remove(deleteSong);
+        }
+        else
+        {
+            cmSong.getItems().add(deleteSong);
+            cmSong.getItems().remove(deleteSongFromPlist);
+        }
     }
 
     @FXML
@@ -403,7 +432,7 @@ public class MyTunesController implements Initializable {
         }
     }
 
-    private void genratePlaylistMenuItems(Menu menuAdd, Menu menuDelete) {
+    private void genratePlaylistMenuItems(Menu menuAdd) {
         menuAdd.getItems().clear();
         for (Playlist playlist : allplaylist) {
             String title = playlist.getTitle();
@@ -423,17 +452,7 @@ public class MyTunesController implements Initializable {
             });
             menuAdd.getItems().add(playlistAdd);
 
-            MenuItem playlistdelete = new MenuItem(title);
-            playlistdelete.setOnAction(new EventHandler<ActionEvent>() {
-
-                @Override
-                public void handle(ActionEvent event) {
-                    Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                    mtModel.deleteFromPlayist(song, playlist);
-
-                }
-            });
-            menuDelete.getItems().add(playlistdelete);
+            
         }
     }
 

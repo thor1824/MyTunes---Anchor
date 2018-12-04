@@ -20,7 +20,9 @@ public class Song {
     private String artist;
     private double duration;
     private String genre;
+    private int PositionID;
 
+    
     /**
      * Get the value of genre
      *
@@ -47,6 +49,7 @@ public class Song {
         this.artist = artist;
         this.duration = duration;
         this.genre = genre;
+        setPositionID(PositionID);
     }
 
     
@@ -126,4 +129,13 @@ public class Song {
     public int getId() {
         return id;
     }
+    
+    public int getPositionID() {
+        return PositionID;
+    }
+
+    public void setPositionID(int PositionID) {
+        this.PositionID = PositionID;
+    }
+
 }
