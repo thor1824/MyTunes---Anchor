@@ -48,16 +48,11 @@ public class MyTunesModel {
     public void updatePlaylists() throws SQLException {
         playlists.setAll(logiclayer.getAllPlaylits());
     }
-<<<<<<< HEAD
 
-    public void deleteFromPlayist(Song song, Playlist playlist) {
-
-=======
     
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException
     {
         playlist.deleteFromPlaylist(playlist.getSongs().indexOf(song));
->>>>>>> c9e15f48dc38f76b13f52d366c5486c62c42d594
         logiclayer.deleteFromPlayist(song, playlist);
 
     }
@@ -103,9 +98,7 @@ public class MyTunesModel {
 
     private String formatePathTosrc(String path) {
         path.replace("\\", "/").replaceAll(" ", "%20");
-        System.out.println(path);
         if (path.contains("src\\Music")) {
-            System.out.println("hej");
             String[] urlSplit = path.split("src");
             String newURL = "src" + urlSplit[1];
             return newURL;

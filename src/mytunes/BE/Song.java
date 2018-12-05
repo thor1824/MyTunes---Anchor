@@ -22,8 +22,8 @@ public class Song {
     private StringProperty artistProperty;
     private double duration;
     private String genre;
-<<<<<<< HEAD
     private StringProperty genreProperty;
+    private int PositionID = 0;
 
     public Song(String fileParth, String Title, int id, String artist, double duration, String genre) {
         this.filePath = fileParth;
@@ -44,11 +44,7 @@ public class Song {
     public StringProperty getGenreProperty() {
         return genreProperty;
     }
-=======
-    private int PositionID;
->>>>>>> c9e15f48dc38f76b13f52d366c5486c62c42d594
 
-    
     /**
      * Get the value of genre
      *
@@ -68,22 +64,6 @@ public class Song {
         genreProperty.setValue(genre);
     }
 
-<<<<<<< HEAD
-=======
-
-    public Song(String fileParth, String Title, int id, String artist, double duration, String genre) {
-        this.filePath = fileParth;
-        this.Title = Title;
-        this.id = id;
-        this.artist = artist;
-        this.duration = duration;
-        this.genre = genre;
-        setPositionID(PositionID);
-    }
-
-    
-
->>>>>>> c9e15f48dc38f76b13f52d366c5486c62c42d594
     /**
      * Get the value of duration
      *
@@ -162,13 +142,11 @@ public class Song {
     public int getId() {
         return id;
     }
-<<<<<<< HEAD
 
     public StringProperty getTitleProperty() {
         return titleProperty;
     }
-=======
-    
+
     public int getPositionID() {
         return PositionID;
     }
@@ -177,5 +155,4 @@ public class Song {
         this.PositionID = PositionID;
     }
 
->>>>>>> c9e15f48dc38f76b13f52d366c5486c62c42d594
 }

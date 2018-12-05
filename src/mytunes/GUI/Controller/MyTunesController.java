@@ -137,7 +137,6 @@ public class MyTunesController implements Initializable {
     private TableView<Playlist> tbvPlayllist;
     @FXML
     private TableColumn<Playlist, String> tbvPlaylistName;
-    
 
     /**
      * Initializes the controller class.
@@ -210,8 +209,8 @@ public class MyTunesController implements Initializable {
                 playSong(song);
             }
         });
-        
-         deleteSongFromPlist = new MenuItem("Delete song from playlist");
+
+        deleteSongFromPlist = new MenuItem("Delete song from playlist");
         deleteSongFromPlist.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -307,11 +306,6 @@ public class MyTunesController implements Initializable {
             public void handle(ContextMenuEvent event) {
                 cmPlaylist.hide();
                 cmSong.setMinWidth(100);
-                if (onPlaylist) {
-
-                } else {
-                }
-
                 cmSong.show(tbvSongs, event.getScreenX(), event.getScreenY());
             }
         });
@@ -339,7 +333,6 @@ public class MyTunesController implements Initializable {
                         tbvSongs.requestFocus();
                         playSong(song);
                         tbvSongs.getSelectionModel().clearSelection();
-                        
 
                     }
                 }
@@ -353,9 +346,11 @@ public class MyTunesController implements Initializable {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
                         Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
-                        activePlaylist = playlist;
-                        onPlaylist = true;
                         changeMusicList(playlist.getSongs());
+                        if (!onPlaylist) {
+                            addCorrectMenuItem();
+                            onPlaylist = true;
+                        }
                         
 
                     }
@@ -369,9 +364,12 @@ public class MyTunesController implements Initializable {
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        onPlaylist = false;
                         changeMusicList(allSongs);
-                        
+                        if (onPlaylist) {
+                            addCorrectMenuItem();
+                            onPlaylist = false;
+                        }
+
                     }
                 }
             }
@@ -396,15 +394,18 @@ public class MyTunesController implements Initializable {
     private void changeMusicList(ObservableList list) {
         activeObvPlaylist = list;
         tbvSongs.setItems(activeObvPlaylist);
-        if (onPlaylist)
-        {
-            cmSong.getItems().add(deleteSongFromPlist);
+        activeObvPlaylist = list;
+    }
+
+    private void addCorrectMenuItem() {
+        if (onPlaylist) {
             cmSong.getItems().remove(deleteSong);
-        }
-        else
-        {
-            cmSong.getItems().add(deleteSong);
+            cmSong.getItems().add(deleteSongFromPlist);
+
+        } else {
             cmSong.getItems().remove(deleteSongFromPlist);
+            cmSong.getItems().add(deleteSong);
+
         }
     }
 
@@ -458,7 +459,6 @@ public class MyTunesController implements Initializable {
             });
             menuAdd.getItems().add(playlistAdd);
 
-            
         }
     }
 
