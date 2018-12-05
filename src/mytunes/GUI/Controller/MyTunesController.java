@@ -124,9 +124,9 @@ public class MyTunesController implements Initializable {
     private ContextMenu cmSong;
     private MenuItem deleteSong;
     private MenuItem deleteSongFromPlist;
-    private FilteredList<Song> searchList; 
+    private FilteredList<Song> searchList;
     private SortedList<Song> sortedData;
-    
+
     @FXML
     private Label mLibrary1;
     @FXML
@@ -141,7 +141,7 @@ public class MyTunesController implements Initializable {
     private TableColumn<Playlist, String> tbvPlaylistName;
     @FXML
     private TextField txtSearch;
-    
+
 
     /**
      * Initializes the controller class.
@@ -191,7 +191,7 @@ public class MyTunesController implements Initializable {
             allPlaylist = mtModel.getAllPlaylists();
             tbvPlayllist.setItems(allPlaylist);
             searchList = new FilteredList(activeObvPlaylist, p -> true);
-            
+
             if (activeObvPlaylist.size() > 0) {
                 activeSong = activeObvPlaylist.get(0);
                 setSongElements(activeSong);
@@ -199,39 +199,42 @@ public class MyTunesController implements Initializable {
 
         } catch (SQLException ex) {
             Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex)
+        {
+            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        // Predicator 
+
+        // Predicator
         txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
             searchList.setPredicate(song -> {
                 // If filter text is empty, display all persons.
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
-                
+
                 // Compare first name and last name of every person with filter text.
                 String lowerCaseFilter = newValue.toLowerCase();
-                
+
                 if (song.getTitle().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches first name.
                 } else if (song.getArtist().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches last name.
-                } 
+                }
 //                else if (song.getGenre().toLowerCase().contains(lowerCaseFilter)|| song.getGenre() != null) {
 //                    return true; // Filter matches last name.
-//                } 
+//                }
                 return false; // Does not match.
             });
         });
-        // 3. Wrap the FilteredList in a SortedList. 
+        // 3. Wrap the FilteredList in a SortedList.
         sortedData = new SortedList<>(searchList);
-        
+
         // 4. Bind the SortedList comparator to the TableView comparator.
         sortedData.comparatorProperty().bind(tbvSongs.comparatorProperty());
-        
+
         // 5. Add sorted (and filtered) data to the table.
         tbvSongs.setItems(sortedData);
-        
+
         // timer
         // ContextMenu
         // Create cmSong
@@ -246,18 +249,16 @@ public class MyTunesController implements Initializable {
                 playSong(song);
             }
         });
-        
-         deleteSongFromPlist = new MenuItem("Delete song from playlist");
+
+        deleteSongFromPlist = new MenuItem("Delete song from playlist");
         deleteSongFromPlist.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
                 Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                try
-                {
+                try {
                     mtModel.deleteFromPlayist(song, activePlaylist);
-                } catch (SQLException ex)
-                {
+                } catch (SQLException ex) {
                     Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -345,11 +346,6 @@ public class MyTunesController implements Initializable {
             public void handle(ContextMenuEvent event) {
                 cmPlaylist.hide();
                 cmSong.setMinWidth(100);
-                if (onPlaylist) {
-
-                } else {
-                }
-
                 cmSong.show(tbvSongs, event.getScreenX(), event.getScreenY());
             }
         });
@@ -377,7 +373,6 @@ public class MyTunesController implements Initializable {
                         tbvSongs.requestFocus();
                         playSong(song);
                         tbvSongs.getSelectionModel().clearSelection();
-                        
 
                     }
                 }
@@ -391,10 +386,13 @@ public class MyTunesController implements Initializable {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
                         Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
-                        activePlaylist = playlist;
-                        onPlaylist = true;
+
                         changeMusicList(playlist.getSongs());
-                        
+                        if (!onPlaylist) {
+                            onPlaylist = true;
+                            switchMenuItems();
+
+                        }
 
                     }
                 }
@@ -407,9 +405,12 @@ public class MyTunesController implements Initializable {
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        onPlaylist = false;
                         changeMusicList(allSongs);
-                        
+                        if (onPlaylist) {
+                            onPlaylist = false;
+                            switchMenuItems();
+
+                        }
                     }
                 }
             }
@@ -434,15 +435,18 @@ public class MyTunesController implements Initializable {
     private void changeMusicList(ObservableList list) {
         activeObvPlaylist = list;
         tbvSongs.setItems(activeObvPlaylist);
-        if (onPlaylist)
-        {
-            cmSong.getItems().add(deleteSongFromPlist);
+
+    }
+
+    public void switchMenuItems() {
+        if (onPlaylist) {
             cmSong.getItems().remove(deleteSong);
-        }
-        else
-        {
-            cmSong.getItems().add(deleteSong);
+            cmSong.getItems().add(deleteSongFromPlist);
+
+        } else {
             cmSong.getItems().remove(deleteSongFromPlist);
+            cmSong.getItems().add(deleteSong);
+
         }
     }
 
@@ -496,7 +500,6 @@ public class MyTunesController implements Initializable {
             });
             menuAdd.getItems().add(playlistAdd);
 
-            
         }
     }
 
@@ -868,10 +871,10 @@ public class MyTunesController implements Initializable {
     }
 
     @FXML
-    
+
     private void txtSearchField(ActionEvent event)
     {
-       
+
     }
 
 }

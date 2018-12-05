@@ -6,6 +6,7 @@
 package mytunes.DAL.DB;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,7 +25,7 @@ public class SongDAO {
 
     ServerConnect sc;
 
-    public SongDAO() {
+    public SongDAO() throws IOException {
         sc = new ServerConnect();
     }
 
@@ -95,7 +96,7 @@ public class SongDAO {
         List<Song> songs = new ArrayList<>();
         Connection con = sc.getConnection();
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM Song");
+        ResultSet rs = st.executeQuery("SELECT * FROM [MyTunesAnchor].[dbo].[Song]");
 
         while (rs.next()) {
             int id = rs.getInt("SongID");
