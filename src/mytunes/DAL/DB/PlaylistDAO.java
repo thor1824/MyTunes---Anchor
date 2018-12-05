@@ -7,6 +7,7 @@ package mytunes.DAL.DB;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,7 +27,7 @@ public class PlaylistDAO {
 
     private static ServerConnect server;
 
-    public PlaylistDAO() {
+    public PlaylistDAO() throws IOException {
 
         this.server = new ServerConnect();
     }
@@ -94,7 +95,7 @@ public class PlaylistDAO {
         List<Playlist> playlists = new ArrayList<>();
         Connection con = server.getConnection();
         Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM Playlist");
+        ResultSet rs = st.executeQuery("SELECT * FROM [MyTunesAnchor].[dbo].[Playlist]");
 
         while (rs.next()) {
             int id = rs.getInt("PlaylistID");
@@ -111,8 +112,8 @@ public class PlaylistDAO {
         Connection con = server.getConnection();
         Statement st = con.createStatement();
         ResultSet resultSet = st.executeQuery("SELECT * "
-                + "FROM Song "
-                + "RIGHT JOIN Song_Playlist ON Song.SongID = Song_Playlist.SongID "
+                + "FROM [MyTunesAnchor].[dbo].[Song] "
+                + "RIGHT JOIN [MyTunesAnchor].[dbo].[Song_Playlist] ON [MyTunesAnchor].[dbo].[Song].[SongID] = [MyTunesAnchor].[dbo].[Song_Playlist].[SongID] "
                 + "WHERE PlaylistID = " + playlist.getId()
         );
         while (resultSet.next()) {

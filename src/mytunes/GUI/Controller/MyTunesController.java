@@ -193,6 +193,9 @@ public class MyTunesController implements Initializable {
 
         } catch (SQLException ex) {
             Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex)
+        {
+            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // timer
