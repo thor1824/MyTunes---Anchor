@@ -10,9 +10,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
@@ -32,7 +30,6 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -53,10 +50,12 @@ import javafx.util.Duration;
 import mytunes.BE.Song;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
-import javafx.event.EventType;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import mytunes.BE.Playlist;
 import mytunes.GUI.Model.MyTunesModel;
@@ -125,6 +124,9 @@ public class MyTunesController implements Initializable {
     private ContextMenu cmSong;
     private MenuItem deleteSong;
     private MenuItem deleteSongFromPlist;
+    private FilteredList<Song> searchList; 
+    private SortedList<Song> sortedData;
+    
     @FXML
     private Label mLibrary1;
     @FXML
@@ -137,6 +139,8 @@ public class MyTunesController implements Initializable {
     private TableView<Playlist> tbvPlayllist;
     @FXML
     private TableColumn<Playlist, String> tbvPlaylistName;
+    @FXML
+    private TextField txtSearch;
     
 
     /**
@@ -186,7 +190,8 @@ public class MyTunesController implements Initializable {
 
             allPlaylist = mtModel.getAllPlaylists();
             tbvPlayllist.setItems(allPlaylist);
-
+            searchList = new FilteredList(activeObvPlaylist, p -> true);
+            
             if (activeObvPlaylist.size() > 0) {
                 activeSong = activeObvPlaylist.get(0);
                 setSongElements(activeSong);
@@ -195,7 +200,38 @@ public class MyTunesController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
+        // Predicator 
+        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            searchList.setPredicate(song -> {
+                // If filter text is empty, display all persons.
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                
+                // Compare first name and last name of every person with filter text.
+                String lowerCaseFilter = newValue.toLowerCase();
+                
+                if (song.getTitle().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches first name.
+                } else if (song.getArtist().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches last name.
+                } 
+//                else if (song.getGenre().toLowerCase().contains(lowerCaseFilter)|| song.getGenre() != null) {
+//                    return true; // Filter matches last name.
+//                } 
+                return false; // Does not match.
+            });
+        });
+        // 3. Wrap the FilteredList in a SortedList. 
+        sortedData = new SortedList<>(searchList);
+        
+        // 4. Bind the SortedList comparator to the TableView comparator.
+        sortedData.comparatorProperty().bind(tbvSongs.comparatorProperty());
+        
+        // 5. Add sorted (and filtered) data to the table.
+        tbvSongs.setItems(sortedData);
+        
         // timer
         // ContextMenu
         // Create cmSong
@@ -217,7 +253,13 @@ public class MyTunesController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                mtModel.deleteFromPlayist(song, activePlaylist);
+                try
+                {
+                    mtModel.deleteFromPlayist(song, activePlaylist);
+                } catch (SQLException ex)
+                {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
@@ -823,6 +865,13 @@ public class MyTunesController implements Initializable {
                 break;
 
         }
+    }
+
+    @FXML
+    
+    private void txtSearchField(ActionEvent event)
+    {
+       
     }
 
 }
