@@ -217,11 +217,7 @@ public class MyTunesController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                try {
-                    mtModel.deleteFromPlayist(song, activePlaylist);
-                } catch (SQLException ex) {
-                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                mtModel.deleteFromPlayist(song, activePlaylist);
             }
         });
 
