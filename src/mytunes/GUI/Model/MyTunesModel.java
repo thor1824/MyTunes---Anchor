@@ -50,10 +50,6 @@ public class MyTunesModel {
         playlists.setAll(logiclayer.getAllPlaylits());
     }
 
-<<<<<<< HEAD
-    
-=======
->>>>>>> 56195b58713b03a86f50569715814bfbcde8a6d2
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException
     {
         playlist.deleteFromPlaylist(playlist.getSongs().indexOf(song));

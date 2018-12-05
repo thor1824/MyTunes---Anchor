@@ -139,11 +139,8 @@ public class MyTunesController implements Initializable {
     private TableView<Playlist> tbvPlayllist;
     @FXML
     private TableColumn<Playlist, String> tbvPlaylistName;
-<<<<<<< HEAD
-=======
     @FXML
     private TextField txtSearch;
->>>>>>> 56195b58713b03a86f50569715814bfbcde8a6d2
 
     /**
      * Initializes the controller class.
@@ -382,14 +379,6 @@ public class MyTunesController implements Initializable {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
                         Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
-<<<<<<< HEAD
-                        changeMusicList(playlist.getSongs());
-                        if (!onPlaylist) {
-                            addCorrectMenuItem();
-                            onPlaylist = true;
-                        }
-                        
-=======
 
                         changeMusicList(playlist.getSongs());
                         if (!onPlaylist) {
@@ -397,7 +386,6 @@ public class MyTunesController implements Initializable {
                             switchMenuItems();
 
                         }
->>>>>>> 56195b58713b03a86f50569715814bfbcde8a6d2
 
                     }
                 }
@@ -412,17 +400,10 @@ public class MyTunesController implements Initializable {
                     if (mouseEvent.getClickCount() == 2) {
                         changeMusicList(allSongs);
                         if (onPlaylist) {
-<<<<<<< HEAD
-                            addCorrectMenuItem();
-                            onPlaylist = false;
-                        }
-
-=======
                             onPlaylist = false;
                             switchMenuItems();
 
                         }
->>>>>>> 56195b58713b03a86f50569715814bfbcde8a6d2
                     }
                 }
             }
@@ -447,17 +428,10 @@ public class MyTunesController implements Initializable {
     private void changeMusicList(ObservableList list) {
         activeObvPlaylist = list;
         tbvSongs.setItems(activeObvPlaylist);
-<<<<<<< HEAD
-        activeObvPlaylist = list;
-    }
-
-    private void addCorrectMenuItem() {
-=======
 
     }
 
     public void switchMenuItems() {
->>>>>>> 56195b58713b03a86f50569715814bfbcde8a6d2
         if (onPlaylist) {
             cmSong.getItems().remove(deleteSong);
             cmSong.getItems().add(deleteSongFromPlist);
@@ -639,7 +613,7 @@ public class MyTunesController implements Initializable {
                 updateValues();
             }
         });
-        
+
         sldProg.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov,
                     Number old_val, Number new_val) {
