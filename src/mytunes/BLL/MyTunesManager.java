@@ -5,6 +5,7 @@
  */
 package mytunes.BLL;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import mytunes.BE.Playlist;
@@ -21,7 +22,7 @@ public class MyTunesManager {
     PlaylistDAO playlistDAO;
     SongDAO songDAO;
 
-    public MyTunesManager() {
+    public MyTunesManager() throws IOException {
         this.playlistDAO = new PlaylistDAO();
         this.songDAO = new SongDAO();
     }

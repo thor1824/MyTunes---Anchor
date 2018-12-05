@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -19,28 +20,33 @@
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="863.0" prefWidth="1115.0" stylesheets="@Resouces/Layout.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.Controller.MyTunesController">
+<VBox prefHeight="863.0" prefWidth="1115.0" stylesheets="@Resouces/Layout.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.Controller.MyTunesController">
    <children>
-      <MenuBar prefHeight="26.0" prefWidth="800.0" style="-fx-border-color: black; -fx-background-color: #1a1a1a;" VBox.vgrow="ALWAYS">
-        <menus>
-          <Menu mnemonicParsing="false" style="fx-text-fill: palegreen;" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#menuAddSong" text="Add Song" />
-                  <MenuItem mnemonicParsing="false" onAction="#menuAddAlbum" text="Add Album" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#newPlaylistBtn" text="Add Playlist" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
+      <HBox prefHeight="26.0" prefWidth="1115.0">
+         <children>
+            <MenuBar prefHeight="26.0" prefWidth="695.0" style="-fx-border-color: black; -fx-background-color: #1a1a1a;">
+              <menus>
+                <Menu mnemonicParsing="false" style="fx-text-fill: palegreen;" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#menuAddSong" text="Add Song" />
+                        <MenuItem mnemonicParsing="false" onAction="#menuAddAlbum" text="Add Album" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#newPlaylistBtn" text="Add Playlist" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <TextField fx:id="txtSearch" onAction="#txtSearchField" prefHeight="26.0" prefWidth="424.0" style="-fx-background-color: #1a1a1a;" />
+         </children>
+      </HBox>
       <HBox prefHeight="600.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
          <children>
             <VBox minWidth="200.0" prefHeight="600.0" prefWidth="200.0" HBox.hgrow="NEVER">

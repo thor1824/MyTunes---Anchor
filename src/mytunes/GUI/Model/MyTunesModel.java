@@ -5,6 +5,7 @@
  */
 package mytunes.GUI.Model;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -23,7 +24,7 @@ public class MyTunesModel {
     private ObservableList<Playlist> playlists;
     private MyTunesManager logiclayer;
 
-    public MyTunesModel() throws SQLException {
+    public MyTunesModel() throws SQLException, IOException {
         logiclayer = new MyTunesManager();
 
         songs = FXCollections.observableArrayList();
@@ -49,7 +50,10 @@ public class MyTunesModel {
         playlists.setAll(logiclayer.getAllPlaylits());
     }
 
+<<<<<<< HEAD
     
+=======
+>>>>>>> 56195b58713b03a86f50569715814bfbcde8a6d2
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException
     {
         playlist.deleteFromPlaylist(playlist.getSongs().indexOf(song));
