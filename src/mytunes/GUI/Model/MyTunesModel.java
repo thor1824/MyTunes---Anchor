@@ -5,6 +5,7 @@
  */
 package mytunes.GUI.Model;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -23,7 +24,7 @@ public class MyTunesModel {
     private ObservableList<Playlist> playlists;
     private MyTunesManager logiclayer;
 
-    public MyTunesModel() throws SQLException {
+    public MyTunesModel() throws SQLException, IOException {
         logiclayer = new MyTunesManager();
 
         songs = FXCollections.observableArrayList();

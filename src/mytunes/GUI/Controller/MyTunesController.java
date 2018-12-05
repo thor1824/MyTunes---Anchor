@@ -194,6 +194,9 @@ public class MyTunesController implements Initializable {
 
         } catch (SQLException ex) {
             Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex)
+        {
+            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // timer
@@ -217,7 +220,13 @@ public class MyTunesController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                mtModel.deleteFromPlayist(song, activePlaylist);
+                try
+                {
+                    mtModel.deleteFromPlayist(song, activePlaylist);
+                } catch (SQLException ex)
+                {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
