@@ -142,7 +142,6 @@ public class MyTunesController implements Initializable {
     @FXML
     private TextField txtSearch;
 
-
     /**
      * Initializes the controller class.
      */
@@ -199,41 +198,35 @@ public class MyTunesController implements Initializable {
 
         } catch (SQLException ex) {
             Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // Predicator
         txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
             searchList.setPredicate(song -> {
-                // If filter text is empty, display all persons.
+                // If filter text is empty, display all Songs
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
 
-                // Compare first name and last name of every person with filter text.
+                // Compare Title, Artist and Genre of every Song with filter text.
                 String lowerCaseFilter = newValue.toLowerCase();
 
                 if (song.getTitle().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches first name.
+                    return true; // Filter matches Title.
                 } else if (song.getArtist().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches last name.
+                    return true; // Filter matches Artist.
                 }
 //                else if (song.getGenre().toLowerCase().contains(lowerCaseFilter)|| song.getGenre() != null) {
-//                    return true; // Filter matches last name.
+//                    return true; // Filter matches Genre.
 //                }
                 return false; // Does not match.
             });
         });
-        // 3. Wrap the FilteredList in a SortedList.
-        sortedData = new SortedList<>(searchList);
-
-        // 4. Bind the SortedList comparator to the TableView comparator.
-        sortedData.comparatorProperty().bind(tbvSongs.comparatorProperty());
-
-        // 5. Add sorted (and filtered) data to the table.
-        tbvSongs.setItems(sortedData);
+        sortedData = new SortedList<>(searchList); // Wrap the FilteredList in a SortedList.
+        sortedData.comparatorProperty().bind(tbvSongs.comparatorProperty()); // Bind the SortedList comparator to the TableView comparator.
+        tbvSongs.setItems(sortedData);//Add sorted (and filtered) data to the table.
 
         // timer
         // ContextMenu
@@ -620,6 +613,7 @@ public class MyTunesController implements Initializable {
                 updateValues();
             }
         });
+        
         sldProg.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov,
                     Number old_val, Number new_val) {
@@ -872,8 +866,7 @@ public class MyTunesController implements Initializable {
 
     @FXML
 
-    private void txtSearchField(ActionEvent event)
-    {
+    private void txtSearchField(ActionEvent event) {
 
     }
 

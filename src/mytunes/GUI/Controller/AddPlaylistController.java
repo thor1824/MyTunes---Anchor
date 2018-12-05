@@ -25,10 +25,8 @@ import mytunes.GUI.Model.MyTunesModel;
  *
  * @author Nijas Hansen
  */
-public class AddPlaylistController implements Initializable
-{
+public class AddPlaylistController implements Initializable {
 
-    
     private Button btnAdd;
     @FXML
     private Button btnCancel;
@@ -36,41 +34,39 @@ public class AddPlaylistController implements Initializable
     private MyTunesModel mtModel;
     @FXML
     private TextField txtPlaylistName;
+
     /**
      * Initializes the controller class.
      */
     @Override
-    public void initialize(URL url, ResourceBundle rb)
-    {
-        try
-        {
+    public void initialize(URL url, ResourceBundle rb) {
+        try {
             mtModel = new MyTunesModel();
-        } catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
+            Logger.getLogger(AddPlaylistController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(AddPlaylistController.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }    
+    }
 
     @FXML
-    private void addPlaylistBTN(ActionEvent event) throws SQLException
-    {
-           mtModel.createPlaylist(txtPlaylistName.getText());
+    private void addPlaylistBTN(ActionEvent event) throws SQLException {
+        mtModel.createPlaylist(txtPlaylistName.getText());
     }
-    
-    public void setMtModel(MyTunesModel mtm)
-    {
+
+    public void setMtModel(MyTunesModel mtm) {
         mtModel = mtm;
     }
+
     /**
-     * 
+     *
      * @param event closes the window
      */
     @FXML
-    private void cancelPlaylist(ActionEvent event)
-    {
+    private void cancelPlaylist(ActionEvent event) {
         Stage stage = (Stage) btnCancel.getScene().getWindow();
-        
+
         stage.close();
     }
-    
+
 }
