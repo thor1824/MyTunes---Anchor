@@ -48,6 +48,7 @@ import javafx.scene.input.ContextMenuEvent;
 import mytunes.BE.MediaPlayerWithElements;
 import mytunes.BE.MetadataExtractor;
 import mytunes.BE.Playlist;
+import mytunes.BLL.exception.MyTunesException;
 import mytunes.GUI.Model.MyTunesModel;
 
 import org.apache.tika.exception.TikaException;
@@ -114,7 +115,7 @@ public class MyTunesController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         //Collum Init
         TableColumn<Song, String> title = new TableColumn<>();
         title.setCellValueFactory(c -> c.getValue().getTitleProperty());
@@ -160,7 +161,6 @@ public class MyTunesController implements Initializable {
             allPlaylist = FXCollections.observableArrayList();
             allPlaylist.setAll(mtModel.getAllPlaylists());
             tbvPlayllist.setItems(allPlaylist);
-            
 
             //Creating MediaPlayerWithElemets
             mPlayer2 = new MediaPlayerWithElements(mPlayer, activeObvPlaylist, activeSong);
@@ -175,7 +175,7 @@ public class MyTunesController implements Initializable {
             if (activeObvPlaylist.size() > 0) {
                 mPlayer2.setInitialSong(activeObvPlaylist.get(0));
             }
-            
+
             setupSeachBar();
 
             //Creating MetadataExtractor
@@ -187,8 +187,6 @@ public class MyTunesController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        
 
         // timer
         // ContextMenu
@@ -226,7 +224,7 @@ public class MyTunesController implements Initializable {
             public void handle(ActionEvent event) {
                 try {
                     editSong();
-                } catch (IOException ex) {
+                } catch (MyTunesException ex) {
                     Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -375,7 +373,7 @@ public class MyTunesController implements Initializable {
     private void volSlider(MouseEvent event) {
         mPlayer2.ChangeVolume();
     }
-    
+
     @FXML
     private void newPlaylistBtn(ActionEvent event) {
         try {
@@ -395,7 +393,7 @@ public class MyTunesController implements Initializable {
             e.printStackTrace();
         }
     }
-    
+
     @FXML
     private void playSongBtn(MouseEvent event) {
         mPlayer2.playPauseSwitch();
@@ -496,32 +494,38 @@ public class MyTunesController implements Initializable {
         }
     }
 
-    private void editSong() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/EditSongInfo.fxml"));
+    private void editSong() throws MyTunesException {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/EditSongInfo.fxml"));
 
-        EditSongInfoController editCon = loader.getController();
-        editCon.setMtModel(mtModel);
-        editCon.setSongInfo(tbvSongs.getSelectionModel().getSelectedItem());
+            EditSongInfoController editCon = loader.getController();
+            editCon.setMtModel(mtModel);
+            editCon.setSongInfo(tbvSongs.getSelectionModel().getSelectedItem());
 
-        Parent root = loader.load();
-        Stage stage = new Stage();
-        stage.setTitle("Edit song info");
-        stage.setScene(new Scene(root));
-        stage.show();
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Edit song info");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            throw new MyTunesException("Song info could not be changed");
+        }
     }
 
     private void changeMusicList(ObservableList list) {
         tbvSongs.setItems(list);
         mPlayer2.changeMusicList(list);
         // Needs to setup at every list change for the filterlist, predicator and sortedlist to respond to input
-        setupSeachBar(); 
+        setupSeachBar();
 
     }
 
     private void setupSeachBar() {
         searchList = new FilteredList(mPlayer2.getActivelistOfSongs(), p -> true);
-        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-            searchList.setPredicate(song -> {
+        txtSearch.textProperty().addListener((observable, oldValue, newValue)
+                -> {
+            searchList.setPredicate(song
+                    -> {
                 // If filter text is empty, display all Songs
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
@@ -534,8 +538,7 @@ public class MyTunesController implements Initializable {
                     return true; // Filter matches Title.
                 } else if (song.getArtist().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches Artist.
-                }
-                else if (song.getGenre().toLowerCase().contains(lowerCaseFilter)) {
+                } else if (song.getGenre().toLowerCase().contains(lowerCaseFilter)) {
                     return true; // Filter matches Genre.
                 }
                 return false; // Does not match.
