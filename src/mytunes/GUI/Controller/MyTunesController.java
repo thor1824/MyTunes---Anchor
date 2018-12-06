@@ -77,7 +77,6 @@ public class MyTunesController implements Initializable {
     private ProgressBar songProg;
     @FXML
     private MediaView mview;
-    private Label mLibrary;
     @FXML
     private ImageView btnShuffle;
     @FXML
@@ -122,7 +121,7 @@ public class MyTunesController implements Initializable {
         title.setText("Title");
         title.setPrefWidth(350);
         tbvSongs.getColumns().add(title);
-
+        
         TableColumn<Song, String> artist = new TableColumn<>();
         artist.setCellValueFactory(c -> c.getValue().getArtistProperty());
         artist.setText("Artist");
@@ -144,6 +143,7 @@ public class MyTunesController implements Initializable {
         tbvSongs.setPlaceholder(new Label("Playlist is Empty"));
         tbvPlaylistName.setCellValueFactory(c -> c.getValue().getTitleProperty());
         tbvPlayllist.setPlaceholder(new Label("No Playlists yet!"));
+        txtSearch.setPromptText("search...");
 
         // slider
         sldVol.setValue(50);
@@ -412,7 +412,7 @@ public class MyTunesController implements Initializable {
     }
 
     @FXML
-    private void menuAddSong(ActionEvent event) throws SQLException {
+    private void menuAddSong(ActionEvent event) throws SQLException { 
 
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(new ExtensionFilter("mp3 files", "*.mp3"));
