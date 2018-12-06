@@ -13,18 +13,27 @@ import javafx.beans.property.StringProperty;
  * @author Christian
  */
 public class Song {
-
+   
+    private String artist;
     private String filePath;
     private String songTitle;
-    private StringProperty titleProperty;
-    private int id;
-    private String artist;
-    private StringProperty artistProperty;
-    private double duration;
     private String genre;
+    private StringProperty titleProperty;
     private StringProperty genreProperty;
+    private StringProperty artistProperty;
+    private int id;
     private int PositionID = 0;
-
+    private double duration;
+        
+    /**
+     * Construct the song
+     * @param fileParth
+     * @param Title
+     * @param id
+     * @param artist
+     * @param duration
+     * @param genre 
+     */
     public Song(String fileParth, String Title, int id, String artist, double duration, String genre) {
         this.filePath = fileParth;
         this.songTitle = Title;
@@ -37,10 +46,18 @@ public class Song {
         genreProperty = new SimpleStringProperty(genre);
     }
 
+    /**
+     * 
+     * @return 
+     */
     public StringProperty getArtistProperty() {
         return artistProperty;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public StringProperty getGenreProperty() {
         return genreProperty;
     }
@@ -139,18 +156,34 @@ public class Song {
         titleProperty.setValue(Title);
     }
 
+    /**
+     * 
+     * @return 
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public StringProperty getTitleProperty() {
         return titleProperty;
     }
-
+    
+    /**
+     * 
+     * @return 
+     */
     public int getPositionID() {
         return PositionID;
     }
 
+    /**
+     * 
+     * @param PositionID 
+     */
     public void setPositionID(int PositionID) {
         this.PositionID = PositionID;
     }

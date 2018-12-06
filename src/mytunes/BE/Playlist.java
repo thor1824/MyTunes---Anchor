@@ -11,7 +11,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
- *
+ * Playlist contains a oberservablelist with songs, a title and a id
+ * 
  * @author Christian
  */
 public class Playlist {
@@ -21,6 +22,12 @@ public class Playlist {
     private int id;
     private ObservableList<Song> songs;
 
+    
+    /**
+     * Constructs the PlayList.
+     * @param title
+     * @param id 
+     */
     public Playlist(String title, int id) {
         this.title = title;
         this.id = id;
@@ -70,17 +77,34 @@ public class Playlist {
         
     }
 
+    /**
+     * Add a song to the PlayList.
+     * @param song 
+     */
     public void addToPlaylist(Song song) {
         songs.add(song);
     }
+    
+    /**
+     * Remove a song from songs.
+     * @param song 
+     */
     public void RemoveSongFromPlaylist(Song song) {
         songs.remove(song);
     }
 
+    /**
+     * Remove a song from songs by index number.
+     * @param index 
+     */
     public void deleteFromPlaylist(int index) {
         songs.remove(index);
     }
 
+    /**
+     * object to string metode.
+     * @return title
+     */
     @Override
     public String toString() {
         return title;
