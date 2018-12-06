@@ -73,6 +73,9 @@ public class Playlist {
     public void addToPlaylist(Song song) {
         songs.add(song);
     }
+    public void RemoveSongFromPlaylist(Song song) {
+        songs.remove(song);
+    }
 
     public void deleteFromPlaylist(int index) {
         songs.remove(index);

@@ -45,11 +45,6 @@ public class MyTunesModel {
     public ObservableList<Playlist> getAllPlaylists() {
         return playlists;
     }
-
-    public void updatePlaylists() throws SQLException {
-        playlists.setAll(logiclayer.getAllPlaylits());
-    }
-
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException
     {
         playlist.deleteFromPlaylist(playlist.getSongs().indexOf(song));
@@ -118,12 +113,11 @@ public class MyTunesModel {
     }
 
     public void deleteSong(Song song) throws SQLException {
-        System.out.println("hej");
         logiclayer.deleteSong(song);
-
         songs.remove(song);
-        updatePlaylists();
-
+        for (Playlist playlist : playlists) {
+            playlist.RemoveSongFromPlaylist(song);
+        }
     }
 
     public void deletePlayliste(Playlist playlist) throws SQLException {

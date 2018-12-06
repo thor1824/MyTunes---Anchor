@@ -29,7 +29,7 @@ import javafx.util.Duration;
  *
  * @author Thorbjørn Schultz Damkjær
  */
-public class SongPlayer {
+public class MediaPlayerWithElements {
 
     private final int SHUFFLE_ON = 1;
     private final int SHUFFLE_OFF = 0;
@@ -42,45 +42,76 @@ public class SongPlayer {
     private Song activeSong;
     private Duration duration;
     private Slider sldProg;
+    private Slider sldVol;
     private ProgressBar songProg;
     private Label lbltime;
     private final int PAUSED = 0;
     private final int PLAYING = 1;
     private int playState = PAUSED;
     private ImageView btnPlay;
+    private ImageView btnRepeat;
+    private ImageView btnShuffle;
+    private Label lblPlaying;
 
-    public SongPlayer(MediaPlayer mPlayer, ObservableList<Song> activeObvPlaylist, Song activeSong) {
+    public MediaPlayerWithElements(MediaPlayer mPlayer, ObservableList<Song> activeObvPlaylist, Song activeSong) {
         this.mPlayer = mPlayer;
         this.activeObvPlaylist = activeObvPlaylist;
         this.activeSong = activeSong;
         lbltime = new Label();
         sldProg = new Slider();
+        sldVol = new Slider();
         songProg = new ProgressBar();
+        btnRepeat = new ImageView();
+        btnShuffle = new ImageView();
+        btnPlay = new ImageView();
+        lblPlaying = new Label();
     }
 
-    public void setSldProg(Slider sldProg) {
+    public void setVolumeSlider(Slider sldVol) {
+        this.sldVol = sldVol;
+    }
+
+    public void setSongPlayingLabel(Label lblPlaying) {
+        this.lblPlaying = lblPlaying;
+    }
+
+    public void setRepeatButton(ImageView btnRepeat) {
+        this.btnRepeat = btnRepeat;
+    }
+
+    public void setShuffleButton(ImageView btnShuffle) {
+        this.btnShuffle = btnShuffle;
+    }
+
+    public void setSongProgressSlider(Slider sldProg) {
         this.sldProg = sldProg;
     }
 
-    public void setSongProg(ProgressBar songProg) {
+    public void setSongProgressBar(ProgressBar songProg) {
         this.songProg = songProg;
     }
 
-    public void setLbltime(Label lbltime) {
+    public void setTimeLabel(Label lbltime) {
         this.lbltime = lbltime;
     }
 
-    public void setBtnPlay(ImageView btnPlay) {
+    public void setPlayButton(ImageView btnPlay) {
         this.btnPlay = btnPlay;
     }
-    
 
-    public void shuffleWithButton(ImageView imageView) {
+    public void setInitialSong(Song song) {
+
+        activeSong = song;
+        setSongElements(activeSong);
+
+    }
+
+    public void shuffleSongs() {
         switch (shuffleState) {
             case SHUFFLE_OFF:
 
                 Image shuffleOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Ashuffle-26.png");
-                imageView.setImage(shuffleOn);
+                btnShuffle.setImage(shuffleOn);
 
                 shuffleState = SHUFFLE_ON;
                 checkShuffleState();
@@ -88,7 +119,7 @@ public class SongPlayer {
                 break;
             case SHUFFLE_ON:
                 Image shuffleOff = new Image("mytunes/GUI/View/Resouces/icons/icons8-shuffle-26.png");
-                imageView.setImage(shuffleOff);
+                btnShuffle.setImage(shuffleOff);
 
                 shuffleState = SHUFFLE_OFF;
                 checkShuffleState();
@@ -102,7 +133,7 @@ public class SongPlayer {
                 mPlayer.setOnEndOfMedia(new Runnable() {
                     @Override
                     public void run() {
-                        NextSong();
+                        playNextSong();
                     }
                 });
                 break;
@@ -120,12 +151,21 @@ public class SongPlayer {
         }
     }
 
-    private void NextSong() {
+    public void playNextSong() {
         int nextIndex = activeObvPlaylist.indexOf(activeSong) + 1;
         if ((activeObvPlaylist.size() - 1) < nextIndex) {
             nextIndex = 0;
         }
         activeSong = activeObvPlaylist.get(nextIndex);
+        playSong(activeSong);
+    }
+
+    public void playPreviousSong() {
+        int previousIndex = activeObvPlaylist.indexOf(activeSong) - 1;
+        if (previousIndex < 0) {
+            previousIndex = activeObvPlaylist.size() - 1;
+        }
+        activeSong = activeObvPlaylist.get(previousIndex);
         playSong(activeSong);
     }
 
@@ -145,7 +185,7 @@ public class SongPlayer {
 
     }
 
-    private void playSong(Song song) {
+    public void playSong(Song song) {
         mPlayer.stop();
         activeSong = song;
         setSongElements(song);
@@ -160,12 +200,12 @@ public class SongPlayer {
 
         mPlayer = new MediaPlayer(media);
 
-//        lblPlaying.setText("now Playing...  " + song.getTitle()); //efter metoden i mtController
-        //volSlider(null); // i GUI
-//        updateValues(); // til GUI
-//        updateSlide();
-//        updateTimer();
-//        checkState();
+        lblPlaying.setText("now Playing...  " + song.getTitle()); //efter metoden i mtController
+        ChangeVolume();
+        updateValues();
+        updateSlide();
+        updateTimer();
+        checkState();
     }
 
     private void checkState() {
@@ -185,14 +225,14 @@ public class SongPlayer {
         }
     }
 
-    private void updateSlide(Slider slider) {
-        slider.valueProperty().addListener(new InvalidationListener() {
+    private void updateSlide() {
+        sldProg.valueProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
-                if (slider.isValueChanging()) {
+                if (sldProg.isValueChanging()) {
                     // multiply duration by percentage calculated by slider position
                     if (duration != null) {
-                        mPlayer.seek(duration.multiply(slider.getValue() / 100.0));
+                        mPlayer.seek(duration.multiply(sldProg.getValue() / 100.0));
                     }
                     updateValues();
 
@@ -208,7 +248,7 @@ public class SongPlayer {
             }
         });
 
-        slider.valueProperty().addListener(new ChangeListener<Number>() {
+        sldProg.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov,
                     Number old_val, Number new_val) {
                 songProg.setProgress(new_val.doubleValue() / 100);
@@ -283,4 +323,62 @@ public class SongPlayer {
         }
     }
 
+    public void playPauseSwitch() {
+        switch (playState) {
+            case PAUSED:
+                mediaPlay();
+                break;
+            case PLAYING:
+                mediaPause();
+                break;
+        }
+    }
+
+    public void RepeatSongs() {
+        switch (repeatState) {
+            case repeat_OFF:
+
+                Image repeatOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Arefresh-96.png");
+                btnRepeat.setImage(repeatOn);
+
+                repeatState = repeat_ON;
+                checkState();
+
+                break;
+
+            case repeat_ON:
+                Image repeatOFF = new Image("mytunes/GUI/View/Resouces/icons/icons8-refresh-96.png");
+                btnRepeat.setImage(repeatOFF);
+
+                repeatState = repeat_OFF;
+                checkState();
+
+                break;
+
+        }
+    }
+
+    public ObservableList<Song> getActivelistOfSongs() {
+        return activeObvPlaylist;
+    }
+    
+    public void jumpinSong() {
+
+        Duration jumpToTime = new Duration(duration.toMillis() / 100 * sldProg.getValue());
+        mPlayer.seek(jumpToTime);
+
+    }
+
+    public void changeMusicList(ObservableList list) {
+        activeObvPlaylist.setAll(list);
+    }
+
+    public void ChangeVolume() {
+        if (mPlayer != null) {
+            double volume = sldVol.getValue();
+            double max = sldVol.getMax();
+            mPlayer.setVolume((volume / max * 100) / 100);
+        }
+
+    }
 }

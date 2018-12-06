@@ -13,25 +13,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import static java.lang.Math.floor;
-import static java.lang.String.format;
 import java.sql.SQLException;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -39,16 +29,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.input.MouseButton;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import mytunes.BE.Song;
-import javafx.beans.Observable;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -57,17 +45,13 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
+import mytunes.BE.MediaPlayerWithElements;
+import mytunes.BE.MetadataExtractor;
 import mytunes.BE.Playlist;
 import mytunes.GUI.Model.MyTunesModel;
 
 import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.mp3.Mp3Parser;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * FXML Controller class
@@ -77,14 +61,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class MyTunesController implements Initializable {
 
     //FXML
-//    @FXML
-//    private ListView<Playlist> LstPlaylist;
     @FXML
     private ImageView btnPlay;
-    @FXML
-    private ImageView btnPrev;
-    @FXML
-    private ImageView btnNext;
     @FXML
     private Slider sldVol;
     @FXML
@@ -99,38 +77,7 @@ public class MyTunesController implements Initializable {
     private ProgressBar songProg;
     @FXML
     private MediaView mview;
-    @FXML
     private Label mLibrary;
-
-    //other
-    private MediaPlayer mPlayer;
-    private MyTunesModel mtModel;
-    private final int PAUSED = 0;
-    private final int PLAYING = 1;
-    private int state = PAUSED;
-    private boolean onPlaylist = false;
-    private ObservableList<Playlist> allPlaylist;
-    private ObservableList<Song> allSongs;
-    private ObservableList<Song> activeObvPlaylist;
-    private Playlist activePlaylist;
-    private Song activeSong;
-    private Duration duration;
-    private final int SHUFFLE_ON = 1;
-    private final int SHUFFLE_OFF = 0;
-    private int shuffleState = SHUFFLE_OFF;
-    private final int repeat_ON = 1;
-    private final int repeat_OFF = 0;
-    private int repeatState = repeat_OFF;
-    private ContextMenu cmSong;
-    private MenuItem deleteSong;
-    private MenuItem deleteSongFromPlist;
-    private FilteredList<Song> searchList;
-    private SortedList<Song> sortedData;
-
-    @FXML
-    private Label mLibrary1;
-    @FXML
-    private Label mLibrary2;
     @FXML
     private ImageView btnShuffle;
     @FXML
@@ -142,12 +89,33 @@ public class MyTunesController implements Initializable {
     @FXML
     private TextField txtSearch;
 
+    //other
+    private MediaPlayer mPlayer;
+    private MyTunesModel mtModel;
+    private boolean onPlaylist = false;
+    private ObservableList<Playlist> allPlaylist;
+    private ObservableList<Song> allSongs;
+    private ObservableList<Song> activeObvPlaylist;
+    private Playlist activePlaylist;
+    private Song activeSong;
+    private ContextMenu cmSong;
+    private MenuItem deleteSong;
+    private MenuItem deleteSongFromPlist;
+    private FilteredList<Song> searchList;
+    private SortedList<Song> sortedData;
+    private MediaPlayerWithElements mPlayer2;
+    private MetadataExtractor metadata;
+    @FXML
+    private Label lblLibrary;
+    @FXML
+    private Label lblYoutube;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        
         //Collum Init
         TableColumn<Song, String> title = new TableColumn<>();
         title.setCellValueFactory(c -> c.getValue().getTitleProperty());
@@ -175,6 +143,7 @@ public class MyTunesController implements Initializable {
 
         tbvSongs.setPlaceholder(new Label("Playlist is Empty"));
         tbvPlaylistName.setCellValueFactory(c -> c.getValue().getTitleProperty());
+        tbvPlayllist.setPlaceholder(new Label("No Playlists yet!"));
 
         // slider
         sldVol.setValue(50);
@@ -183,18 +152,35 @@ public class MyTunesController implements Initializable {
         try {
             mtModel = new MyTunesModel();
 
-            allSongs = mtModel.getAllSong();
-            activeObvPlaylist = allSongs;
+            allSongs = FXCollections.observableArrayList();
+            allSongs.setAll(mtModel.getAllSong());
+            activeObvPlaylist = FXCollections.observableArrayList();
+            activeObvPlaylist.setAll(allSongs);
             tbvSongs.setItems(activeObvPlaylist);
-
-            allPlaylist = mtModel.getAllPlaylists();
+            allPlaylist = FXCollections.observableArrayList();
+            allPlaylist.setAll(mtModel.getAllPlaylists());
             tbvPlayllist.setItems(allPlaylist);
-            searchList = new FilteredList(activeObvPlaylist, p -> true);
+            
 
+            //Creating MediaPlayerWithElemets
+            mPlayer2 = new MediaPlayerWithElements(mPlayer, activeObvPlaylist, activeSong);
+            mPlayer2.setPlayButton(btnPlay);
+            mPlayer2.setRepeatButton(btnRepeat);
+            mPlayer2.setShuffleButton(btnShuffle);
+            mPlayer2.setSongProgressBar(songProg);
+            mPlayer2.setSongProgressSlider(sldProg);
+            mPlayer2.setTimeLabel(lbltime);
+            mPlayer2.setSongPlayingLabel(lblPlaying);
+            mPlayer2.setVolumeSlider(sldVol);
             if (activeObvPlaylist.size() > 0) {
-                activeSong = activeObvPlaylist.get(0);
-                setSongElements(activeSong);
+                mPlayer2.setInitialSong(activeObvPlaylist.get(0));
             }
+            
+            setupSeachBar();
+
+            //Creating MetadataExtractor
+            metadata = new MetadataExtractor();
+            metadata.setMtModel(mtModel);
 
         } catch (SQLException ex) {
             Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
@@ -202,31 +188,7 @@ public class MyTunesController implements Initializable {
             Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // Predicator
-        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-            searchList.setPredicate(song -> {
-                // If filter text is empty, display all Songs
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-
-                // Compare Title, Artist and Genre of every Song with filter text.
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (song.getTitle().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches Title.
-                } else if (song.getArtist().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches Artist.
-                }
-//                else if (song.getGenre().toLowerCase().contains(lowerCaseFilter)|| song.getGenre() != null) {
-//                    return true; // Filter matches Genre.
-//                }
-                return false; // Does not match.
-            });
-        });
-        sortedData = new SortedList<>(searchList); // Wrap the FilteredList in a SortedList.
-        sortedData.comparatorProperty().bind(tbvSongs.comparatorProperty()); // Bind the SortedList comparator to the TableView comparator.
-        tbvSongs.setItems(sortedData);//Add sorted (and filtered) data to the table.
+        
 
         // timer
         // ContextMenu
@@ -275,9 +237,7 @@ public class MyTunesController implements Initializable {
 
             @Override
             public void handle(ActionEvent event) {
-
                 Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                System.out.println("he");
                 try {
                     mtModel.deleteSong(song);
                 } catch (SQLException ex) {
@@ -379,7 +339,7 @@ public class MyTunesController implements Initializable {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
                         Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
-
+                        activePlaylist = playlist;
                         changeMusicList(playlist.getSongs());
                         if (!onPlaylist) {
                             onPlaylist = true;
@@ -393,12 +353,12 @@ public class MyTunesController implements Initializable {
         });
 
         // Double-click on Music Library to see all songs
-        mLibrary.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        lblLibrary.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        changeMusicList(allSongs);
+                        changeMusicList(mtModel.getAllSong());
                         if (onPlaylist) {
                             onPlaylist = false;
                             switchMenuItems();
@@ -411,48 +371,11 @@ public class MyTunesController implements Initializable {
 
     }
 
-    private void editSong() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/EditSongInfo.fxml"));
-
-        EditSongInfoController editCon = loader.getController();
-        editCon.setMtModel(mtModel);
-        editCon.setSongInfo(tbvSongs.getSelectionModel().getSelectedItem());
-
-        Parent root = loader.load();
-        Stage stage = new Stage();
-        stage.setTitle("Edit song info");
-        stage.setScene(new Scene(root));
-        stage.show();
-    }
-
-    private void changeMusicList(ObservableList list) {
-        activeObvPlaylist = list;
-        tbvSongs.setItems(activeObvPlaylist);
-
-    }
-
-    public void switchMenuItems() {
-        if (onPlaylist) {
-            cmSong.getItems().remove(deleteSong);
-            cmSong.getItems().add(deleteSongFromPlist);
-
-        } else {
-            cmSong.getItems().remove(deleteSongFromPlist);
-            cmSong.getItems().add(deleteSong);
-
-        }
-    }
-
     @FXML
     private void volSlider(MouseEvent event) {
-        if (mPlayer != null) {
-            double volume = sldVol.getValue();
-            double max = sldVol.getMax();
-            mPlayer.setVolume((volume / max * 100) / 100);
-        }
-
+        mPlayer2.ChangeVolume();
     }
-
+    
     @FXML
     private void newPlaylistBtn(ActionEvent event) {
         try {
@@ -470,6 +393,168 @@ public class MyTunesController implements Initializable {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private void playSongBtn(MouseEvent event) {
+        mPlayer2.playPauseSwitch();
+    }
+
+    @FXML
+    private void NextSongBtn(MouseEvent event) {
+        mPlayer2.playNextSong();
+    }
+
+    @FXML
+    private void prevSongBtn(MouseEvent event) {
+        mPlayer2.playPreviousSong();
+    }
+
+    @FXML
+    private void menuAddSong(ActionEvent event) throws SQLException {
+
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().addAll(new ExtensionFilter("mp3 files", "*.mp3"));
+        fc.setInitialDirectory(new File("src"));
+        File addedFile = fc.showOpenDialog(null);
+        try {
+
+            metadata.createSongFromMetadata(addedFile);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (TikaException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void menuAddAlbum(ActionEvent event) throws SQLException {
+        DirectoryChooser dc = new DirectoryChooser();
+        File[] files = dc.showDialog(null).listFiles();
+        for (File addedFile : files) {
+            if (addedFile.getAbsolutePath().contains(".mp3")) {
+                try {
+
+                    metadata.createSongFromMetadata(addedFile);
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (TikaException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void jumpTo(MouseEvent event) {
+        mPlayer2.jumpinSong();
+    }
+
+    @FXML
+    private void btnShuffle(MouseEvent event) {
+        mPlayer2.shuffleSongs();
+    }
+
+    @FXML
+    private void btnRepeat(MouseEvent event) {
+        mPlayer2.RepeatSongs();
+    }
+
+    private void playSong(Song song) {
+        mPlayer2.playSong(song);
+    }
+
+    private void editPlaylist(ActionEvent event) {
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(("mytunes/GUI/View/EditPlaylist.fxml")));
+
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Edit Playlist");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            EditPlaylistController editCon = loader.getController();
+            editCon.setMtModel(mtModel);
+            editCon.setPlaylist(tbvPlayllist.getSelectionModel().getSelectedItem());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void editSong() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/EditSongInfo.fxml"));
+
+        EditSongInfoController editCon = loader.getController();
+        editCon.setMtModel(mtModel);
+        editCon.setSongInfo(tbvSongs.getSelectionModel().getSelectedItem());
+
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Edit song info");
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
+    private void changeMusicList(ObservableList list) {
+        tbvSongs.setItems(list);
+        mPlayer2.changeMusicList(list);
+        // Needs to setup at every list change for the filterlist, predicator and sortedlist to respond to input
+        setupSeachBar(); 
+
+    }
+
+    private void setupSeachBar() {
+        searchList = new FilteredList(mPlayer2.getActivelistOfSongs(), p -> true);
+        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            searchList.setPredicate(song -> {
+                // If filter text is empty, display all Songs
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                // Compare Title, Artist and Genre of every Song with filter text.
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (song.getTitle().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches Title.
+                } else if (song.getArtist().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches Artist.
+                }
+                else if (song.getGenre().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches Genre.
+                }
+                return false; // Does not match.
+            });
+        });
+        sortedData = new SortedList<>(searchList); // Wrap the FilteredList in a SortedList.
+        sortedData.comparatorProperty().bind(tbvSongs.comparatorProperty()); // Bind the SortedList comparator to the TableView comparator.
+        tbvSongs.setItems(sortedData);//Add sorted (and filtered) data to the table.
+    }
+
+    public void switchMenuItems() {
+        if (onPlaylist) {
+            cmSong.getItems().remove(deleteSong);
+            cmSong.getItems().add(deleteSongFromPlist);
+
+        } else {
+            cmSong.getItems().remove(deleteSongFromPlist);
+            cmSong.getItems().add(deleteSong);
+
         }
     }
 
@@ -494,380 +579,6 @@ public class MyTunesController implements Initializable {
             menuAdd.getItems().add(playlistAdd);
 
         }
-    }
-
-    @FXML
-    private void playSongBtn(MouseEvent event) {
-
-        switch (state) {
-            case PAUSED:
-                mediaPlay();
-                break;
-            case PLAYING:
-                mediaPause();
-                break;
-        }
-    }
-
-    private void mediaPlay() {
-        Image pause = new Image("mytunes/GUI/View/Resouces/icons/icons8-pause-30.png");
-        btnPlay.setImage(pause);
-        mPlayer.play();
-        state = PLAYING;
-
-    }
-
-    private void mediaPause() {
-        Image play = new Image("mytunes/GUI/View/Resouces/icons/icons8-play-30.png");
-        btnPlay.setImage(play);
-        mPlayer.pause();
-        state = PAUSED;
-
-    }
-
-    @FXML
-    private void NextSongBtn(MouseEvent event) {
-        int nextIndex = activeObvPlaylist.indexOf(activeSong) + 1;
-        if ((activeObvPlaylist.size() - 1) < nextIndex) {
-            nextIndex = 0;
-        }
-        activeSong = activeObvPlaylist.get(nextIndex);
-        playSong(activeSong);
-    }
-
-    @FXML
-    private void prevSongBtn(MouseEvent event) {
-        int previousIndex = activeObvPlaylist.indexOf(activeSong) - 1;
-        if (previousIndex < 0) {
-            previousIndex = activeObvPlaylist.size() - 1;
-        }
-        activeSong = activeObvPlaylist.get(previousIndex);
-        playSong(activeSong);
-    }
-
-    @FXML
-    private void menuAddSong(ActionEvent event) throws SQLException {
-
-        FileChooser fc = new FileChooser();
-        fc.getExtensionFilters().addAll(new ExtensionFilter("mp3 files", "*.mp3"));
-        fc.setInitialDirectory(new File("src"));
-        File addedFile = fc.showOpenDialog(null);
-        try {
-
-            createSongFromMetadata(addedFile);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (TikaException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void menuAddAlbum(ActionEvent event) throws SQLException {
-        DirectoryChooser dc = new DirectoryChooser();
-
-        File[] files = dc.showDialog(null).listFiles();
-        for (File addedFile : files) {
-            if (addedFile.getAbsolutePath().contains(".mp3")) {
-                try {
-
-                    createSongFromMetadata(addedFile);
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                } catch (TikaException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private void updateSlide() {
-        sldProg.valueProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                if (sldProg.isValueChanging()) {
-                    // multiply duration by percentage calculated by slider position
-                    if (duration != null) {
-                        mPlayer.seek(duration.multiply(sldProg.getValue() / 100.0));
-                    }
-                    updateValues();
-
-                }
-            }
-        });
-
-        mPlayer.currentTimeProperty().addListener(new ChangeListener() {
-
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                updateValues();
-            }
-        });
-
-        sldProg.valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov,
-                    Number old_val, Number new_val) {
-                songProg.setProgress(new_val.doubleValue() / 100);
-            }
-        });
-
-    }
-
-    private void updateTimer() {
-        mPlayer.currentTimeProperty().addListener((Observable ov) -> {
-            updateValues();
-        });
-
-        mPlayer.setOnReady(() -> {
-            duration = mPlayer.getMedia().getDuration();
-            updateValues();
-        });
-    }
-
-    private void updateValues() {
-        if (lbltime != null && sldProg != null && duration != null) {
-            Platform.runLater(new Runnable() {
-                public void run() {
-                    Duration currentTime = mPlayer.getCurrentTime();
-                    lbltime.setText(formatTime(currentTime, duration));
-                    sldProg.setDisable(duration.isUnknown());
-                    if (!sldProg.isDisabled() && duration.greaterThan(Duration.ZERO) && !sldProg.isValueChanging()) {
-                        sldProg.setValue(currentTime.divide(duration).toMillis() * 100.0);
-                    }
-
-                }
-            });
-        }
-    }
-
-    private void createSongFromMetadata(File addedFile) throws IOException, SAXException, SQLException, FileNotFoundException, TikaException, NumberFormatException {
-        InputStream input = new FileInputStream(addedFile);
-        ContentHandler handler = new DefaultHandler();
-        Metadata metadata = new Metadata();
-        Parser parser = new Mp3Parser();
-        ParseContext parseCtx = new ParseContext();
-        parser.parse(input, handler, metadata, parseCtx);
-        input.close();
-
-        String filePath = addedFile.getPath();
-        System.out.println(filePath);
-        String title = metadata.get("title");
-
-        String artist = metadata.get("xmpDM:artist");
-        double duration = Double.parseDouble(metadata.get("xmpDM:duration"));
-        String genre = metadata.get("xmpDM:genre");
-        boolean added = mtModel.createSong(filePath, title, artist, duration, genre);
-        if (added) {
-            System.out.println("Song added to Library");
-        } else {
-            System.out.println(title + ": already exsist");
-        }
-    }
-
-    private void playSong(Song song) {
-        mPlayer.stop();
-        activeSong = song;
-        setSongElements(song);
-        mediaPlay();
-
-    }
-
-    private void setSongElements(Song song) {
-        String path = new File(song.getFilePath()).getAbsolutePath();
-        path.replace("\\", "/").replaceAll(" ", "%20");
-        Media media = new Media(new File(path).toURI().toString());
-
-        mPlayer = new MediaPlayer(media);
-
-        mview = new MediaView(mPlayer);
-
-        mPlayer.setOnReady(new Runnable() {
-            @Override
-            public void run() {
-
-                mview.setMediaPlayer(mPlayer);
-
-            }
-        });
-
-        lblPlaying.setText("now Playing...  " + song.getTitle());
-        volSlider(null);
-        updateValues();
-        updateSlide();
-        updateTimer();
-        checkState();
-    }
-
-    private static String formatTime(Duration elapsed, Duration duration) {
-        int intElapsed = (int) floor(elapsed.toSeconds());
-        int elapsedHours = intElapsed / (60 * 60);
-        if (elapsedHours > 0) {
-            intElapsed -= elapsedHours * 60 * 60;
-        }
-        int elapsedMinutes = intElapsed / 60;
-        int elapsedSeconds = intElapsed - elapsedHours * 60 * 60
-                - elapsedMinutes * 60;
-
-        if (duration.greaterThan(Duration.ZERO)) {
-            int intDuration = (int) floor(duration.toSeconds());
-            int durationHours = intDuration / (60 * 60);
-            if (durationHours > 0) {
-                intDuration -= durationHours * 60 * 60;
-            }
-            int durationMinutes = intDuration / 60;
-            int durationSeconds = intDuration - durationHours * 60 * 60
-                    - durationMinutes * 60;
-            if (durationHours > 0) {
-                return format("%d:%02d:%02d/%d:%02d:%02d",
-                        elapsedHours, elapsedMinutes, elapsedSeconds,
-                        durationHours, durationMinutes, durationSeconds);
-            } else {
-                return format("%02d:%02d/%02d:%02d",
-                        elapsedMinutes, elapsedSeconds, durationMinutes,
-                        durationSeconds);
-            }
-        } else {
-            if (elapsedHours > 0) {
-                return format("%d:%02d:%02d", elapsedHours,
-                        elapsedMinutes, elapsedSeconds);
-            } else {
-                return format("%02d:%02d", elapsedMinutes,
-                        elapsedSeconds);
-            }
-        }
-    }
-
-    private void editPlaylist(ActionEvent event) {
-
-        try {
-
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(("mytunes/GUI/View/EditPlaylist.fxml")));
-
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Edit Playlist");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-            EditPlaylistController editCon = loader.getController();
-            editCon.setMtModel(mtModel);
-            editCon.setPlaylist(tbvPlayllist.getSelectionModel().getSelectedItem());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void jumpTo(MouseEvent event) {
-
-        Duration jumpToTime = new Duration(duration.toMillis() / 100 * sldProg.getValue());
-        mPlayer.seek(jumpToTime);
-
-    }
-
-    private void checkShuffleState() {
-        switch (shuffleState) {
-            case SHUFFLE_OFF:
-                mPlayer.setOnEndOfMedia(new Runnable() {
-                    @Override
-                    public void run() {
-                        NextSongBtn(null);
-                    }
-                });
-                break;
-
-            case SHUFFLE_ON:
-                mPlayer.setOnEndOfMedia(new Runnable() {
-                    @Override
-                    public void run() {
-                        Random random = new Random(System.currentTimeMillis());
-                        int nextIndex = random.nextInt(activeObvPlaylist.size());
-                        playSong(activeObvPlaylist.get(nextIndex));
-                    }
-                });
-                break;
-        }
-    }
-
-    private void checkState() {
-        switch (repeatState) {
-            case repeat_OFF:
-                checkShuffleState();
-                break;
-
-            case repeat_ON:
-                mPlayer.setOnEndOfMedia(new Runnable() {
-                    @Override
-                    public void run() {
-                        playSong(activeSong);
-                    }
-                });
-                break;
-        }
-    }
-
-    @FXML
-    private void btnShuffle(MouseEvent event) {
-        switch (shuffleState) {
-            case SHUFFLE_OFF:
-
-                Image shuffleOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Ashuffle-26.png");
-                btnShuffle.setImage(shuffleOn);
-
-                shuffleState = SHUFFLE_ON;
-                checkShuffleState();
-
-                break;
-            case SHUFFLE_ON:
-                Image shuffleOff = new Image("mytunes/GUI/View/Resouces/icons/icons8-shuffle-26.png");
-                btnShuffle.setImage(shuffleOff);
-
-                shuffleState = SHUFFLE_OFF;
-                checkShuffleState();
-                break;
-        }
-    }
-
-    @FXML
-    private void btnRepeat(MouseEvent event) {
-        switch (repeatState) {
-            case repeat_OFF:
-
-                Image repeatOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Arefresh-96.png");
-                btnRepeat.setImage(repeatOn);
-
-                repeatState = repeat_ON;
-                checkState();
-
-                break;
-
-            case repeat_ON:
-                Image repeatOFF = new Image("mytunes/GUI/View/Resouces/icons/icons8-refresh-96.png");
-                btnRepeat.setImage(repeatOFF);
-
-                repeatState = repeat_OFF;
-                checkState();
-
-                break;
-
-        }
-    }
-
-    @FXML
-
-    private void txtSearchField(ActionEvent event) {
-
     }
 
 }

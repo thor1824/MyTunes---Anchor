@@ -20,11 +20,11 @@
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="863.0" prefWidth="1115.0" stylesheets="@Resouces/Layout.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.Controller.MyTunesController">
+<VBox prefHeight="863.0" prefWidth="1115.0" stylesheets="@Resouces/Layout.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.Controller.MyTunesController">
    <children>
-      <HBox prefHeight="26.0" prefWidth="1115.0">
+      <HBox maxHeight="25.0" minHeight="25.0" prefHeight="0.0" prefWidth="1115.0" VBox.vgrow="ALWAYS">
          <children>
-            <MenuBar prefHeight="26.0" prefWidth="695.0" style="-fx-border-color: black; -fx-background-color: #1a1a1a;">
+            <MenuBar maxHeight="25.0" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="695.0" style="-fx-border-color: black; -fx-background-color: #1a1a1a;" HBox.hgrow="ALWAYS">
               <menus>
                 <Menu mnemonicParsing="false" style="fx-text-fill: palegreen;" text="File">
                   <items>
@@ -44,7 +44,7 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <TextField fx:id="txtSearch" onAction="#txtSearchField" prefHeight="26.0" prefWidth="424.0" style="-fx-background-color: #1a1a1a;" />
+            <TextField fx:id="txtSearch" maxHeight="25.0" maxWidth="420.0" minHeight="25.0" minWidth="420.0" prefHeight="25.0" prefWidth="420.0" style="-fx-background-color: #404040;" stylesheets="@Resouces/Layout.css" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
       <HBox prefHeight="600.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
@@ -53,16 +53,11 @@
                <children>
                   <AnchorPane maxHeight="115.0" maxWidth="200.0" minHeight="115.0" minWidth="200.0" prefHeight="195.0" prefWidth="200.0" style="-fx-background-color: #1a1a1a; -fx-border-color: black;" VBox.vgrow="NEVER">
                      <children>
-                        <Label fx:id="mLibrary" layoutX="33.0" layoutY="5.0" prefHeight="17.0" prefWidth="161.0" text="- Music Library" textFill="#00b300">
+                        <Label fx:id="lblLibrary" layoutX="33.0" layoutY="5.0" prefHeight="17.0" prefWidth="161.0" text="- Music Library" textFill="#00b300">
                            <font>
                               <Font name="Monospaced Bold" size="12.0" />
                            </font></Label>
-                        <Label fx:id="mLibrary1" layoutX="33.0" layoutY="58.0" prefHeight="17.0" prefWidth="161.0" text="- something else" textFill="#00b300">
-                           <font>
-                              <Font name="Monospaced Bold" size="12.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="mLibrary2" layoutX="33.0" layoutY="32.0" prefHeight="17.0" prefWidth="161.0" text="- something else" textFill="#00b300">
+                        <Label fx:id="lblYoutube" layoutX="33.0" layoutY="32.0" prefHeight="17.0" prefWidth="161.0" text="- YouTube Player" textFill="#00b300">
                            <font>
                               <Font name="Monospaced Bold" size="12.0" />
                            </font>
@@ -105,7 +100,7 @@
                               </Label>
                               <HBox prefHeight="46.0" prefWidth="200.0">
                                  <children>
-                                    <ImageView fx:id="btnPrev" fitHeight="42.0" fitWidth="42.0" onMouseClicked="#prevSongBtn" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="42.0" fitWidth="42.0" onMouseClicked="#prevSongBtn" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@Resouces/icons/icons8-fast-forward-30.png" />
                                        </image>
@@ -121,7 +116,7 @@
                                           <Insets left="15.0" />
                                        </HBox.margin>
                                     </ImageView>
-                                    <ImageView fx:id="btnNext" fitHeight="42.0" fitWidth="42.0" onMouseClicked="#NextSongBtn" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="42.0" fitWidth="42.0" onMouseClicked="#NextSongBtn" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@Resouces/icons/icons8-fast-forward-100.png" />
                                        </image>
