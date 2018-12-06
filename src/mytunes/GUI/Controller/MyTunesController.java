@@ -45,8 +45,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
-import mytunes.BE.MediaPlayerWithElements;
-import mytunes.BE.MetadataExtractor;
+import mytunes.GUI.Model.MediaPlayerWithElements;
+import mytunes.DAL.MetadataExtractor;
 import mytunes.BE.Playlist;
 import mytunes.BLL.exception.MyTunesException;
 import mytunes.GUI.Model.MyTunesModel;
@@ -88,6 +88,12 @@ public class MyTunesController implements Initializable {
     private TableColumn<Playlist, String> tbvPlaylistName;
     @FXML
     private TextField txtSearch;
+    @FXML
+    private Label lblLibrary;
+    @FXML
+    private Label lblYoutube;
+    @FXML
+    private Label lblVideoPLayer;
 
     //other
     private MediaPlayer mPlayer;
@@ -105,10 +111,6 @@ public class MyTunesController implements Initializable {
     private SortedList<Song> sortedData;
     private MediaPlayerWithElements mPlayer2;
     private MetadataExtractor metadata;
-    @FXML
-    private Label lblLibrary;
-    @FXML
-    private Label lblYoutube;
 
     /**
      * Initializes the controller class.
@@ -122,7 +124,7 @@ public class MyTunesController implements Initializable {
         title.setText("Title");
         title.setPrefWidth(350);
         tbvSongs.getColumns().add(title);
-        
+
         TableColumn<Song, String> artist = new TableColumn<>();
         artist.setCellValueFactory(c -> c.getValue().getArtistProperty());
         artist.setText("Artist");
@@ -367,6 +369,29 @@ public class MyTunesController implements Initializable {
             }
         });
 
+        lblYoutube.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    if (mouseEvent.getClickCount() == 2) {
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/YouTubePlayer.fxml"));
+                            
+                            Parent root = loader.load();
+                            Stage stage = new Stage();
+                            stage.setTitle("Create Playlist");
+                            stage.setScene(new Scene(root));
+                            stage.show();
+                            
+                            
+                        } catch (IOException ex) {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+        });
+
     }
 
     @FXML
@@ -410,7 +435,7 @@ public class MyTunesController implements Initializable {
     }
 
     @FXML
-    private void menuAddSong(ActionEvent event) throws SQLException { 
+    private void menuAddSong(ActionEvent event) throws SQLException {
 
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(new ExtensionFilter("mp3 files", "*.mp3"));

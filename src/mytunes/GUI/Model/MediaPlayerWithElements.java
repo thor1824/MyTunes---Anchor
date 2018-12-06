@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mytunes.BE;
+package mytunes.GUI.Model;
 
 import java.io.File;
 import static java.lang.Math.floor;
@@ -24,6 +24,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
+import mytunes.BE.Song;
 
 /**
  *
