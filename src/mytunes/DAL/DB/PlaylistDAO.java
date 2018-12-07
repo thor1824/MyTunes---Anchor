@@ -24,14 +24,20 @@ import mytunes.DAL.ServerConnect;
  * @author Christian
  */
 public class PlaylistDAO {
-
-    private static ServerConnect server;
-
+    /*
+     *establishes a server connect witch can be used in the inter class
+     */
+     private static ServerConnect server;
+   
+    
     public PlaylistDAO() throws IOException {
 
         this.server = new ServerConnect();
     }
-
+    /* 
+     * creats a playlist on the sever, using sql
+     */
+    
     public Playlist createPlaylist(String name) throws SQLServerException, SQLException {
         String sql = "INSERT INTO [MyTunesAnchor].[dbo].[Playlist] (Title) VALUES (?)";
 
@@ -42,7 +48,7 @@ public class PlaylistDAO {
         st.setString(1, name);
 
         int rowsAffected = st.executeUpdate();
-
+        //get a sever generated number to use as id
         ResultSet rs = st.getGeneratedKeys();
 
         int id = 0;
@@ -56,7 +62,12 @@ public class PlaylistDAO {
         return playlist;
 
     }
-
+    
+    /*
+    *adds a song to a playlist by inserting a song object and a playlist object into a joind table 
+    @SongID
+    @PlaylistID
+    */
     public void addSongToPlaylist(Song song, Playlist playlist) throws SQLServerException, SQLException {
         Connection con = server.getConnection();
         String sql = "INSERT INTO [MyTunesAnchor].[dbo].[Song_Playlist] (SongID, PlaylistID) VALUES (?,?)";
@@ -75,10 +86,12 @@ public class PlaylistDAO {
         }
 
     }
-
+  /*
+   * delete a playlist by playlist id
+   */
     public void deletePlayliste(Playlist playlist) throws SQLServerException, SQLException {
         Connection con = server.getConnection();
-
+        //sql that delete the playlist from sever tabel
         Statement statement = con.createStatement();
         statement.execute(
                 "DELETE FROM [MyTunesAnchor].[dbo].[Playlist] WHERE PlaylistID = "
@@ -90,7 +103,10 @@ public class PlaylistDAO {
         );
 
     }
-
+   /*
+    * gets all playlists from sever
+    *@returns all playlists 
+    */
     public List<Playlist> getAllPlaylits() throws SQLException {
         List<Playlist> playlists = new ArrayList<>();
         Connection con = server.getConnection();
@@ -107,7 +123,9 @@ public class PlaylistDAO {
         }
         return playlists;
     }
-
+   /*
+    * gets all the songs on a playlist 
+    */
     public void getSongFromPlaylist(Playlist playlist) throws SQLException {
         Connection con = server.getConnection();
         Statement st = con.createStatement();
@@ -116,6 +134,7 @@ public class PlaylistDAO {
                 + "RIGHT JOIN [MyTunesAnchor].[dbo].[Song_Playlist] ON [MyTunesAnchor].[dbo].[Song].[SongID] = [MyTunesAnchor].[dbo].[Song_Playlist].[SongID] "
                 + "WHERE PlaylistID = " + playlist.getId()
         );
+        //runns all songes through
         while (resultSet.next()) {
             int id = resultSet.getInt("SongID");
             double duration = resultSet.getDouble("Duration");
@@ -130,7 +149,9 @@ public class PlaylistDAO {
             playlist.addToPlaylist(song);
         }
     }
-
+    /*
+     *updates the name of the playlist from id 
+     */
     public boolean updatePlaylist(Playlist playlist) throws SQLServerException, SQLException {
 
         String sql = "UPDATE [MyTunesAnchor].[dbo].[Playlist] SET Title = ? WHERE PlaylistID =" + playlist.getId();
@@ -149,7 +170,9 @@ public class PlaylistDAO {
         return false;
 
     }
-
+    /*
+     *delets a song from the playlist using a playlist id and the song PositionID 
+     */
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException {
         Connection con = server.getConnection();
         Statement st = con.createStatement();
