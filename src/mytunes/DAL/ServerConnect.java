@@ -14,7 +14,7 @@ import java.util.Properties;
 
 /**
  *
- * @author Andreas
+ * @author Nijas
  */
 public class ServerConnect {
 
