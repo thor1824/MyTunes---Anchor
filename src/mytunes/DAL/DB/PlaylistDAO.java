@@ -24,11 +24,9 @@ import mytunes.DAL.ServerConnect;
  * @author Christian
  */
 public class PlaylistDAO {
-    /*
-     *establishes a server connect witch can be used in the inter class
-     */
-     private static ServerConnect server;
-   
+
+    //establishes a server connect witch can be used in the inter class
+    private static ServerConnect server;
     
     public PlaylistDAO() throws IOException {
 
@@ -86,9 +84,7 @@ public class PlaylistDAO {
         }
 
     }
-  /*
-   * delete a playlist by playlist id
-   */
+    //delete a playlist by playlist id
     public void deletePlayliste(Playlist playlist) throws SQLServerException, SQLException {
         Connection con = server.getConnection();
         //sql that delete the playlist from sever tabel
@@ -103,7 +99,7 @@ public class PlaylistDAO {
         );
 
     }
-   /*
+    /*
     * gets all playlists from sever
     *@returns all playlists 
     */
@@ -123,7 +119,7 @@ public class PlaylistDAO {
         }
         return playlists;
     }
-   /*
+    /*
     * gets all the songs on a playlist 
     */
     public void getSongFromPlaylist(Playlist playlist) throws SQLException {
@@ -134,7 +130,6 @@ public class PlaylistDAO {
                 + "RIGHT JOIN [MyTunesAnchor].[dbo].[Song_Playlist] ON [MyTunesAnchor].[dbo].[Song].[SongID] = [MyTunesAnchor].[dbo].[Song_Playlist].[SongID] "
                 + "WHERE PlaylistID = " + playlist.getId()
         );
-        //runns all songes through
         while (resultSet.next()) {
             int id = resultSet.getInt("SongID");
             double duration = resultSet.getDouble("Duration");
@@ -149,9 +144,8 @@ public class PlaylistDAO {
             playlist.addToPlaylist(song);
         }
     }
-    /*
-     *updates the name of the playlist from id 
-     */
+
+    // updates the name of the playlist from id 
     public boolean updatePlaylist(Playlist playlist) throws SQLServerException, SQLException {
 
         String sql = "UPDATE Playlist SET Title = ? WHERE PlaylistID =" + playlist.getId();
@@ -170,9 +164,7 @@ public class PlaylistDAO {
         return false;
 
     }
-    /*
-     *delets a song from the playlist using a playlist id and the song PositionID 
-     */
+    //delets a song from the playlist using a playlist id and the song PositionID 
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException {
         Connection con = server.getConnection();
         Statement st = con.createStatement();
