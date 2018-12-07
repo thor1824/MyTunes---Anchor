@@ -45,6 +45,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.media.Media;
 import mytunes.BE.MediaPlayerWithElements;
 import mytunes.BE.MetadataExtractor;
 import mytunes.BE.Playlist;
@@ -581,6 +582,26 @@ public class MyTunesController implements Initializable {
             });
             menuAdd.getItems().add(playlistAdd);
 
+        }
+    }
+    
+    private Media checkMediaPath(String file, Song song) throws MyTunesException, SQLException {
+        try
+        {
+            Media media = new Media(new File(file).toURI().toString());
+            return media;
+        } catch (Exception e) {
+            e.printStackTrace();
+            FileChooser filechooser = new FileChooser();
+            filechooser.setInitialDirectory(new File("src"));
+            filechooser.setTitle("Open File");
+            filechooser.getExtensionFilters().addAll(
+                    new ExtensionFilter("Audio Files", ".wav", ".mp3"));
+            File selectedFile = filechooser.showOpenDialog(null);
+            song.setFilePath(mtModel.formatePathTosrc(selectedFile.getAbsolutePath()));
+            mtModel.updateSong(song);
+            Media medi = new Media(selectedFile.toURI().toString());
+            return medi;
         }
     }
 

@@ -30,7 +30,7 @@ public class SongDAO {
     }
 
     public Song createSong(String filePath, String title, String artist, double duration, String genre) throws SQLServerException, SQLException {
-        String sql = "INSERT INTO Song (Title, Artist, Genre, Duration, Path) VALUES (?, ?, ?, ?, ?);"; //måske album og nr på album
+        String sql = "INSERT INTO [MyTunesAnchor].[dbo].[Song] (Title, Artist, Genre, Duration, Path) VALUES (?, ?, ?, ?, ?);"; //måske album og nr på album
 
         Connection con = sc.getConnection();
 
@@ -59,7 +59,7 @@ public class SongDAO {
     }
 
     public boolean updateSong(Song song) throws SQLException {
-        String sql = "UPDATE Song SET Title = ?, Artist = ?, Path = ? WHERE SongID =" + song.getId();
+        String sql = "UPDATE [MyTunesAnchor].[dbo].[Song] SET Title = ?, Artist = ?, Path = ? WHERE SongID =" + song.getId();
 
         Connection con = sc.getConnection();
 
@@ -82,11 +82,11 @@ public class SongDAO {
 
         Statement statement = con.createStatement();
         statement.execute(
-                "DELETE FROM Song_Playlist WHERE SongID = "
+                "DELETE FROM [MyTunesAnchor].[dbo].[Song_Playlist] WHERE SongID = "
                 + song.getId()
         );
         statement.execute(
-                "DELETE FROM Song WHERE SongID = "
+                "DELETE FROM [MyTunesAnchor].[dbo].[Song] WHERE SongID = "
                 + song.getId()
         );
         

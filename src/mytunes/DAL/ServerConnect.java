@@ -13,8 +13,9 @@ import java.sql.Connection;
 import java.util.Properties;
 
 /**
- *
- * @author Andreas
+ * @author Nijas Hansen
+ * establishing connection between program and database
+ * by using the file "database.settings".
  */
 public class ServerConnect {
 

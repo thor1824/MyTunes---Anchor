@@ -33,7 +33,7 @@ public class PlaylistDAO {
     }
 
     public Playlist createPlaylist(String name) throws SQLServerException, SQLException {
-        String sql = "INSERT INTO Playlist (Title) VALUES (?)";
+        String sql = "INSERT INTO [MyTunesAnchor].[dbo].[Playlist] (Title) VALUES (?)";
 
         Connection con = server.getConnection();
 
@@ -59,7 +59,7 @@ public class PlaylistDAO {
 
     public void addSongToPlaylist(Song song, Playlist playlist) throws SQLServerException, SQLException {
         Connection con = server.getConnection();
-        String sql = "INSERT INTO Song_Playlist (SongID, PlaylistID) VALUES (?,?)";
+        String sql = "INSERT INTO [MyTunesAnchor].[dbo].[Song_Playlist] (SongID, PlaylistID) VALUES (?,?)";
 
         PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
@@ -81,11 +81,11 @@ public class PlaylistDAO {
 
         Statement statement = con.createStatement();
         statement.execute(
-                "DELETE FROM Playlist WHERE PlaylistID = "
+                "DELETE FROM [MyTunesAnchor].[dbo].[Playlist] WHERE PlaylistID = "
                 + playlist.getId()
         );
         statement.execute(
-                "DELETE FROM Song_Playlist WHERE PlaylistID = "
+                "DELETE FROM [MyTunesAnchor].[dbo].[Song_Playlist] WHERE PlaylistID = "
                 + playlist.getId()
         );
 
@@ -133,7 +133,7 @@ public class PlaylistDAO {
 
     public boolean updatePlaylist(Playlist playlist) throws SQLServerException, SQLException {
 
-        String sql = "UPDATE Playlist SET Title = ? WHERE PlaylistID =" + playlist.getId();
+        String sql = "UPDATE [MyTunesAnchor].[dbo].[Playlist] SET Title = ? WHERE PlaylistID =" + playlist.getId();
 
         Connection con = server.getConnection();
 
@@ -155,7 +155,7 @@ public class PlaylistDAO {
         Statement st = con.createStatement();
 
         st.execute(
-                "DELETE FROM Song_Playlist WHERE PlaylistID = " + playlist.getId()
+                "DELETE FROM [MyTunesAnchor].[dbo].[Song_Playlist] WHERE PlaylistID = " + playlist.getId()
                 + " AND PositionID = " + song.getPositionID()
         );
 
