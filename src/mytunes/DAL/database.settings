@@ -1,6 +1,3 @@
-/**
-* this file has the information needed to run the ServerConnect.class
-*\
 Server=10.176.111.31
 Datebase=MyTunesAnchor
 User=CS2018A_32
