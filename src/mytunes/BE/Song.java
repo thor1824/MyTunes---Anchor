@@ -47,6 +47,7 @@ public class Song {
     }
 
     /**
+     * get the artist as a stringProperty
      * 
      * @return 
      */
@@ -55,8 +56,9 @@ public class Song {
     }
 
     /**
+     * get the genre as a stringProperty
      * 
-     * @return 
+     * @return the value of genreProperty
      */
     public StringProperty getGenreProperty() {
         return genreProperty;
@@ -157,30 +159,34 @@ public class Song {
     }
 
     /**
+     * Get the value of songId
      * 
-     * @return 
+     * @return the song Id
      */
     public int getId() {
         return id;
     }
 
     /**
+     * get StringProperty of a title
      * 
-     * @return 
+     * @return Title new value of songTitleProperty
      */
     public StringProperty getTitleProperty() {
         return titleProperty;
     }
     
     /**
+     * get the positionID of a id
      * 
-     * @return 
+     * @return the position of ID
      */
     public int getPositionID() {
         return PositionID;
     }
 
     /**
+     * set the value of positionID
      * 
      * @param PositionID 
      */
