@@ -13,14 +13,15 @@ import java.sql.Connection;
 import java.util.Properties;
 
 /**
- *
- * @author Andreas
+ * @author Nijas Hansen
+ * establishing connection between program and database
+ * by using the file "database.settings".
  */
 public class ServerConnect {
 
     private static final String PROP_FILE = "src/mytunes/dal/database.settings";
     private SQLServerDataSource ds;
-    
+
     public ServerConnect() throws IOException
     {
         Properties databaseProperties = new Properties();
@@ -31,7 +32,7 @@ public class ServerConnect {
         ds.setUser(databaseProperties.getProperty("User"));
         ds.setPassword(databaseProperties.getProperty("Password"));
     }
-    
+
     public Connection getConnection() throws SQLServerException
     {
         return ds.getConnection();

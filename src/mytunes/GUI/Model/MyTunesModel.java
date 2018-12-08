@@ -90,7 +90,7 @@ public class MyTunesModel {
         }
     }
 
-    private String formatePathTosrc(String path) {
+    public String formatePathTosrc(String path) {
         path.replace("\\", "/").replaceAll(" ", "%20");
         if (path.contains("src\\Music")) {
             String[] urlSplit = path.split("src");
