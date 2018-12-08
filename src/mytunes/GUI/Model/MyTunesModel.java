@@ -66,8 +66,7 @@ public class MyTunesModel {
     public boolean createSong(String filePath, String title, String artist, double duration, String genre) throws SQLException {
         boolean nonIdentical = true;
         for (Song song : songs) {
-            System.out.println(title);
-            System.out.println(song.getTitle());
+            
             if (song.getTitle().equals(title)) {
 
                 nonIdentical = false;

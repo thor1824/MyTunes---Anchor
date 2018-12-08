@@ -5,11 +5,16 @@
  */
 package mytunes.BLL;
 
+import mytunes.DAL.DB.YoutubePlaylistDAO;
+import mytunes.DAL.DB.YoutubeDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import javafx.collections.ObservableList;
 import mytunes.BE.Playlist;
 import mytunes.BE.Song;
+import mytunes.BE.YoutubePlaylist;
+import mytunes.BE.YoutubeVideo;
 import mytunes.DAL.DB.PlaylistDAO;
 import mytunes.DAL.DB.SongDAO;
 
@@ -21,10 +26,15 @@ public class MyTunesManager {
 
     PlaylistDAO playlistDAO;
     SongDAO songDAO;
+    YoutubeDAO youtubeDAO;
+    YoutubePlaylistDAO youtubePlaylistDAO;
+            
 
     public MyTunesManager() throws IOException {
         this.playlistDAO = new PlaylistDAO();
         this.songDAO = new SongDAO();
+        this.youtubeDAO = new YoutubeDAO();
+        this.youtubePlaylistDAO = new YoutubePlaylistDAO();
     }
 
     public Playlist createPlaylist(String name) throws SQLException {
@@ -65,6 +75,55 @@ public class MyTunesManager {
 
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException {
         playlistDAO.deleteFromPlayist(song, playlist);
+    }
+
+    public void addYoutubeVideoToYoutubePlaylist(YoutubeVideo yVideo, YoutubePlaylist yplaylist) {
+        youtubePlaylistDAO.addYoutubeVideoToYoutubePlaylist(yVideo, yplaylist);
+    }
+
+    public YoutubePlaylist createYoutubePlaylist(String name) {
+        return youtubePlaylistDAO.createYoutubePlaylist(name);
+    }
+
+    public void updateYouTube(YoutubeVideo yVideo) {
+        youtubeDAO.addYoutubeVideoToYoutubePlaylist(yVideo);
+    }
+
+    public void updateYoutubePlaylist(YoutubePlaylist yPlaylist) {
+        youtubePlaylistDAO.updateYoutubePlaylist(yPlaylist);
+    }
+
+    public void deleteYoutubeVideo(YoutubeVideo yVideo) {
+        youtubeDAO.deleteYoutubeVideo(yVideo);
+    }
+
+    public void deleteToutubePlaylist(YoutubePlaylist yPlaylist) {
+        youtubePlaylistDAO.deleteToutubePlaylist(yPlaylist);
+    }
+
+    public YoutubeVideo createYoutubeVideo(String url)
+    {
+        return youtubeDAO.createYoutubeVideo(url);
+    }
+
+    public void addSongToPlaylist(YoutubeVideo video, YoutubePlaylist playlist)
+    {
+        youtubePlaylistDAO.addSongToPlaylist(video, playlist);
+    }
+
+    public void deleteFromPlaylist(YoutubeVideo video, YoutubePlaylist activePlaylist)
+    {
+        youtubePlaylistDAO.deleteFromPlaylist( video, activePlaylist);
+    }
+
+    public ObservableList<YoutubeVideo> getAllYoutubeVideos()
+    {
+        return youtubeDAO.getAllYoutubeVideos();
+    }
+
+    public ObservableList<YoutubePlaylist> getAllYoutubePlaylists()
+    {
+        return youtubePlaylistDAO.getAllYoutubePlaylists();
     }
 
 }

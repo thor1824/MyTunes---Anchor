@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mytunes.GUI.Controller;
+package mytunes.GUI.Controller.Music;
 
 import java.io.File;
 import java.net.URL;
@@ -46,16 +46,7 @@ public class EditSongInfoController implements Initializable
     private static Song songInfo;
     private static MyTunesModel mtModel;
 
-    public static void setMtModel(MyTunesModel mtModel)
-    {
-        EditSongInfoController.mtModel = mtModel;
-    }
     
-    
-    public static void setSongInfo(Song songInfo)
-    {
-        EditSongInfoController.songInfo = songInfo;
-    }
     
     
     /**
@@ -118,6 +109,17 @@ public class EditSongInfoController implements Initializable
     @FXML
     private void txtFilePathEdit(ActionEvent event)
     {
+    }
+    
+    public static void setMtModel(MyTunesModel mtModel)
+    {
+        EditSongInfoController.mtModel = mtModel;
+    }
+    
+    
+    public static void setSongInfo(Song songInfo)
+    {
+        EditSongInfoController.songInfo = songInfo;
     }
     
 }

@@ -111,7 +111,7 @@ public class MediaPlayerWithElements {
         switch (shuffleState) {
             case SHUFFLE_OFF:
 
-                Image shuffleOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Ashuffle-26.png");
+                Image shuffleOn = new Image("Resouces/icons/icons8-Ashuffle-26.png");
                 btnShuffle.setImage(shuffleOn);
 
                 shuffleState = SHUFFLE_ON;
@@ -119,7 +119,7 @@ public class MediaPlayerWithElements {
 
                 break;
             case SHUFFLE_ON:
-                Image shuffleOff = new Image("mytunes/GUI/View/Resouces/icons/icons8-shuffle-26.png");
+                Image shuffleOff = new Image("Resouces/icons/icons8-shuffle-26.png");
                 btnShuffle.setImage(shuffleOff);
 
                 shuffleState = SHUFFLE_OFF;
@@ -171,15 +171,15 @@ public class MediaPlayerWithElements {
     }
 
     private void mediaPlay() {
-        Image pause = new Image("mytunes/GUI/View/Resouces/icons/icons8-pause-30.png");
+        Image pause = new Image("Resouces/icons/icons8-pause-30.png");
         btnPlay.setImage(pause);
         mPlayer.play();
         playState = PLAYING;
 
     }
 
-    private void mediaPause() {
-        Image play = new Image("mytunes/GUI/View/Resouces/icons/icons8-play-30.png");
+    public void mediaPause() {
+        Image play = new Image("Resouces/icons/icons8-play-30.png");
         btnPlay.setImage(play);
         mPlayer.pause();
         playState = PAUSED;
@@ -339,7 +339,7 @@ public class MediaPlayerWithElements {
         switch (repeatState) {
             case repeat_OFF:
 
-                Image repeatOn = new Image("mytunes/GUI/View/Resouces/icons/icons8-Arefresh-96.png");
+                Image repeatOn = new Image("Resouces/icons/icons8-Arefresh-96.png");
                 btnRepeat.setImage(repeatOn);
 
                 repeatState = repeat_ON;
@@ -348,7 +348,7 @@ public class MediaPlayerWithElements {
                 break;
 
             case repeat_ON:
-                Image repeatOFF = new Image("mytunes/GUI/View/Resouces/icons/icons8-refresh-96.png");
+                Image repeatOFF = new Image("Resouces/icons/icons8-refresh-96.png");
                 btnRepeat.setImage(repeatOFF);
 
                 repeatState = repeat_OFF;

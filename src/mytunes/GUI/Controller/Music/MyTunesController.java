@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mytunes.GUI.Controller;
+package mytunes.GUI.Controller.Music;
 
+import mytunes.GUI.Controller.Youtube.YouTubePlayerController;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -45,6 +46,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.AnchorPane;
 import mytunes.GUI.Model.MediaPlayerWithElements;
 import mytunes.DAL.MetadataExtractor;
 import mytunes.BE.Playlist;
@@ -59,7 +61,8 @@ import org.xml.sax.SAXException;
  *
  * @author Nijas Hansen
  */
-public class MyTunesController implements Initializable {
+public class MyTunesController implements Initializable
+{
 
     //FXML
     @FXML
@@ -111,13 +114,324 @@ public class MyTunesController implements Initializable {
     private SortedList<Song> sortedData;
     private MediaPlayerWithElements mPlayer2;
     private MetadataExtractor metadata;
+    private Stage myStage;
+    @FXML
+    private AnchorPane mainPane;
 
     /**
      * Initializes the controller class.
      */
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(URL url, ResourceBundle rb)
+    {
 
+        initializeCollums();
+
+        txtSearch.setPromptText("search...");
+
+        // slider
+        sldVol.setValue(50);
+
+        //other init
+        try
+        {
+            mtModel = new MyTunesModel();
+
+            allSongs = FXCollections.observableArrayList();
+            allSongs.setAll(mtModel.getAllSong());
+
+            activeObvPlaylist = FXCollections.observableArrayList();
+            activeObvPlaylist.setAll(allSongs);
+            tbvSongs.setItems(activeObvPlaylist);
+
+            allPlaylist = FXCollections.observableArrayList();
+            allPlaylist.setAll(mtModel.getAllPlaylists());
+            tbvPlayllist.setItems(allPlaylist);
+
+            //Creating MediaPlayerWithElemets
+            mPlayer2 = new MediaPlayerWithElements(mPlayer, activeObvPlaylist, activeSong);
+            mPlayer2.setPlayButton(btnPlay);
+            mPlayer2.setRepeatButton(btnRepeat);
+            mPlayer2.setShuffleButton(btnShuffle);
+            mPlayer2.setSongProgressBar(songProg);
+            mPlayer2.setSongProgressSlider(sldProg);
+            mPlayer2.setTimeLabel(lbltime);
+            mPlayer2.setSongPlayingLabel(lblPlaying);
+            mPlayer2.setVolumeSlider(sldVol);
+            if (activeObvPlaylist.size() > 0)
+            {
+                mPlayer2.setInitialSong(activeObvPlaylist.get(0));
+            }
+
+            setupSeachBar();
+
+            //Creating MetadataExtractor
+            metadata = new MetadataExtractor();
+            metadata.setMtModel(mtModel);
+
+        } catch (SQLException ex)
+        {
+
+        } catch (IOException ex)
+        {
+            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // timer
+        // ContextMenu
+        // Create cmSong
+        cmSong = new ContextMenu();
+
+        MenuItem playSong = new MenuItem("Play Song");
+        playSong.setOnAction(new EventHandler<ActionEvent>()
+        {
+
+            @Override
+            public void handle(ActionEvent event)
+            {
+                Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                playSong(song);
+            }
+        });
+
+        deleteSongFromPlist = new MenuItem("Delete song from playlist");
+        deleteSongFromPlist.setOnAction(new EventHandler<ActionEvent>()
+        {
+
+            @Override
+            public void handle(ActionEvent event)
+            {
+                Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                try
+                {
+                    mtModel.deleteFromPlayist(song, activePlaylist);
+                } catch (SQLException ex)
+                {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        MenuItem editSong = new MenuItem("Edit Song");
+        editSong.setOnAction(new EventHandler<ActionEvent>()
+        {
+
+            @Override
+            public void handle(ActionEvent event)
+            {
+                try
+                {
+                    editSong();
+                } catch (MyTunesException ex)
+                {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        deleteSong = new MenuItem("Delete Song From Library");
+        deleteSong.setOnAction(new EventHandler<ActionEvent>()
+        {
+
+            @Override
+            public void handle(ActionEvent event)
+            {
+                Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                try
+                {
+                    mtModel.deleteSong(song);
+                } catch (SQLException ex)
+                {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        });
+
+        Menu addtoPlaylist = new Menu("Add to: ");
+        genratePlaylistMenuItems(addtoPlaylist);
+
+        // Create cmPlaylist
+        ContextMenu cmPlaylist = new ContextMenu();
+
+        MenuItem plChoose = new MenuItem("Choose Playlist");
+        plChoose.setOnAction(new EventHandler<ActionEvent>()
+        {
+
+            @Override
+            public void handle(ActionEvent event)
+            {
+                Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
+                changeMusicList(playlist.getSongs());
+            }
+        });
+
+        MenuItem plDelete = new MenuItem("Delete Playlist");
+        plDelete.setOnAction(new EventHandler<ActionEvent>()
+        {
+
+            @Override
+            public void handle(ActionEvent event)
+            {
+                Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
+                try
+                {
+                    mtModel.deletePlayliste(playlist);
+                } catch (SQLException ex)
+                {
+                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        MenuItem plEdit = new MenuItem("Edit Playlist");
+        plEdit.setOnAction(new EventHandler<ActionEvent>()
+        {
+
+            @Override
+            public void handle(ActionEvent event)
+            {
+                Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
+                editPlaylist(null);
+            }
+        });
+
+        // Add MenuItem to ContextMenus
+        cmSong.getItems().addAll(playSong, editSong, deleteSong, addtoPlaylist);
+        cmPlaylist.getItems().addAll(plChoose, plDelete, plEdit);
+
+        // Right Click
+        // When user right-click on a Song
+        tbvSongs.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>()
+        {
+
+            @Override
+            public void handle(ContextMenuEvent event)
+            {
+                cmPlaylist.hide();
+                cmSong.setMinWidth(100);
+                cmSong.show(tbvSongs, event.getScreenX(), event.getScreenY());
+            }
+        });
+
+        // When user right-click on a Playlist
+        tbvPlayllist.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>()
+        {
+
+            @Override
+            public void handle(ContextMenuEvent event)
+            {
+                cmSong.hide();
+                cmPlaylist.show(tbvSongs, event.getScreenX(), event.getScreenY());
+            }
+        });
+
+        // Double-click
+        // Double-click on Song to play
+        tbvSongs.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent mouseEvent)
+            {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
+                {
+                    if (mouseEvent.getClickCount() == 2 && tbvSongs.getSelectionModel().getSelectedItem() != null)
+                    {
+                        Song song = tbvSongs.getSelectionModel().getSelectedItem();
+                        int focusIndex = tbvSongs.getSelectionModel().getSelectedIndex();
+                        tbvSongs.getFocusModel().focus(focusIndex);
+                        tbvSongs.requestFocus();
+                        playSong(song);
+                        tbvSongs.getSelectionModel().clearSelection();
+
+                    }
+                }
+            }
+        });
+
+        // Double-click on Playlist to set Active
+        tbvPlayllist.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent mouseEvent)
+            {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
+                {
+                    if (mouseEvent.getClickCount() == 2)
+                    {
+                        Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
+                        activePlaylist = playlist;
+                        changeMusicList(playlist.getSongs());
+                        if (!onPlaylist)
+                        {
+                            onPlaylist = true;
+                            switchMenuItems();
+
+                        }
+
+                    }
+                }
+            }
+        });
+
+        // Double-click on Music Library to see all songs
+        lblLibrary.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent mouseEvent)
+            {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
+                {
+                    if (mouseEvent.getClickCount() == 2)
+                    {
+                        changeMusicList(mtModel.getAllSong());
+                        if (onPlaylist)
+                        {
+                            onPlaylist = false;
+                            switchMenuItems();
+
+                        }
+                    }
+                }
+            }
+        });
+
+        lblYoutube.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent mouseEvent)
+            {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
+                {
+                    if (mouseEvent.getClickCount() == 2)
+                    {
+                        try
+                        {
+                            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/Youtube/YouTubePlayer.fxml"));
+
+                            Parent root = loader.load();
+                            Stage stage = new Stage();
+                            stage.setScene(new Scene(root));
+                            YouTubePlayerController controller = loader.getController();
+                            controller.setStage(stage);
+                            stage.setTitle("MyTube");
+                            stage.show();
+                            mPlayer2.mediaPause();
+                            myStage.close();
+
+                        } catch (IOException ex)
+                        {
+                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
+    private void initializeCollums()
+    {
         //Collum Init
         TableColumn<Song, String> title = new TableColumn<>();
         title.setCellValueFactory(c -> c.getValue().getTitleProperty());
@@ -146,264 +460,21 @@ public class MyTunesController implements Initializable {
         tbvSongs.setPlaceholder(new Label("Playlist is Empty"));
         tbvPlaylistName.setCellValueFactory(c -> c.getValue().getTitleProperty());
         tbvPlayllist.setPlaceholder(new Label("No Playlists yet!"));
-        txtSearch.setPromptText("search...");
-
-        // slider
-        sldVol.setValue(50);
-
-        //other init
-        try {
-            mtModel = new MyTunesModel();
-
-            allSongs = FXCollections.observableArrayList();
-            allSongs.setAll(mtModel.getAllSong());
-            activeObvPlaylist = FXCollections.observableArrayList();
-            activeObvPlaylist.setAll(allSongs);
-            tbvSongs.setItems(activeObvPlaylist);
-            allPlaylist = FXCollections.observableArrayList();
-            allPlaylist.setAll(mtModel.getAllPlaylists());
-            tbvPlayllist.setItems(allPlaylist);
-
-            //Creating MediaPlayerWithElemets
-            mPlayer2 = new MediaPlayerWithElements(mPlayer, activeObvPlaylist, activeSong);
-            mPlayer2.setPlayButton(btnPlay);
-            mPlayer2.setRepeatButton(btnRepeat);
-            mPlayer2.setShuffleButton(btnShuffle);
-            mPlayer2.setSongProgressBar(songProg);
-            mPlayer2.setSongProgressSlider(sldProg);
-            mPlayer2.setTimeLabel(lbltime);
-            mPlayer2.setSongPlayingLabel(lblPlaying);
-            mPlayer2.setVolumeSlider(sldVol);
-            if (activeObvPlaylist.size() > 0) {
-                mPlayer2.setInitialSong(activeObvPlaylist.get(0));
-            }
-
-            setupSeachBar();
-
-            //Creating MetadataExtractor
-            metadata = new MetadataExtractor();
-            metadata.setMtModel(mtModel);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        // timer
-        // ContextMenu
-        // Create cmSong
-        cmSong = new ContextMenu();
-
-        MenuItem playSong = new MenuItem("Play Song");
-        playSong.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                playSong(song);
-            }
-        });
-
-        deleteSongFromPlist = new MenuItem("Delete song from playlist");
-        deleteSongFromPlist.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                try {
-                    mtModel.deleteFromPlayist(song, activePlaylist);
-                } catch (SQLException ex) {
-                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-
-        MenuItem editSong = new MenuItem("Edit Song");
-        editSong.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    editSong();
-                } catch (MyTunesException ex) {
-                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-
-        deleteSong = new MenuItem("Delete Song From Library");
-        deleteSong.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                try {
-                    mtModel.deleteSong(song);
-                } catch (SQLException ex) {
-                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }
-        });
-
-        Menu addtoPlaylist = new Menu("Add to: ");
-        genratePlaylistMenuItems(addtoPlaylist);
-
-        // Create cmPlaylist
-        ContextMenu cmPlaylist = new ContextMenu();
-
-        MenuItem plChoose = new MenuItem("Choose Playlist");
-        plChoose.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
-                changeMusicList(playlist.getSongs());
-            }
-        });
-
-        MenuItem plDelete = new MenuItem("Delete Playlist");
-        plDelete.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
-                try {
-                    mtModel.deletePlayliste(playlist);
-                } catch (SQLException ex) {
-                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-
-        MenuItem plEdit = new MenuItem("Edit Playlist");
-        plEdit.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
-                editPlaylist(null);
-            }
-        });
-
-        // Add MenuItem to ContextMenus
-        cmSong.getItems().addAll(playSong, editSong, deleteSong, addtoPlaylist);
-        cmPlaylist.getItems().addAll(plChoose, plDelete, plEdit);
-
-        // Right Click
-        // When user right-click on a Song
-        tbvSongs.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-
-            @Override
-            public void handle(ContextMenuEvent event) {
-                cmPlaylist.hide();
-                cmSong.setMinWidth(100);
-                cmSong.show(tbvSongs, event.getScreenX(), event.getScreenY());
-            }
-        });
-
-        // When user right-click on a Playlist
-        tbvPlayllist.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-
-            @Override
-            public void handle(ContextMenuEvent event) {
-                cmSong.hide();
-                cmPlaylist.show(tbvSongs, event.getScreenX(), event.getScreenY());
-            }
-        });
-
-        // Double-click
-        // Double-click on Song to play
-        tbvSongs.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    if (mouseEvent.getClickCount() == 2 && tbvSongs.getSelectionModel().getSelectedItem() != null) {
-                        Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                        int focusIndex = tbvSongs.getSelectionModel().getSelectedIndex();
-                        tbvSongs.getFocusModel().focus(focusIndex);
-                        tbvSongs.requestFocus();
-                        playSong(song);
-                        tbvSongs.getSelectionModel().clearSelection();
-
-                    }
-                }
-            }
-        });
-
-        // Double-click on Playlist to set Active
-        tbvPlayllist.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    if (mouseEvent.getClickCount() == 2) {
-                        Playlist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
-                        activePlaylist = playlist;
-                        changeMusicList(playlist.getSongs());
-                        if (!onPlaylist) {
-                            onPlaylist = true;
-                            switchMenuItems();
-
-                        }
-
-                    }
-                }
-            }
-        });
-
-        // Double-click on Music Library to see all songs
-        lblLibrary.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    if (mouseEvent.getClickCount() == 2) {
-                        changeMusicList(mtModel.getAllSong());
-                        if (onPlaylist) {
-                            onPlaylist = false;
-                            switchMenuItems();
-
-                        }
-                    }
-                }
-            }
-        });
-
-        lblYoutube.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    if (mouseEvent.getClickCount() == 2) {
-                        try {
-                            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/YouTubePlayer.fxml"));
-                            
-                            Parent root = loader.load();
-                            Stage stage = new Stage();
-                            stage.setTitle("Create Playlist");
-                            stage.setScene(new Scene(root));
-                            stage.show();
-                            
-                            
-                        } catch (IOException ex) {
-                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                }
-            }
-        });
-
     }
 
     @FXML
-    private void volSlider(MouseEvent event) {
+    private void volSlider(MouseEvent event)
+    {
         mPlayer2.ChangeVolume();
     }
 
     @FXML
-    private void newPlaylistBtn(ActionEvent event) {
-        try {
+    private void newPlaylistBtn(ActionEvent event)
+    {
+        try
+        {
 
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/AddPlaylist.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/Music/AddPlaylist.fxml"));
 
             Parent root = loader.load();
             Stage stage = new Stage();
@@ -414,65 +485,83 @@ public class MyTunesController implements Initializable {
             AddPlaylistController addCon = loader.getController();
             addCon.setMtModel(mtModel);
 
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
 
     @FXML
-    private void playSongBtn(MouseEvent event) {
+    private void playSongBtn(MouseEvent event)
+    {
         mPlayer2.playPauseSwitch();
     }
 
     @FXML
-    private void NextSongBtn(MouseEvent event) {
+    private void NextSongBtn(MouseEvent event)
+    {
         mPlayer2.playNextSong();
     }
 
     @FXML
-    private void prevSongBtn(MouseEvent event) {
+    private void prevSongBtn(MouseEvent event)
+    {
         mPlayer2.playPreviousSong();
     }
 
     @FXML
-    private void menuAddSong(ActionEvent event) throws SQLException {
+    private void menuAddSong(ActionEvent event) throws SQLException
+    {
 
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(new ExtensionFilter("mp3 files", "*.mp3"));
         fc.setInitialDirectory(new File("src"));
         File addedFile = fc.showOpenDialog(null);
-        try {
+        try
+        {
 
             metadata.createSongFromMetadata(addedFile);
 
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e)
+        {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
-        } catch (SAXException e) {
+        } catch (SAXException e)
+        {
             e.printStackTrace();
-        } catch (TikaException e) {
+        } catch (TikaException e)
+        {
             e.printStackTrace();
         }
     }
 
     @FXML
-    private void menuAddAlbum(ActionEvent event) throws SQLException {
+    private void menuAddAlbum(ActionEvent event) throws SQLException
+    {
         DirectoryChooser dc = new DirectoryChooser();
         File[] files = dc.showDialog(null).listFiles();
-        for (File addedFile : files) {
-            if (addedFile.getAbsolutePath().contains(".mp3")) {
-                try {
+        for (File addedFile : files)
+        {
+            if (addedFile.getAbsolutePath().contains(".mp3"))
+            {
+                try
+                {
 
                     metadata.createSongFromMetadata(addedFile);
 
-                } catch (FileNotFoundException e) {
+                } catch (FileNotFoundException e)
+                {
                     e.printStackTrace();
-                } catch (IOException e) {
+                } catch (IOException e)
+                {
                     e.printStackTrace();
-                } catch (SAXException e) {
+                } catch (SAXException e)
+                {
                     e.printStackTrace();
-                } catch (TikaException e) {
+                } catch (TikaException e)
+                {
                     e.printStackTrace();
                 }
             }
@@ -480,29 +569,35 @@ public class MyTunesController implements Initializable {
     }
 
     @FXML
-    private void jumpTo(MouseEvent event) {
+    private void jumpTo(MouseEvent event)
+    {
         mPlayer2.jumpinSong();
     }
 
     @FXML
-    private void btnShuffle(MouseEvent event) {
+    private void btnShuffle(MouseEvent event)
+    {
         mPlayer2.shuffleSongs();
     }
 
     @FXML
-    private void btnRepeat(MouseEvent event) {
+    private void btnRepeat(MouseEvent event)
+    {
         mPlayer2.RepeatSongs();
     }
 
-    private void playSong(Song song) {
+    private void playSong(Song song)
+    {
         mPlayer2.playSong(song);
     }
 
-    private void editPlaylist(ActionEvent event) {
+    private void editPlaylist(ActionEvent event)
+    {
 
-        try {
+        try
+        {
 
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(("mytunes/GUI/View/EditPlaylist.fxml")));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(("mytunes/GUI/View/Music/EditPlaylist.fxml")));
 
             Parent root = loader.load();
             Stage stage = new Stage();
@@ -514,14 +609,17 @@ public class MyTunesController implements Initializable {
             editCon.setMtModel(mtModel);
             editCon.setPlaylist(tbvPlayllist.getSelectionModel().getSelectedItem());
 
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
 
-    private void editSong() throws MyTunesException {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/EditSongInfo.fxml"));
+    private void editSong() throws MyTunesException
+    {
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mytunes/GUI/View/Music/EditSongInfo.fxml"));
 
             EditSongInfoController editCon = loader.getController();
             editCon.setMtModel(mtModel);
@@ -531,39 +629,49 @@ public class MyTunesController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Edit song info");
             stage.setScene(new Scene(root));
+
             stage.show();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             throw new MyTunesException("Song info could not be changed");
         }
     }
 
-    private void changeMusicList(ObservableList list) {
+    private void changeMusicList(ObservableList list)
+    {
         tbvSongs.setItems(list);
         mPlayer2.changeMusicList(list);
-        // Needs to setup at every list change for the filterlist, predicator and sortedlist to respond to input
+        // Needs to setup at every list change for the filterlist, predicator and sortedlist to respond to input from "seachfield"
         setupSeachBar();
 
     }
 
-    private void setupSeachBar() {
+    private void setupSeachBar()
+    {
         searchList = new FilteredList(mPlayer2.getActivelistOfSongs(), p -> true);
         txtSearch.textProperty().addListener((observable, oldValue, newValue)
-                -> {
+                ->
+        {
             searchList.setPredicate(song
-                    -> {
+                    ->
+            {
                 // If filter text is empty, display all Songs
-                if (newValue == null || newValue.isEmpty()) {
+                if (newValue == null || newValue.isEmpty())
+                {
                     return true;
                 }
 
                 // Compare Title, Artist and Genre of every Song with filter text.
                 String lowerCaseFilter = newValue.toLowerCase();
 
-                if (song.getTitle().toLowerCase().contains(lowerCaseFilter)) {
+                if (song.getTitle().toLowerCase().contains(lowerCaseFilter))
+                {
                     return true; // Filter matches Title.
-                } else if (song.getArtist().toLowerCase().contains(lowerCaseFilter)) {
+                } else if (song.getArtist().toLowerCase().contains(lowerCaseFilter))
+                {
                     return true; // Filter matches Artist.
-                } else if (song.getGenre().toLowerCase().contains(lowerCaseFilter)) {
+                } else if (song.getGenre().toLowerCase().contains(lowerCaseFilter))
+                {
                     return true; // Filter matches Genre.
                 }
                 return false; // Does not match.
@@ -574,32 +682,41 @@ public class MyTunesController implements Initializable {
         tbvSongs.setItems(sortedData);//Add sorted (and filtered) data to the table.
     }
 
-    public void switchMenuItems() {
-        if (onPlaylist) {
+    private void switchMenuItems()
+    {
+        if (onPlaylist)
+        {
             cmSong.getItems().remove(deleteSong);
             cmSong.getItems().add(deleteSongFromPlist);
 
-        } else {
+        } else
+        {
             cmSong.getItems().remove(deleteSongFromPlist);
             cmSong.getItems().add(deleteSong);
 
         }
     }
 
-    private void genratePlaylistMenuItems(Menu menuAdd) {
+    private void genratePlaylistMenuItems(Menu menuAdd)
+    {
         menuAdd.getItems().clear();
-        for (Playlist playlist : allPlaylist) {
+        for (Playlist playlist : allPlaylist)
+        {
             String title = playlist.getTitle();
             MenuItem playlistAdd = new MenuItem(title);
 
-            playlistAdd.setOnAction(new EventHandler<ActionEvent>() {
+            playlistAdd.setOnAction(new EventHandler<ActionEvent>()
+            {
 
                 @Override
-                public void handle(ActionEvent event) {
+                public void handle(ActionEvent event)
+                {
                     Song song = tbvSongs.getSelectionModel().getSelectedItem();
-                    try {
+                    try
+                    {
                         mtModel.addSongToPlaylist(song, playlist);
-                    } catch (SQLException ex) {
+                    } catch (SQLException ex)
+                    {
                         Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -607,6 +724,11 @@ public class MyTunesController implements Initializable {
             menuAdd.getItems().add(playlistAdd);
 
         }
+    }
+
+    public void setStage(Stage stage)
+    {
+        myStage = stage;
     }
 
 }

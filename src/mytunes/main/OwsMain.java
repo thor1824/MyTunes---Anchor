@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import mytunes.GUI.Controller.Music.MyTunesController;
 
 /**
  *
@@ -22,12 +23,15 @@ public final class OwsMain extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        
-        Parent root = FXMLLoader.load(getClass().getResource("/mytunes/GUI/View/MyTunes.FXML"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mytunes/GUI/View/Music/MyTunes.FXML"));
+        Parent root = loader.load();
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        MyTunesController mtCon = loader.getController();
+        mtCon.setStage(stage);
         stage.setTitle("MyTunes");
         stage.show();
+        
         
     }
 
