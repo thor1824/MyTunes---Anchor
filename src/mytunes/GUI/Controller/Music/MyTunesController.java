@@ -47,6 +47,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.Media;
 import mytunes.GUI.Model.MediaPlayerWithElements;
 import mytunes.DAL.MetadataExtractor;
 import mytunes.BE.Playlist;
@@ -138,14 +139,14 @@ public class MyTunesController implements Initializable
             mtModel = new MyTunesModel();
 
             allSongs = FXCollections.observableArrayList();
-            allSongs.setAll(mtModel.getAllSong());
+            allSongs = mtModel.getAllSong();
 
             activeObvPlaylist = FXCollections.observableArrayList();
-            activeObvPlaylist.setAll(allSongs);
-            tbvSongs.setItems(activeObvPlaylist);
+            activeObvPlaylist = allSongs;
+            tbvSongs.setItems(allSongs);
 
             allPlaylist = FXCollections.observableArrayList();
-            allPlaylist.setAll(mtModel.getAllPlaylists());
+            allPlaylist = mtModel.getAllPlaylists();
             tbvPlayllist.setItems(allPlaylist);
 
             //Creating MediaPlayerWithElemets
@@ -411,7 +412,9 @@ public class MyTunesController implements Initializable
 
                             Parent root = loader.load();
                             Stage stage = new Stage();
-                            stage.setScene(new Scene(root));
+                            Scene scene = new Scene(root);
+                            scene.getStylesheets().add("Resouces/Layout.css");
+                            stage.setScene(scene);
                             YouTubePlayerController controller = loader.getController();
                             controller.setStage(stage);
                             stage.setTitle("MyTube");

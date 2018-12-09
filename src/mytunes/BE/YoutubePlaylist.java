@@ -5,7 +5,9 @@
  */
 package mytunes.BE;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -21,7 +23,10 @@ public class YoutubePlaylist {
 
     public YoutubePlaylist(String title, int id) {
         this.title = title;
+        titleProperty = new SimpleStringProperty();
+        titleProperty.setValue(title);
         this.id = id;
+        youtubeVideos = FXCollections.observableArrayList();
     }
 
     public String getTitle() {

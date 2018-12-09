@@ -113,5 +113,14 @@ public class MetadataExtractor {
         body = doc.body();
         return body.getElementsByAttributeValue("itemprop", "embedURL").get(0).attr("href");
     } 
+    
+    public String getYoutubeVideoID(String url) throws IOException {
+        String splitat = "v=";
+        String[] splitURL = url.split(splitat);
+        System.out.println(splitURL.length);
+        System.out.println(splitURL[0]);
+        System.out.println(splitURL[1]);
+       return splitURL[1];
+    } 
 
 }

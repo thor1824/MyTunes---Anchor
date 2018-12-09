@@ -7,6 +7,7 @@ package mytunes.GUI.Controller.Youtube;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,11 +76,17 @@ public class YouTubePlayerController implements Initializable
     private Menu addtoMenu;
     @FXML
     private TableView<YoutubeVideo> tbvYoutubeVideos;
+    @FXML
+    private ContextMenu ctmPlaylists;
+    @FXML
+    private ContextMenu ctmVideos;
+
 
     private static final String startEmbeddedURL = "<iframe width=\"900\" height=\"485\" src=\"http://www.youtube.com/embed/";
-    private static final String endEmbeddedURL = "?&autoplay=1&state=enabled&cc_load_policy=1&playlist=mItWfoNnUag\" frameborder=\"0\" allowfullscreen></iframe>";
-    private static final String endPlaylistMiddelEmbeddedURL = "?&autoplay=1&state=enabled&cc_load_policy=1&playlist=";
-    private static final String endPlaylistEndEmbeddedURL = "\" frameborder=\"0\" allowfullscreen></iframe>";
+    private static final String endEmbeddedURL = "?&autoplay=1&state=enabled&cc_load_policy=1\" frameborder=\"0\" allowfullscreen></iframe>";
+    private static final String middelPlaylistEmbeddedURL = "?&autoplay=1&state=enabled&cc_load_policy=1&playlist=";
+    private static final String endPlaylistEmbeddedURL = "\" frameborder=\"0\" allowfullscreen></iframe>";
+    private static final String endNoneAutoplayeEmbeddedURL = "?&state=enabled&cc_load_policy=1\" frameborder=\"0\" allowfullscreen></iframe>";
     private WebEngine webEngine;
     private Stage myStage;
     private YouTubePlayerModel ytModel;
@@ -96,11 +103,7 @@ public class YouTubePlayerController implements Initializable
             + "http://www.youtube.com/embed/4z9TdDCWN7g"
             + "?&autoplay=1&state=enabled&cc_load_policy=1&playlist=mItWfoNnUag"
             + "\" frameborder=\"0\" allowfullscreen></iframe>";
-    @FXML
-    private ContextMenu ctmPlaylists;
-    @FXML
-    private ContextMenu ctmVideos;
-
+    
     /**
      * Initializes the controller class.
      */
@@ -112,17 +115,43 @@ public class YouTubePlayerController implements Initializable
         colArtist.setCellValueFactory(c -> c.getValue().getArtistProperty());
         colDuration.setCellValueFactory(c -> new SimpleObjectProperty(c.getValue().getFormattetDuration()));
         webEngine = webview.getEngine();
-        webEngine.loadContent(Test_Url);
+        
+        activeObvPlaylist = FXCollections.observableArrayList();
+        
+        setupDobbleClick();
+        try
+        {
+            ytModel = new YouTubePlayerModel();
+        } catch (IOException ex)
+        {
+            Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex)
+        {
+            Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        allPlaylist = FXCollections.observableArrayList();
+        allPlaylist = ytModel.getAllPlaylists();
+        tbvPlayllist.setItems(allPlaylist);
+
+        allVideos = FXCollections.observableArrayList();
+        allVideos = ytModel.getAllVideos();
+        activeObvPlaylist.setAll(allVideos);
+        tbvYoutubeVideos.setItems(allVideos);
+        if (!allVideos.isEmpty())
+        {
+           webEngine.loadContent(startEmbeddedURL + allVideos.get(0).getYoutubeID() + endNoneAutoplayeEmbeddedURL);
+           activeVideo= allVideos.get(0);
+        }
         Label location = new Label();
         location.textProperty().bind(webEngine.locationProperty());
-        location.textProperty().addListener((observable, oldValue, newValue) -> {
+        location.textProperty().addListener((observable, oldValue, newValue) ->
+        {
             playVideo(activeVideo);
         });
-        setupDobbleClick();
-        allPlaylist = FXCollections.observableArrayList();
-//        this.allPlaylist.setAll(ytModel.getAllPlaylists());
-        allVideos = FXCollections.observableArrayList();
-//        this.allVideos.setAll(ytModel.getAllSong());
+//        webEngine.loadContent(Test_Url);
+        
+
         deleteFromAllVideos = new MenuItem("Delete from Library");
         this.deleteFromAllVideos.setOnAction(new EventHandler<ActionEvent>()
         {
@@ -131,7 +160,13 @@ public class YouTubePlayerController implements Initializable
             public void handle(ActionEvent event)
             {
                 YoutubeVideo video = tbvYoutubeVideos.getSelectionModel().getSelectedItem();
-                ytModel.deleteYoutubeVideo(video);
+                try
+                {
+                    ytModel.deleteYoutubeVideo(video);
+                } catch (SQLException ex)
+                {
+                    Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
             }
         });
@@ -144,9 +179,16 @@ public class YouTubePlayerController implements Initializable
             public void handle(ActionEvent event)
             {
                 YoutubeVideo video = tbvYoutubeVideos.getSelectionModel().getSelectedItem();
-                ytModel.deleteFromPlaylist(video, activePlaylist);
+                try
+                {
+                    ytModel.deleteFromPlaylist(video, activePlaylist);
+                } catch (SQLException ex)
+                {
+                    Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
+        genratePlaylistMenuItems(addtoMenu);
 
     }
 
@@ -229,7 +271,7 @@ public class YouTubePlayerController implements Initializable
             }
 
             webEngine.loadContent(startEmbeddedURL + playlist.getYoutubeVideos().get(0).getYoutubeID()
-                    + endPlaylistMiddelEmbeddedURL + youtubeIDPlaylist + endPlaylistEndEmbeddedURL);
+                    + middelPlaylistEmbeddedURL + youtubeIDPlaylist + endPlaylistEmbeddedURL);
         } else if (playlist.getYoutubeVideos().size() > 0)
         {
             playVideo(playlist.getYoutubeVideos().get(0));
@@ -237,7 +279,7 @@ public class YouTubePlayerController implements Initializable
     }
 
     @FXML
-    private void deleteYPlaylist(ActionEvent event)
+    private void deleteYPlaylist(ActionEvent event) throws SQLException
     {
         ytModel.deletePlayliste(tbvPlayllist.getSelectionModel().getSelectedItem());
     }
@@ -270,7 +312,7 @@ public class YouTubePlayerController implements Initializable
     }
 
     @FXML
-    private void deleteYVideo(ActionEvent event)
+    private void deleteYVideo(ActionEvent event) throws SQLException
     {
         ytModel.deleteYoutubeVideo(tbvYoutubeVideos.getSelectionModel().getSelectedItem());
     }
@@ -321,6 +363,7 @@ public class YouTubePlayerController implements Initializable
     private void playVideo(YoutubeVideo video)
     {
         activeVideo = video;
+        System.out.println(video.getYoutubeID());
         webEngine.loadContent(startEmbeddedURL + video.getYoutubeID() + endEmbeddedURL);
     }
 
@@ -369,8 +412,10 @@ public class YouTubePlayerController implements Initializable
                 {
                     if (mouseEvent.getClickCount() == 2)
                     {
-
-                        if (!onPlaylist)
+                        System.out.println("dobbleclick");
+                        System.out.println(allVideos);
+                        tbvYoutubeVideos.setItems(allVideos);
+                        if (onPlaylist)
                         {
                             onPlaylist = false;
                             switchMenuItems();
@@ -462,7 +507,13 @@ public class YouTubePlayerController implements Initializable
                 public void handle(ActionEvent event)
                 {
                     YoutubeVideo video = tbvYoutubeVideos.getSelectionModel().getSelectedItem();
-                    ytModel.addSongToPlaylist(video, playlist);
+                    try
+                    {
+                        ytModel.addYoutubeVideoToYoutubePlaylist(video, playlist);
+                    } catch (SQLException ex)
+                    {
+                        Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
                 }
             });
@@ -475,7 +526,9 @@ public class YouTubePlayerController implements Initializable
     {
         YoutubePlaylist playlist = tbvPlayllist.getSelectionModel().getSelectedItem();
         activePlaylist = playlist;
-        activeObvPlaylist.setAll(playlist.getYoutubeVideos());
+        System.out.println(playlist.getYoutubeVideos());
+        activeObvPlaylist = playlist.getYoutubeVideos();
+        tbvYoutubeVideos.setItems(activeObvPlaylist);
 
         if (!onPlaylist)
         {

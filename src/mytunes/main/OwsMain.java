@@ -8,11 +8,13 @@ package mytunes.main;
 
 
 import java.io.IOException;
+import java.sql.SQLException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import mytunes.DAL.DB.YoutubeDAO;
 import mytunes.GUI.Controller.Music.MyTunesController;
 
 /**
@@ -38,9 +40,9 @@ public final class OwsMain extends Application {
     /**
      * @param args the command line argument
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException {
         launch(args);
-
+        
     }
 
 }

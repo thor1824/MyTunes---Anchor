@@ -52,7 +52,7 @@ public class EditYoutubeInfoController implements Initializable
     }
 
     @FXML
-    private void btnOkEdit(ActionEvent event)
+    private void btnOkEdit(ActionEvent event) throws SQLException
     {
         yVideo.setTitle(txtSongEditTitle.getText());
         yVideo.setArtist(txtSongEditArtist.getText());

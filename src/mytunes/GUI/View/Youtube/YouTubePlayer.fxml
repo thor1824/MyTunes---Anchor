@@ -64,7 +64,7 @@
                               <Label fx:id="lblVPlayer" layoutX="33.0" layoutY="58.0" text="- Video Player" />
                            </children>
                         </AnchorPane>
-                        <TableView fx:id="tbvPlayllist" maxHeight="2000.0" maxWidth="2000.0" prefHeight="784.0" prefWidth="963.0" style="-fx-background-color: #404040; -fx-border-color: black;" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="tbvPlayllist" maxHeight="2000.0" maxWidth="2000.0" prefHeight="784.0" prefWidth="963.0" style="-fx-background-color: #404040; -fx-border-color: black;" stylesheets="@../../../../Resouces/Layout.css" VBox.vgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="tbvPlaylistName" prefWidth="198.0" resizable="false" text="Playlists" />
                            </columns>
@@ -146,7 +146,7 @@
                                     <Insets />
                                  </VBox.margin>
                               </WebView>
-                              <TableView fx:id="tbvYoutubeVideos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="337.0" prefWidth="999.0" VBox.vgrow="ALWAYS">
+                              <TableView fx:id="tbvYoutubeVideos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="337.0" prefWidth="999.0" stylesheets="@../../../../Resouces/Layout.css" VBox.vgrow="ALWAYS">
                                  <columns>
                                     <TableColumn fx:id="colTitle" prefWidth="427.0" text="Title" />
                                     <TableColumn fx:id="colArtist" minWidth="0.0" prefWidth="293.0" text="Artist" />

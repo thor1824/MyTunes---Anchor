@@ -77,51 +77,47 @@ public class MyTunesManager {
         playlistDAO.deleteFromPlayist(song, playlist);
     }
 
-    public void addYoutubeVideoToYoutubePlaylist(YoutubeVideo yVideo, YoutubePlaylist yplaylist) {
+    public void addYoutubeVideoToYoutubePlaylist(YoutubeVideo yVideo, YoutubePlaylist yplaylist) throws SQLException {
         youtubePlaylistDAO.addYoutubeVideoToYoutubePlaylist(yVideo, yplaylist);
     }
 
-    public YoutubePlaylist createYoutubePlaylist(String name) {
+    public YoutubePlaylist createYoutubePlaylist(String name) throws SQLException {
         return youtubePlaylistDAO.createYoutubePlaylist(name);
     }
 
-    public void updateYouTube(YoutubeVideo yVideo) {
-        youtubeDAO.addYoutubeVideoToYoutubePlaylist(yVideo);
+    public void updateYouTubeVideo(YoutubeVideo yVideo) throws SQLException {
+        youtubeDAO.updateYouTubeVideo(yVideo);
     }
 
-    public void updateYoutubePlaylist(YoutubePlaylist yPlaylist) {
+    public void updateYoutubePlaylist(YoutubePlaylist yPlaylist) throws SQLException {
         youtubePlaylistDAO.updateYoutubePlaylist(yPlaylist);
     }
 
-    public void deleteYoutubeVideo(YoutubeVideo yVideo) {
+    public void deleteYoutubeVideo(YoutubeVideo yVideo) throws SQLException {
         youtubeDAO.deleteYoutubeVideo(yVideo);
     }
 
-    public void deleteToutubePlaylist(YoutubePlaylist yPlaylist) {
-        youtubePlaylistDAO.deleteToutubePlaylist(yPlaylist);
+    public void deleteToutubePlaylist(YoutubePlaylist yPlaylist) throws SQLException {
+        youtubePlaylistDAO.deleteYoutubePlaylist(yPlaylist);
     }
 
-    public YoutubeVideo createYoutubeVideo(String url)
+    public YoutubeVideo createYoutubeVideo(String url) throws IOException, SQLException
     {
         return youtubeDAO.createYoutubeVideo(url);
     }
 
-    public void addSongToPlaylist(YoutubeVideo video, YoutubePlaylist playlist)
-    {
-        youtubePlaylistDAO.addSongToPlaylist(video, playlist);
-    }
 
-    public void deleteFromPlaylist(YoutubeVideo video, YoutubePlaylist activePlaylist)
+    public void deleteFromPlaylist(YoutubeVideo video, YoutubePlaylist activePlaylist) throws SQLException
     {
         youtubePlaylistDAO.deleteFromPlaylist( video, activePlaylist);
     }
 
-    public ObservableList<YoutubeVideo> getAllYoutubeVideos()
+    public List<YoutubeVideo> getAllYoutubeVideos() throws SQLException
     {
         return youtubeDAO.getAllYoutubeVideos();
     }
 
-    public ObservableList<YoutubePlaylist> getAllYoutubePlaylists()
+    public List<YoutubePlaylist> getAllYoutubePlaylists() throws SQLException
     {
         return youtubePlaylistDAO.getAllYoutubePlaylists();
     }

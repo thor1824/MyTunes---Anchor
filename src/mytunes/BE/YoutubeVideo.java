@@ -5,7 +5,9 @@
  */
 package mytunes.BE;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.css.SimpleStyleableStringProperty;
 
 /**
  *
@@ -16,21 +18,36 @@ public class YoutubeVideo {
     private String artist;
     private StringProperty titleProperty;
     private StringProperty artistProperty;
+    private int positionID = 0;
     private final String youtubeID;
     private final int id;
-    private final double duration;
+    private final String duration;
     
 
-    public YoutubeVideo(String title, String artist, String youtubeID, int id, double duration) {
+    public YoutubeVideo(String title, String artist, String youtubeID, int id, String duration) {
         this.title = title;
+        this.titleProperty =  new SimpleStringProperty();
         this.titleProperty.setValue(title);
         this.artist = artist;
+        this.artistProperty = new SimpleStringProperty();
         this.artistProperty.setValue(artist);
         this.youtubeID = youtubeID;
         this.id = id;
         this.duration = duration;
     }
 
+    public int getPositionID()
+    {
+        return positionID;
+    }
+
+    public void setPositionID(int positionID)
+    {
+        this.positionID = positionID;
+    }
+    
+    
+    
     public StringProperty getTitleProperty() {
         return titleProperty;
     }
@@ -45,7 +62,7 @@ public class YoutubeVideo {
 
     public void setTitle(String title) {
         this.title = title;
-        artistProperty.setValue(title);
+        titleProperty.setValue(title);
     }
 
     public String getArtist() {
@@ -65,7 +82,7 @@ public class YoutubeVideo {
         return id;
     }
 
-    public double getDuration() {
+    public String getDuration() {
         return duration;
     }
 
