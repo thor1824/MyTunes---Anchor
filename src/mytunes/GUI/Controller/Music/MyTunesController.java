@@ -137,13 +137,13 @@ public class MyTunesController implements Initializable
         try
         {
             mtModel = new MyTunesModel();
-
+            
+            activeObvPlaylist = FXCollections.observableArrayList();
             allSongs = FXCollections.observableArrayList();
             allSongs = mtModel.getAllSong();
-
-            activeObvPlaylist = FXCollections.observableArrayList();
-            activeObvPlaylist = allSongs;
+            
             tbvSongs.setItems(allSongs);
+            activeObvPlaylist.setAll(allSongs);
 
             allPlaylist = FXCollections.observableArrayList();
             allPlaylist = mtModel.getAllPlaylists();
@@ -159,7 +159,7 @@ public class MyTunesController implements Initializable
             mPlayer2.setTimeLabel(lbltime);
             mPlayer2.setSongPlayingLabel(lblPlaying);
             mPlayer2.setVolumeSlider(sldVol);
-            if (activeObvPlaylist.size() > 0)
+            if (!activeObvPlaylist.isEmpty())
             {
                 mPlayer2.setInitialSong(activeObvPlaylist.get(0));
             }
@@ -385,7 +385,8 @@ public class MyTunesController implements Initializable
                 {
                     if (mouseEvent.getClickCount() == 2)
                     {
-                        changeMusicList(mtModel.getAllSong());
+                        
+                        tbvSongs.setItems(allSongs);
                         if (onPlaylist)
                         {
                             onPlaylist = false;
@@ -642,8 +643,10 @@ public class MyTunesController implements Initializable
 
     private void changeMusicList(ObservableList list)
     {
-        tbvSongs.setItems(list);
-        mPlayer2.changeMusicList(list);
+        activeObvPlaylist = list;
+        System.out.println(activeObvPlaylist);
+        tbvSongs.setItems(activeObvPlaylist);
+        mPlayer2.changeMusicList(activeObvPlaylist);
         // Needs to setup at every list change for the filterlist, predicator and sortedlist to respond to input from "seachfield"
         setupSeachBar();
 

@@ -147,7 +147,8 @@ public class YouTubePlayerController implements Initializable
         location.textProperty().bind(webEngine.locationProperty());
         location.textProperty().addListener((observable, oldValue, newValue) ->
         {
-            playVideo(activeVideo);
+           webEngine.loadContent(startEmbeddedURL + activeVideo.getYoutubeID() + endNoneAutoplayeEmbeddedURL);
+           
         });
 //        webEngine.loadContent(Test_Url);
         
