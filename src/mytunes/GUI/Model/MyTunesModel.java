@@ -18,33 +18,40 @@ import mytunes.BLL.MyTunesManager;
  *
  * @author Thorbjørn Schultz Damkjær
  */
-public class MyTunesModel {
+public class MyTunesModel
+{
 
     private ObservableList<Song> songs;
     private ObservableList<Playlist> playlists;
     private MyTunesManager logiclayer;
 
-    public MyTunesModel() throws SQLException, IOException {
+    public MyTunesModel() throws SQLException, IOException
+    {
         logiclayer = new MyTunesManager();
 
         songs = FXCollections.observableArrayList();
         songs.setAll(logiclayer.getAllSong());
-        songs.addListener((Observable observable) -> {
+        songs.addListener((Observable observable) ->
+        {
         });
 
         playlists = FXCollections.observableArrayList();
         playlists.setAll(logiclayer.getAllPlaylits());
-        playlists.addListener((Observable observable) -> {
+        playlists.addListener((Observable observable) ->
+        {
         });
     }
 
-    public ObservableList<Song> getAllSong() {
+    public ObservableList<Song> getAllSong()
+    {
         return songs;
     }
 
-    public ObservableList<Playlist> getAllPlaylists() {
+    public ObservableList<Playlist> getAllPlaylists()
+    {
         return playlists;
     }
+
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException
     {
         playlist.deleteFromPlaylist(playlist.getSongs().indexOf(song));
@@ -52,23 +59,27 @@ public class MyTunesModel {
 
     }
 
-    public void addSongToPlaylist(Song song, Playlist playlist) throws SQLException {
+    public void addSongToPlaylist(Song song, Playlist playlist) throws SQLException
+    {
         logiclayer.addSongToPlaylist(song, playlist);
         int index = playlists.indexOf(playlist);
         playlists.get(index).addToPlaylist(song);
     }
 
-    public void createPlaylist(String name) throws SQLException {
+    public void createPlaylist(String name) throws SQLException
+    {
         Playlist playlist = logiclayer.createPlaylist(name);
         playlists.add(playlist);
     }
 
-    public boolean createSong(String filePath, String title, String artist, double duration, String genre) throws SQLException {
+    public boolean createSong(String filePath, String title, String artist, double duration, String genre) throws SQLException
+    {
         boolean nonIdentical = true;
-        for (Song song : songs) {
-            System.out.println(title);
-            System.out.println(song.getTitle());
-            if (song.getTitle().equals(title)) {
+        for (Song song : songs)
+        {
+
+            if (song.getTitle().equals(title))
+            {
 
                 nonIdentical = false;
             }
@@ -78,11 +89,14 @@ public class MyTunesModel {
         return nonIdentical;
     }
 
-    public void updateSong(Song song) throws SQLException {
+    public void updateSong(Song song) throws SQLException
+    {
         logiclayer.updateSong(song);
 
-        for (Song otherSong : songs) {
-            if (song.getId() == otherSong.getId()) {
+        for (Song otherSong : songs)
+        {
+            if (song.getId() == otherSong.getId())
+            {
                 otherSong.setArtist(song.getArtist());
                 otherSong.setFilePath(formatePathTosrc(song.getFilePath()));
                 otherSong.setTitle(song.getTitle());
@@ -91,9 +105,11 @@ public class MyTunesModel {
         }
     }
 
-    private String formatePathTosrc(String path) {
+    public String formatePathTosrc(String path)
+    {
         path.replace("\\", "/").replaceAll(" ", "%20");
-        if (path.contains("src\\Music")) {
+        if (path.contains("src\\Music"))
+        {
             String[] urlSplit = path.split("src");
             String newURL = "src" + urlSplit[1];
             return newURL;
@@ -101,10 +117,13 @@ public class MyTunesModel {
         return path;
     }
 
-    public boolean updatePlaylist(Playlist playlist) throws SQLException {
+    public boolean updatePlaylist(Playlist playlist) throws SQLException
+    {
         logiclayer.updatePlaylist(playlist);
-        for (Playlist otherPlaylist : playlists) {
-            if (playlist.getId() == otherPlaylist.getId()) {
+        for (Playlist otherPlaylist : playlists)
+        {
+            if (playlist.getId() == otherPlaylist.getId())
+            {
                 otherPlaylist.setTitle(playlist.getTitle());
                 return true;
             }
@@ -112,15 +131,18 @@ public class MyTunesModel {
         return false;
     }
 
-    public void deleteSong(Song song) throws SQLException {
+    public void deleteSong(Song song) throws SQLException
+    {
         logiclayer.deleteSong(song);
         songs.remove(song);
-        for (Playlist playlist : playlists) {
+        for (Playlist playlist : playlists)
+        {
             playlist.RemoveSongFromPlaylist(song);
         }
     }
 
-    public void deletePlayliste(Playlist playlist) throws SQLException {
+    public void deletePlayliste(Playlist playlist) throws SQLException
+    {
         logiclayer.deletePlayliste(playlist);
         playlists.remove(playlist);
     }

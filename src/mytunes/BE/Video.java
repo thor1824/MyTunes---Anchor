@@ -9,6 +9,6 @@ package mytunes.BE;
  *
  * @author Thorbjørn Schultz Damkjær
  */
-public class uTubePlayer {
+public class Video {
     
 }

@@ -8,11 +8,14 @@ package mytunes.main;
 
 
 import java.io.IOException;
+import java.sql.SQLException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import mytunes.DAL.DB.YoutubeDAO;
+import mytunes.GUI.Controller.Music.MyTunesController;
 
 /**
  *
@@ -22,19 +25,24 @@ public final class OwsMain extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/mytunes/GUI/View/MyTunes.FXML"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mytunes/GUI/View/Music/MyTunes.FXML"));
+        Parent root = loader.load();
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        MyTunesController mtCon = loader.getController();
+        mtCon.setStage(stage);
         stage.setTitle("MyTunes");
         stage.show();
+        
+        
     }
 
     /**
      * @param args the command line argument
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException {
         launch(args);
-
+        
     }
 
 }

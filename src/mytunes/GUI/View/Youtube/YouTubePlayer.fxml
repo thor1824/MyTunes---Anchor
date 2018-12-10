@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
+
+<AnchorPane fx:id="mainPane" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.GUI.Controller.Youtube.YouTubePlayerController">
+   <children>
+      <VBox prefHeight="863.0" prefWidth="1115.0" stylesheets="@../../../../Resouces/Layout.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox maxHeight="25.0" minHeight="25.0" prefHeight="0.0" prefWidth="1115.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <MenuBar maxHeight="25.0" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="695.0" style="-fx-border-color: black; -fx-background-color: #1a1a1a;" HBox.hgrow="ALWAYS">
+                    <menus>
+                      <Menu mnemonicParsing="false" style="fx-text-fill: palegreen;" text="File">
+                        <items>
+                          <MenuItem mnemonicParsing="false" onAction="#menuAddYVideo" text="Add Youtube Video" />
+                        </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="Edit">
+                        <items>
+                          <MenuItem mnemonicParsing="false" onAction="#newYPlaylist" text="Add Playlist" />
+                        </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="Help">
+                        <items>
+                          <MenuItem mnemonicParsing="false" text="About" />
+                        </items>
+                      </Menu>
+                    </menus>
+                  </MenuBar>
+               </children>
+            </HBox>
+            <HBox prefHeight="600.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox minWidth="200.0" prefHeight="600.0" prefWidth="200.0" HBox.hgrow="NEVER">
+                     <children>
+                        <AnchorPane maxHeight="115.0" maxWidth="200.0" minHeight="115.0" minWidth="200.0" prefHeight="195.0" prefWidth="200.0" style="-fx-background-color: #1a1a1a; -fx-border-color: black;" VBox.vgrow="NEVER">
+                           <children>
+                              <Label fx:id="lblLibrary" layoutX="33.0" layoutY="5.0" prefHeight="17.0" prefWidth="161.0" text="- Music Library" textFill="#00b300">
+                                 <font>
+                                    <Font name="Monospaced Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblYoutube" layoutX="33.0" layoutY="32.0" prefHeight="17.0" prefWidth="161.0" text="- YouTube Player" textFill="#00b300">
+                                 <font>
+                                    <Font name="Monospaced Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblVPlayer" layoutX="33.0" layoutY="58.0" text="- Video Player" />
+                           </children>
+                        </AnchorPane>
+                        <TableView fx:id="tbvPlayllist" maxHeight="2000.0" maxWidth="2000.0" prefHeight="784.0" prefWidth="963.0" style="-fx-background-color: #404040; -fx-border-color: black;" stylesheets="@../../../../Resouces/Layout.css" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="tbvPlaylistName" prefWidth="198.0" resizable="false" text="Playlists" />
+                           </columns>
+                           <contextMenu>
+                              <ContextMenu fx:id="ctmPlaylists">
+                                <items>
+                                    <MenuItem mnemonicParsing="false" onAction="#chooseYPlaylist" text="Choose Playlist" />
+                                  <MenuItem mnemonicParsing="false" onAction="#playWholePlaylist" text="Play whole playlist" />
+                                    <MenuItem mnemonicParsing="false" onAction="#deleteYPlaylist" text="Delete playlist" />
+                                    <MenuItem mnemonicParsing="false" onAction="#editYPInfo" text="Edit Info" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                        <MediaView fx:id="mview" />
+                        <AnchorPane minHeight="188.0" minWidth="174.0" prefHeight="188.0" prefWidth="200.0" style="-fx-background-color: #666666;" VBox.vgrow="NEVER">
+                           <children>
+                              <VBox layoutY="-21.0" prefHeight="212.0" prefWidth="200.0" style="-fx-background-color: #1a1a1a; -fx-border-color: black;">
+                                 <children>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <ImageView fitHeight="139.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../../../Resouces/icons/icons8-microsoft-zune-32.png" />
+                                             </image>
+                                             <HBox.margin>
+                                                <Insets left="38.0" right="38.0" />
+                                             </HBox.margin>
+                                          </ImageView>
+                                       </children>
+                                    </HBox>
+                                    <Label fx:id="lblPlaying" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="200.0" textAlignment="CENTER" textFill="PALEGREEN">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </Label>
+                                    <HBox prefHeight="46.0" prefWidth="200.0">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <children>
+                                          <ImageView fitHeight="42.0" fitWidth="42.0" onMouseClicked="#prevSongBtn" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../../../Resouces/icons/icons8-fast-forward-30.png" />
+                                             </image>
+                                             <HBox.margin>
+                                                <Insets left="19.0" />
+                                             </HBox.margin>
+                                          </ImageView>
+                                          <ImageView fitHeight="42.0" fitWidth="42.0" onMouseClicked="#NextSongBtn" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../../../Resouces/icons/icons8-fast-forward-100.png" />
+                                             </image>
+                                             <HBox.margin>
+                                                <Insets left="76.0" right="19.0" />
+                                             </HBox.margin>
+                                          </ImageView>
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="27.0" prefWidth="200.0" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #1a1a1a;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="836.0" prefWidth="915.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <WebView fx:id="webview" maxHeight="504.0" maxWidth="915.0" minHeight="504.0" minWidth="915.0" prefHeight="504.0" prefWidth="915.0" VBox.vgrow="NEVER">
+                                 <effect>
+                                    <ColorAdjust />
+                                 </effect>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </WebView>
+                              <TableView fx:id="tbvYoutubeVideos" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="337.0" prefWidth="999.0" stylesheets="@../../../../Resouces/Layout.css" VBox.vgrow="ALWAYS">
+                                 <columns>
+                                    <TableColumn fx:id="colTitle" prefWidth="427.0" text="Title" />
+                                    <TableColumn fx:id="colArtist" minWidth="0.0" prefWidth="293.0" text="Artist" />
+                                    <TableColumn fx:id="colDuration" prefWidth="194.0" text="Duration" />
+                                 </columns>
+                                 <contextMenu>
+                                    <ContextMenu fx:id="ctmVideos">
+                                      <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#playYVideo" text="Play Video" />
+                                          <MenuItem mnemonicParsing="false" onAction="#deleteYVideo" text="Delete Video" />
+                                          <MenuItem mnemonicParsing="false" onAction="#EditYVInfo" text="Edit Info" />
+                                          <Menu fx:id="addtoMenu" mnemonicParsing="false" text="Add to:">
+                                            <items>
+                                              <MenuItem mnemonicParsing="false" text="Action 1" />
+                                            </items>
+                                          </Menu>
+                                      </items>
+                                    </ContextMenu>
+                                 </contextMenu>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

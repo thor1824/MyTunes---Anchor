@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -22,7 +23,7 @@ import mytunes.DAL.ServerConnect;
  * @author Christian
  */
 public class SongDAO {
-   
+
     //makes a server connection "sc" that can be accessed throughout the class
     ServerConnect sc;
 
@@ -31,15 +32,15 @@ public class SongDAO {
     }
     /*
     *receives song data and adds them to the song table on the sever
-    *@retuns a song 
+    *@retuns a song
     */
     public Song createSong(String filePath, String title, String artist, double duration, String genre) throws SQLServerException, SQLException {
-        String sql = "INSERT INTO Song (Title, Artist, Genre, Duration, Path) VALUES (?, ?, ?, ?, ?);"; 
+        String sql = "INSERT INTO [MyTunesAnchor].[dbo].[Song] (Title, Artist, Genre, Duration, Path) VALUES (?, ?, ?, ?, ?);"; //måske album og nr på album
 
         Connection con = sc.getConnection();
 
         PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        //makes it so that only the given parameter can be used 
+        //makes it so that only the given parameter can be used
         st.setString(1, title);
         st.setString(5, filePath);
         st.setString(2, artist);
@@ -47,7 +48,7 @@ public class SongDAO {
         st.setString(3, genre);
 
         int rowsAffected = st.executeUpdate();
-        //get an generated key from sever and asains it as song id 
+        //get an generated key from sever and asains it as song id
         ResultSet rs = st.getGeneratedKeys();
 
         int id = 0;
@@ -63,7 +64,7 @@ public class SongDAO {
     }
     //updates a song witht new Title, Artist, Path.
     public boolean updateSong(Song song) throws SQLException {
-        String sql = "UPDATE Song SET Title = ?, Artist = ?, Path = ? WHERE SongID =" + song.getId();
+        String sql = "UPDATE [MyTunesAnchor].[dbo].[Song] SET Title = ?, Artist = ?, Path = ? WHERE SongID =" + song.getId();
 
         Connection con = sc.getConnection();
 
@@ -80,23 +81,23 @@ public class SongDAO {
         return false;
 //        return oldSong;
     }
-    /* 
+    /*
     *deletes a song both on the playlist and from the list of songs
-    *@pahrameter song 
+    *@pahrameter song
     */
     public void deleteSong(Song song) throws SQLServerException, SQLException {
         Connection con = sc.getConnection();
 
         Statement statement = con.createStatement();
         statement.execute(
-                "DELETE FROM Song_Playlist WHERE SongID = "
+                "DELETE FROM [MyTunesAnchor].[dbo].[Song_Playlist] WHERE SongID = "
                 + song.getId()
         );
         statement.execute(
-                "DELETE FROM Song WHERE SongID = "
+                "DELETE FROM [MyTunesAnchor].[dbo].[Song] WHERE SongID = "
                 + song.getId()
         );
-        
+
     }
     /*
     *gets all the songs in the sever table Song
