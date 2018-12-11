@@ -106,7 +106,9 @@ public class MediaPlayerWithElements {
         setSongElements(activeSong);
 
     }
-
+    /*
+    * switching the picture on the shuffle button
+    */
     public void shuffleSongs() {
         switch (shuffleState) {
             case SHUFFLE_OFF:
@@ -127,7 +129,9 @@ public class MediaPlayerWithElements {
                 break;
         }
     }
-
+    /*
+    * checks shuffle state and shuffle songs if on
+    */
     private void checkShuffleState() {
         switch (shuffleState) {
             case SHUFFLE_OFF:
@@ -151,7 +155,10 @@ public class MediaPlayerWithElements {
                 break;
         }
     }
-
+    
+    /*
+    * plays the songe next with one higer index
+    */
     public void playNextSong() {
         int nextIndex = activeObvPlaylist.indexOf(activeSong) + 1;
         if ((activeObvPlaylist.size() - 1) < nextIndex) {
@@ -161,6 +168,9 @@ public class MediaPlayerWithElements {
         playSong(activeSong);
     }
 
+    /*
+    * plays the songe next with one lower index
+    */
     public void playPreviousSong() {
         int previousIndex = activeObvPlaylist.indexOf(activeSong) - 1;
         if (previousIndex < 0) {
@@ -169,7 +179,9 @@ public class MediaPlayerWithElements {
         activeSong = activeObvPlaylist.get(previousIndex);
         playSong(activeSong);
     }
-
+    /*
+    * plays the current media and changes the displayed image on play button
+    */
     private void mediaPlay() {
         Image pause = new Image("Resouces/icons/icons8-pause-30.png");
         btnPlay.setImage(pause);
@@ -177,7 +189,9 @@ public class MediaPlayerWithElements {
         playState = PLAYING;
 
     }
-
+    /*
+    * pauses the current media and changes the displayed image on play button 
+    */
     public void mediaPause() {
         Image play = new Image("Resouces/icons/icons8-play-30.png");
         btnPlay.setImage(play);
@@ -185,7 +199,10 @@ public class MediaPlayerWithElements {
         playState = PAUSED;
 
     }
-
+    /*
+    * plays the given song
+    *@param Song 
+    */
     public void playSong(Song song) {
         mPlayer.stop();
         activeSong = song;
@@ -193,9 +210,13 @@ public class MediaPlayerWithElements {
         mediaPlay();
 
     }
-
+    
+    /*
+    * gets the song from parth and sets it as????
+    */
     private void setSongElements(Song song) {
         String path = new File(song.getFilePath()).getAbsolutePath();
+        // the mediaplayer cant read slashes so it replases them with emty and %20
         path.replace("\\", "/").replaceAll(" ", "%20");
         Media media = new Media(new File(path).toURI().toString());
 
@@ -209,6 +230,9 @@ public class MediaPlayerWithElements {
         checkState();
     }
 
+    /*
+    * checks if repaet is on if it is not then checks if shuffel is on. if repeat is on repeats curent song
+    */
     private void checkState() {
         switch (repeatState) {
             case repeat_OFF:
@@ -225,7 +249,9 @@ public class MediaPlayerWithElements {
                 break;
         }
     }
-
+    /*
+    *get the time of the songe and sets the sliter as the curent value 
+    */
     private void updateSlide() {
         sldProg.valueProperty().addListener(new InvalidationListener() {
             @Override
@@ -334,7 +360,10 @@ public class MediaPlayerWithElements {
                 break;
         }
     }
-
+    
+    /*
+    * gets the statue of repatry changes the displayed image accordingly
+    */
     public void RepeatSongs() {
         switch (repeatState) {
             case repeat_OFF:
@@ -350,7 +379,6 @@ public class MediaPlayerWithElements {
             case repeat_ON:
                 Image repeatOFF = new Image("Resouces/icons/icons8-refresh-96.png");
                 btnRepeat.setImage(repeatOFF);
-
                 repeatState = repeat_OFF;
                 checkState();
 
