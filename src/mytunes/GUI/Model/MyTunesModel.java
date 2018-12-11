@@ -25,6 +25,12 @@ public class MyTunesModel
     private ObservableList<Playlist> playlists;
     private MyTunesManager logiclayer;
 
+    
+    /**
+     * Constructor of MyTunesModel
+     * @throws SQLException
+     * @throws IOException 
+     */
     public MyTunesModel() throws SQLException, IOException
     {
         logiclayer = new MyTunesManager();
@@ -42,16 +48,30 @@ public class MyTunesModel
         });
     }
 
+    /**
+     * get all songs from a observablelist that get it from logiclayer. 
+     * @return songs
+     */
     public ObservableList<Song> getAllSong()
     {
         return songs;
     }
 
+    /**
+     * get all playlist from a observablelist that get it from the logiclayer.
+     * @return playlists
+     */
     public ObservableList<Playlist> getAllPlaylists()
     {
         return playlists;
     }
 
+    /**
+     * delete a song from a certain playlist at a specific index through the logiclayer.
+     * @param song
+     * @param playlist
+     * @throws SQLException 
+     */
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException
     {
         playlist.deleteFromPlaylist(playlist.getSongs().indexOf(song));
@@ -59,6 +79,12 @@ public class MyTunesModel
 
     }
 
+    /**
+     * add a song to a specific playlist though the logiclayer
+     * @param song
+     * @param playlist
+     * @throws SQLException 
+     */
     public void addSongToPlaylist(Song song, Playlist playlist) throws SQLException
     {
         logiclayer.addSongToPlaylist(song, playlist);
@@ -66,12 +92,27 @@ public class MyTunesModel
         playlists.get(index).addToPlaylist(song);
     }
 
+    /**
+     * create a playlist though the logiclayer.
+     * @param name
+     * @throws SQLException 
+     */
     public void createPlaylist(String name) throws SQLException
     {
         Playlist playlist = logiclayer.createPlaylist(name);
         playlists.add(playlist);
     }
 
+    /**
+     * create a song from logiclayer. checking if the same song is already exits if it does it dont add the song.
+     * @param filePath
+     * @param title
+     * @param artist
+     * @param duration
+     * @param genre
+     * @return
+     * @throws SQLException 
+     */
     public boolean createSong(String filePath, String title, String artist, double duration, String genre) throws SQLException
     {
         boolean nonIdentical = true;
@@ -89,6 +130,11 @@ public class MyTunesModel
         return nonIdentical;
     }
 
+    /**
+     * update a songs infomation though the logiclayer 
+     * @param song
+     * @throws SQLException 
+     */
     public void updateSong(Song song) throws SQLException
     {
         logiclayer.updateSong(song);
@@ -105,6 +151,11 @@ public class MyTunesModel
         }
     }
 
+    /**
+     * formating the path text
+     * @param path
+     * @return 
+     */
     public String formatePathTosrc(String path)
     {
         path.replace("\\", "/").replaceAll(" ", "%20");
@@ -117,6 +168,12 @@ public class MyTunesModel
         return path;
     }
 
+    /**
+     * update a specific title of a playlist though the logiclayer.
+     * @param playlist
+     * @return
+     * @throws SQLException 
+     */
     public boolean updatePlaylist(Playlist playlist) throws SQLException
     {
         logiclayer.updatePlaylist(playlist);
@@ -131,6 +188,11 @@ public class MyTunesModel
         return false;
     }
 
+    /**
+     * remove a song from playlist though the logiclayer.
+     * @param song
+     * @throws SQLException 
+     */
     public void deleteSong(Song song) throws SQLException
     {
         logiclayer.deleteSong(song);
@@ -141,6 +203,11 @@ public class MyTunesModel
         }
     }
 
+    /**
+     * delete playlist though the logiclayer
+     * @param playlist
+     * @throws SQLException 
+     */
     public void deletePlayliste(Playlist playlist) throws SQLException
     {
         logiclayer.deletePlayliste(playlist);
