@@ -14,14 +14,16 @@ import javafx.collections.ObservableList;
  *
  * @author Thorbjørn Schultz Damkjær
  */
-public class YoutubePlaylist {
-    
+public class YoutubePlaylist
+{
+
     private String title;
     private StringProperty titleProperty;
     private final int id;
     private ObservableList<YoutubeVideo> youtubeVideos;
 
-    public YoutubePlaylist(String title, int id) {
+    public YoutubePlaylist(String title, int id)
+    {
         this.title = title;
         titleProperty = new SimpleStringProperty();
         titleProperty.setValue(title);
@@ -29,38 +31,85 @@ public class YoutubePlaylist {
         youtubeVideos = FXCollections.observableArrayList();
     }
 
-    public String getTitle() {
+    /**
+     * Get the value of title
+     *
+     * @return
+     */
+    public String getTitle()
+    {
         return title;
     }
 
-    public StringProperty getTitleProperty() {
+    /**
+     * Get the value of title as string property
+     *
+     * @return
+     */
+    public StringProperty getTitleProperty()
+    {
         return titleProperty;
     }
 
-    public int getId() {
+    /**
+     * Get the value of ID
+     *
+     * @return
+     */
+    public int getId()
+    {
         return id;
     }
 
-    public ObservableList<YoutubeVideo> getYoutubeVideos() {
+    /**
+     * gets all the video on the playlist
+     *
+     * @return
+     */
+    public ObservableList<YoutubeVideo> getYoutubeVideos()
+    {
         return youtubeVideos;
     }
 
-    public void setTitle(String title) {
+    /**
+     * Sets the value of title
+     *
+     * @param title
+     */
+    public void setTitle(String title)
+    {
         this.title = title;
         this.titleProperty.setValue(title);
     }
-    
-    
-    public void addToPlaylist(YoutubeVideo yVideo) {
+
+    /**
+     * Adds a video to the playlist
+     *
+     * @param yVideo
+     */
+    public void addToPlaylist(YoutubeVideo yVideo)
+    {
         youtubeVideos.add(yVideo);
     }
 
-    public void RemoveSongFromPlaylist(YoutubeVideo yVideo) {
+    /**
+     * removes a video from the playlist
+     *
+     * @param yVideo
+     */
+    public void RemoveSongFromPlaylist(YoutubeVideo yVideo)
+    {
         youtubeVideos.remove(yVideo);
     }
-    public void RemoveSongFromPlaylistByIndex(int index) {
+
+    /**
+     * removes a video from playlist bu its ID
+     *
+     * @param index
+     */
+    public void RemoveSongFromPlaylistByIndex(int index)
+    {
         youtubeVideos.remove(index);
     }
-    
-    
+
 }

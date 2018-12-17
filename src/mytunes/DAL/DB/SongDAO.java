@@ -7,6 +7,8 @@
 package mytunes.DAL.DB;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +18,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.BE.Song;
+import mytunes.DAL.MetadataExtractor;
 import mytunes.DAL.ServerConnect;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -26,42 +32,14 @@ public class SongDAO {
 
     //makes a server connection "sc" that can be accessed throughout the class
     ServerConnect sc;
+    MetadataExtractor metaExtractor;
 
     public SongDAO() throws IOException {
         sc = new ServerConnect();
+        metaExtractor = new MetadataExtractor();
     }
-    /*
-    *receives song data and adds them to the song table on the sever
-    *@retuns a song
-    */
-    public Song createSong(String filePath, String title, String artist, double duration, String genre) throws SQLServerException, SQLException {
-        String sql = "INSERT INTO [MyTunesAnchor].[dbo].[Song] (Title, Artist, Genre, Duration, Path) VALUES (?, ?, ?, ?, ?);"; //måske album og nr på album
-
-        Connection con = sc.getConnection();
-
-        PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        //makes it so that only the given parameter can be used
-        st.setString(1, title);
-        st.setString(5, filePath);
-        st.setString(2, artist);
-        st.setDouble(4, duration);
-        st.setString(3, genre);
-
-        int rowsAffected = st.executeUpdate();
-        //get an generated key from sever and asains it as song id
-        ResultSet rs = st.getGeneratedKeys();
-
-        int id = 0;
-
-        if (rs.next()) {
-            id = rs.getInt(1);
-
-        }
-
-        Song song = new Song(filePath, title, id, artist, duration, genre);
-
-        return song;
-    }
+    
+    
     //updates a song witht new Title, Artist, Path.
     public boolean updateSong(Song song) throws SQLException {
         String sql = "UPDATE [MyTunesAnchor].[dbo].[Song] SET Title = ?, Artist = ?, Path = ? WHERE SongID =" + song.getId();
@@ -124,6 +102,62 @@ public class SongDAO {
         }
 
         return songs;
+    }
+    
+    /*
+    *
+    
+    *@retuns a song
+    */
+    /**
+     *  extracts metadat from file, adds it to the Database and returns a song
+     * 
+     * @param addedFile
+     * 
+     * @return Song
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
+     * @throws SAXException
+     * @throws TikaException
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public Song createSong(File addedFile) throws IOException, FileNotFoundException, SAXException, TikaException, SQLServerException, SQLException
+    {
+        Metadata meta = metaExtractor.getMetaData(addedFile);
+        String filePath = addedFile.getPath();
+        String title = meta.get("title");
+        String artist = meta.get("xmpDM:artist");
+        double duration = Double.parseDouble(meta.get("xmpDM:duration"));
+        String genre = meta.get("xmpDM:genre");
+        
+        String sql = "INSERT INTO [MyTunesAnchor].[dbo].[Song] (Title, Artist, Genre, Duration, Path) VALUES (?, ?, ?, ?, ?);"; //måske album og nr på album
+
+        Connection con = sc.getConnection();
+
+        PreparedStatement st = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        //makes it so that only the given parameter can be used
+        st.setString(1, title);
+        st.setString(5, filePath);
+        st.setString(2, artist);
+        st.setDouble(4, duration);
+        st.setString(3, genre);
+
+        int rowsAffected = st.executeUpdate();
+        //get an generated key from sever and asains it as song id
+        ResultSet rs = st.getGeneratedKeys();
+
+        int id = 0;
+
+        if (rs.next()) {
+            id = rs.getInt(1);
+
+        }
+
+        Song song = new Song(filePath, title, id, artist, duration, genre);
+
+        return song;
     }
 
 }

@@ -7,13 +7,14 @@ package mytunes.BE;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.css.SimpleStyleableStringProperty;
 
 /**
  *
  * @author Thorbjørn Schultz Damkjær
  */
-public class YoutubeVideo {
+public class YoutubeVideo
+{
+
     private String title;
     private String artist;
     private StringProperty titleProperty;
@@ -22,11 +23,11 @@ public class YoutubeVideo {
     private final String youtubeID;
     private final int id;
     private final String duration;
-    
 
-    public YoutubeVideo(String title, String artist, String youtubeID, int id, String duration) {
+    public YoutubeVideo(String title, String artist, String youtubeID, int id, String duration)
+    {
         this.title = title;
-        this.titleProperty =  new SimpleStringProperty();
+        this.titleProperty = new SimpleStringProperty();
         this.titleProperty.setValue(title);
         this.artist = artist;
         this.artistProperty = new SimpleStringProperty();
@@ -35,61 +36,127 @@ public class YoutubeVideo {
         this.id = id;
         this.duration = duration;
     }
-
+    
+    /**
+     * Get the value of PositionID
+     * 
+     * @return 
+     */
     public int getPositionID()
     {
         return positionID;
     }
-
+    
+    /**
+     * Sets the value of PositionID
+     * 
+     * @param positionID 
+     */
     public void setPositionID(int positionID)
     {
         this.positionID = positionID;
     }
     
-    
-    
-    public StringProperty getTitleProperty() {
+    /**
+     * Get the value of Title as a StringPorperty
+     * 
+     * @return 
+     */
+    public StringProperty getTitleProperty()
+    {
         return titleProperty;
     }
-
-    public StringProperty getArtistProperty() {
+    
+    /**
+     * Get the value of Artist as a StringPorperty
+     * 
+     * @return 
+     */
+    public StringProperty getArtistProperty()
+    {
         return artistProperty;
     }
     
-    public String getTitle() {
+    /**
+     * Get the value of Title
+     * 
+     * @return 
+     */
+    public String getTitle()
+    {
         return title;
     }
-
-    public void setTitle(String title) {
+    
+    /**
+     * Set the value of Title
+     * 
+     * @param title 
+     */
+    public void setTitle(String title)
+    {
         this.title = title;
         titleProperty.setValue(title);
     }
-
-    public String getArtist() {
+    
+    /**
+     * Get the value of Artist
+     * 
+     * @return 
+     */
+    public String getArtist()
+    {
         return artist;
     }
-
-    public void setArtist(String artist) {
+    
+    /**
+     * Set the value of artist
+     * 
+     * @param artist 
+     */
+    public void setArtist(String artist)
+    {
         this.artist = artist;
         this.artistProperty.setValue(artist);
     }
-
-    public String getYoutubeID() {
+    
+    /**
+     * Get the value of YoutubeID
+     * 
+     * @return 
+     */
+    public String getYoutubeID()
+    {
         return youtubeID;
     }
-
-    public int getId() {
+    
+    /**
+     * Get the value of ID
+     * 
+     * @return 
+     */
+    public int getId()
+    {
         return id;
     }
-
-    public String getDuration() {
+    
+    /**
+     * Get the value of duration
+     * 
+     * @return 
+     */
+    public String getDuration()
+    {
         return duration;
     }
-
-    public String getFormattetDuration() {
+    
+    /**
+     * Get the Duration in the format Hours:minutes:seconds (not Supotted yet)
+     * 
+     * @return 
+     */
+    public String getFormattetDuration()
+    {
         return "";
     }
-    
-    
-    
+
 }

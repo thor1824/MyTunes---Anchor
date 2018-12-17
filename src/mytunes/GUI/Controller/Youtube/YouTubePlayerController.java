@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,6 +36,7 @@ import javafx.stage.WindowEvent;
 import mytunes.BE.YoutubePlaylist;
 import mytunes.BE.YoutubeVideo;
 import mytunes.GUI.Controller.Music.MyTunesController;
+import mytunes.GUI.Model.ExceptionHandler;
 import mytunes.GUI.Model.YouTubePlayerModel;
 
 /**
@@ -98,11 +97,9 @@ public class YouTubePlayerController implements Initializable
     private boolean onPlaylist = false;
     private MenuItem deleteFromAllVideos;
     private MenuItem deleteFromPlaylist;
+    private ExceptionHandler error;
 
-    private String Test_Url = "<iframe width=\"900\" height=\"485\" src=\""
-            + "http://www.youtube.com/embed/4z9TdDCWN7g"
-            + "?&autoplay=1&state=enabled&cc_load_policy=1&playlist=mItWfoNnUag"
-            + "\" frameborder=\"0\" allowfullscreen></iframe>";
+    
     
     /**
      * Initializes the controller class.
@@ -110,6 +107,7 @@ public class YouTubePlayerController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+        error = new ExceptionHandler();
         tbvPlaylistName.setCellValueFactory(c -> c.getValue().getTitleProperty());
         colTitle.setCellValueFactory(c -> c.getValue().getTitleProperty());
         colArtist.setCellValueFactory(c -> c.getValue().getArtistProperty());
@@ -124,10 +122,10 @@ public class YouTubePlayerController implements Initializable
             ytModel = new YouTubePlayerModel();
         } catch (IOException ex)
         {
-            Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+            error.openExceptionPromt("cannot load library, connection to server might be missing");
         } catch (SQLException ex)
         {
-            Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+            error.openExceptionPromt("cannot load library, connection to server might be missing");
         }
         
         allPlaylist = FXCollections.observableArrayList();
@@ -166,7 +164,7 @@ public class YouTubePlayerController implements Initializable
                     ytModel.deleteYoutubeVideo(video);
                 } catch (SQLException ex)
                 {
-                    Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+                    error.openExceptionPromt("cannot acces server");
                 }
 
             }
@@ -185,7 +183,7 @@ public class YouTubePlayerController implements Initializable
                     ytModel.deleteFromPlaylist(video, activePlaylist);
                 } catch (SQLException ex)
                 {
-                    Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+                    error.openExceptionPromt("Could not delete from playlist");
                 }
             }
         });
@@ -248,7 +246,7 @@ public class YouTubePlayerController implements Initializable
             addCon.setYtModel(ytModel);
         } catch (IOException ex)
         {
-            Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+            error.openExceptionPromt("Could not open window");
         }
     }
 
@@ -302,7 +300,7 @@ public class YouTubePlayerController implements Initializable
             addCon.setYtModel(ytModel);
         } catch (IOException ex)
         {
-            Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+            error.openExceptionPromt("Could not open window");
         }
     }
 
@@ -335,7 +333,7 @@ public class YouTubePlayerController implements Initializable
             addCon.setYtModel(ytModel);
         } catch (IOException ex)
         {
-            Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+            error.openExceptionPromt("Could not open window");
         }
     }
 
@@ -356,7 +354,7 @@ public class YouTubePlayerController implements Initializable
             addCon.setYoutubeModel(ytModel);
         } catch (IOException ex)
         {
-            Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+            error.openExceptionPromt("Could not open window");
         }
 
     }
@@ -364,7 +362,6 @@ public class YouTubePlayerController implements Initializable
     private void playVideo(YoutubeVideo video)
     {
         activeVideo = video;
-        System.out.println(video.getYoutubeID());
         webEngine.loadContent(startEmbeddedURL + video.getYoutubeID() + endEmbeddedURL);
     }
 
@@ -397,7 +394,7 @@ public class YouTubePlayerController implements Initializable
                             myStage.close();
                         } catch (IOException ex)
                         {
-                            Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+                           error.openExceptionPromt("Could not open window");
                         }
                     }
                 }
@@ -513,7 +510,7 @@ public class YouTubePlayerController implements Initializable
                         ytModel.addYoutubeVideoToYoutubePlaylist(video, playlist);
                     } catch (SQLException ex)
                     {
-                        Logger.getLogger(YouTubePlayerController.class.getName()).log(Level.SEVERE, null, ex);
+                        error.openExceptionPromt("Could not add to " + playlist.getTitle());
                     }
 
                 }

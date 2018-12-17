@@ -12,8 +12,9 @@ import javafx.beans.property.StringProperty;
  *
  * @author Christian
  */
-public class Song {
-   
+public class Song
+{
+
     private String artist;
     private String filePath;
     private String songTitle;
@@ -24,17 +25,19 @@ public class Song {
     private int id;
     private int PositionID = 0;
     private double duration;
-        
+
     /**
      * Construct the song
+     *
      * @param fileParth
      * @param Title
      * @param id
      * @param artist
      * @param duration
-     * @param genre 
+     * @param genre
      */
-    public Song(String fileParth, String Title, int id, String artist, double duration, String genre) {
+    public Song(String fileParth, String Title, int id, String artist, double duration, String genre)
+    {
         this.filePath = fileParth;
         this.songTitle = Title;
         titleProperty = new SimpleStringProperty(Title);
@@ -48,19 +51,21 @@ public class Song {
 
     /**
      * get the artist as a stringProperty
-     * 
-     * @return 
+     *
+     * @return
      */
-    public StringProperty getArtistProperty() {
+    public StringProperty getArtistProperty()
+    {
         return artistProperty;
     }
 
     /**
      * get the genre as a stringProperty
-     * 
+     *
      * @return the value of genreProperty
      */
-    public StringProperty getGenreProperty() {
+    public StringProperty getGenreProperty()
+    {
         return genreProperty;
     }
 
@@ -69,7 +74,8 @@ public class Song {
      *
      * @return the value of genre
      */
-    public String getGenre() {
+    public String getGenre()
+    {
         return genre;
     }
 
@@ -78,7 +84,8 @@ public class Song {
      *
      * @param genre new value of genre
      */
-    public void setGenre(String genre) {
+    public void setGenre(String genre)
+    {
         this.genre = genre;
         genreProperty.setValue(genre);
     }
@@ -88,7 +95,8 @@ public class Song {
      *
      * @return the value of duration
      */
-    public double getDuration() {
+    public double getDuration()
+    {
         return duration;
     }
 
@@ -97,7 +105,8 @@ public class Song {
      *
      * @param duration new value of duration
      */
-    public void setDuration(double duration) {
+    public void setDuration(double duration)
+    {
         this.duration = duration;
     }
 
@@ -106,7 +115,8 @@ public class Song {
      *
      * @return the value of artist
      */
-    public String getArtist() {
+    public String getArtist()
+    {
         return artist;
 
     }
@@ -116,7 +126,8 @@ public class Song {
      *
      * @param artist new value of artist
      */
-    public void setArtist(String artist) {
+    public void setArtist(String artist)
+    {
         this.artist = artist;
         artistProperty.setValue(artist);
     }
@@ -126,7 +137,8 @@ public class Song {
      *
      * @return the value of filePath
      */
-    public String getFilePath() {
+    public String getFilePath()
+    {
         return filePath;
     }
 
@@ -135,7 +147,8 @@ public class Song {
      *
      * @param fileParth new value of filePath
      */
-    public void setFilePath(String fileParth) {
+    public void setFilePath(String fileParth)
+    {
         this.filePath = fileParth;
     }
 
@@ -144,7 +157,8 @@ public class Song {
      *
      * @return the value of songTitle
      */
-    public String getTitle() {
+    public String getTitle()
+    {
         return songTitle;
     }
 
@@ -153,44 +167,49 @@ public class Song {
      *
      * @param Title new value of songTitle
      */
-    public void setTitle(String Title) {
+    public void setTitle(String Title)
+    {
         this.songTitle = Title;
         titleProperty.setValue(Title);
     }
 
     /**
      * Get the value of songId
-     * 
+     *
      * @return the song Id
      */
-    public int getId() {
+    public int getId()
+    {
         return id;
     }
 
     /**
      * get StringProperty of a title
-     * 
+     *
      * @return Title new value of songTitleProperty
      */
-    public StringProperty getTitleProperty() {
+    public StringProperty getTitleProperty()
+    {
         return titleProperty;
     }
-    
+
     /**
      * get the positionID of a id
-     * 
+     *
      * @return the position of ID
      */
-    public int getPositionID() {
+    public int getPositionID()
+    {
         return PositionID;
     }
 
     /**
      * set the value of positionID
-     * 
-     * @param PositionID 
+     *
+     * @param PositionID
      */
-    public void setPositionID(int PositionID) {
+    public void setPositionID(int PositionID)
+    {
         this.PositionID = PositionID;
     }
 

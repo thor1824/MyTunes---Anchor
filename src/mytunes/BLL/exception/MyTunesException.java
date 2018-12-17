@@ -5,8 +5,6 @@
  */
 package mytunes.BLL.exception;
 
-import java.io.*;
-
 /**
  *
  * @author Nijas Hansen

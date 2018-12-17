@@ -5,6 +5,8 @@
  */
 package mytunes.GUI.Model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import javafx.beans.Observable;
@@ -13,6 +15,8 @@ import javafx.collections.ObservableList;
 import mytunes.BE.Playlist;
 import mytunes.BE.Song;
 import mytunes.BLL.MyTunesManager;
+import org.apache.tika.exception.TikaException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -41,54 +45,73 @@ public class MyTunesModel
         {
         });
     }
-
+    
+    /**
+     * get all Songs as an observablelist
+     * 
+     * @return 
+     */
     public ObservableList<Song> getAllSong()
     {
         return songs;
     }
-
+    
+    /**
+     * get all playlist as an observable list
+     * 
+     * @return 
+     */
     public ObservableList<Playlist> getAllPlaylists()
     {
         return playlists;
     }
-
+    
+    /**
+     * deletes the given song on the given playlist
+     * 
+     * @param song
+     * @param playlist
+     * @throws SQLException 
+     */
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException
     {
         playlist.deleteFromPlaylist(playlist.getSongs().indexOf(song));
         logiclayer.deleteFromPlayist(song, playlist);
 
     }
-
+    
+    /**
+     * adds the given song on the given playlist
+     * 
+     * @param song
+     * @param playlist
+     * @throws SQLException 
+     */
     public void addSongToPlaylist(Song song, Playlist playlist) throws SQLException
     {
         logiclayer.addSongToPlaylist(song, playlist);
         int index = playlists.indexOf(playlist);
         playlists.get(index).addToPlaylist(song);
     }
-
+    
+    /**
+     * creates a playlist with given name
+     * 
+     * @param name
+     * @throws SQLException 
+     */
     public void createPlaylist(String name) throws SQLException
     {
         Playlist playlist = logiclayer.createPlaylist(name);
         playlists.add(playlist);
     }
-
-    public boolean createSong(String filePath, String title, String artist, double duration, String genre) throws SQLException
-    {
-        boolean nonIdentical = true;
-        for (Song song : songs)
-        {
-
-            if (song.getTitle().equals(title))
-            {
-
-                nonIdentical = false;
-            }
-        }
-        Song song = logiclayer.createSong(formatePathTosrc(filePath), title, artist, duration, genre);
-        songs.add(song);
-        return nonIdentical;
-    }
-
+    
+    /**
+     * updates the the information of the given song
+     * 
+     * @param song
+     * @throws SQLException 
+     */
     public void updateSong(Song song) throws SQLException
     {
         logiclayer.updateSong(song);
@@ -145,6 +168,13 @@ public class MyTunesModel
     {
         logiclayer.deletePlayliste(playlist);
         playlists.remove(playlist);
+    }
+
+    public void createSong(File addedFile) throws IOException, FileNotFoundException, SAXException, TikaException, SQLException
+    {
+        Song song = logiclayer.createSong(new File(formatePathTosrc(addedFile.getAbsolutePath())));
+        songs.add(song);
+
     }
 
 }

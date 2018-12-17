@@ -5,18 +5,21 @@
  */
 package mytunes.BLL;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import mytunes.DAL.DB.YoutubePlaylistDAO;
 import mytunes.DAL.DB.YoutubeDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import javafx.collections.ObservableList;
 import mytunes.BE.Playlist;
 import mytunes.BE.Song;
 import mytunes.BE.YoutubePlaylist;
 import mytunes.BE.YoutubeVideo;
 import mytunes.DAL.DB.PlaylistDAO;
 import mytunes.DAL.DB.SongDAO;
+import org.apache.tika.exception.TikaException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -68,11 +71,6 @@ public class MyTunesManager {
     public void addSongToPlaylist(Song song, Playlist playlist) throws SQLException {
         playlistDAO.addSongToPlaylist(song, playlist);
     }
-
-    public Song createSong(String filePath, String title, String artist, double duration, String genre) throws SQLException {
-        return songDAO.createSong(filePath, title, artist, duration, genre);
-    }
-
     public void deleteFromPlayist(Song song, Playlist playlist) throws SQLException {
         playlistDAO.deleteFromPlayist(song, playlist);
     }
@@ -120,6 +118,11 @@ public class MyTunesManager {
     public List<YoutubePlaylist> getAllYoutubePlaylists() throws SQLException
     {
         return youtubePlaylistDAO.getAllYoutubePlaylists();
+    }
+
+    public Song createSong(File addedFile) throws IOException, FileNotFoundException, SAXException, TikaException, SQLException
+    {
+        return songDAO.createSong(addedFile);
     }
 
 }

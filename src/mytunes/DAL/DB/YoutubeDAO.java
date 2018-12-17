@@ -53,10 +53,10 @@ public class YoutubeDAO
 
     public YoutubeVideo createYoutubeVideo(String url) throws IOException, SQLException
     {
-        String title = meta.getTitle(url);
-        String artist = meta.getChannelName(url);
+        String title = meta.getYoutubeTitle(url);
+        String artist = meta.getYoutubeChannelName(url);
         String youtubeID = meta.getYoutubeVideoID(url);
-        String duration = meta.getDuration(url);
+        String duration = meta.getYoutubeDuration(url);
 
         String sql = "INSERT INTO [MyTunesAnchor].[dbo].[YoutubeVideo] (Title, Artist, YoutubeID, Duration) VALUES (?, ?, ?, ?);"; //måske album og nr på album
 

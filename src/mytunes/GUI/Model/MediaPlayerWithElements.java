@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * this media play connects GUI elemets with diffrent mediaplayer oparations
+ * none of the elemets have to be connectet
  */
 package mytunes.GUI.Model;
 
@@ -22,7 +21,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 import mytunes.BE.Song;
 
@@ -30,7 +28,8 @@ import mytunes.BE.Song;
  *
  * @author Thorbjørn Schultz Damkjær
  */
-public class MediaPlayerWithElements {
+public class MediaPlayerWithElements
+{
 
     private final int SHUFFLE_ON = 1;
     private final int SHUFFLE_OFF = 0;
@@ -54,7 +53,8 @@ public class MediaPlayerWithElements {
     private ImageView btnShuffle;
     private Label lblPlaying;
 
-    public MediaPlayerWithElements(MediaPlayer mPlayer, ObservableList<Song> activeObvPlaylist, Song activeSong) {
+    public MediaPlayerWithElements(MediaPlayer mPlayer, ObservableList<Song> activeObvPlaylist, Song activeSong)
+    {
         this.mPlayer = mPlayer;
         this.activeObvPlaylist = activeObvPlaylist;
         this.activeSong = activeSong;
@@ -68,47 +68,106 @@ public class MediaPlayerWithElements {
         lblPlaying = new Label();
     }
 
-    public void setVolumeSlider(Slider sldVol) {
+    /**
+     * set the volume slider
+     *
+     * @param sldVol
+     */
+    public void setVolumeSlider(Slider sldVol)
+    {
         this.sldVol = sldVol;
     }
 
-    public void setSongPlayingLabel(Label lblPlaying) {
+    /**
+     * set the volume playing label
+     *
+     * @param lblPlaying
+     */
+    public void setSongPlayingLabel(Label lblPlaying)
+    {
         this.lblPlaying = lblPlaying;
     }
 
-    public void setRepeatButton(ImageView btnRepeat) {
+    /**
+     * set the volume Repeat toggle button
+     *
+     * @param btnRepeat
+     */
+    public void setRepeatButton(ImageView btnRepeat)
+    {
         this.btnRepeat = btnRepeat;
     }
 
-    public void setShuffleButton(ImageView btnShuffle) {
+    /**
+     * set the volume shuffle toggle button
+     *
+     * @param btnShuffle
+     */
+    public void setShuffleButton(ImageView btnShuffle)
+    {
         this.btnShuffle = btnShuffle;
     }
 
-    public void setSongProgressSlider(Slider sldProg) {
+    /**
+     * set the Song progress slider
+     *
+     * @param sldProg
+     */
+    public void setSongProgressSlider(Slider sldProg)
+    {
         this.sldProg = sldProg;
     }
 
-    public void setSongProgressBar(ProgressBar songProg) {
+    /**
+     * set the Song progress bar
+     *
+     * @param songProg
+     */
+    public void setSongProgressBar(ProgressBar songProg)
+    {
         this.songProg = songProg;
     }
 
-    public void setTimeLabel(Label lbltime) {
+    /**
+     * set the time label
+     *
+     * @param lbltime
+     */
+    public void setTimeLabel(Label lbltime)
+    {
         this.lbltime = lbltime;
     }
 
-    public void setPlayButton(ImageView btnPlay) {
+    /**
+     * set the playbutton
+     *
+     * @param btnPlay
+     */
+    public void setPlayButton(ImageView btnPlay)
+    {
         this.btnPlay = btnPlay;
     }
 
-    public void setInitialSong(Song song) {
+    /**
+     * set the first song
+     *
+     * @param song
+     */
+    public void setInitialSong(Song song)
+    {
 
         activeSong = song;
         setSongElements(activeSong);
 
     }
 
-    public void shuffleSongs() {
-        switch (shuffleState) {
+    /**
+     * toggles shuffle song
+     */
+    public void shuffleSongs()
+    {
+        switch (shuffleState)
+        {
             case SHUFFLE_OFF:
 
                 Image shuffleOn = new Image("Resouces/icons/icons8-Ashuffle-26.png");
@@ -128,21 +187,30 @@ public class MediaPlayerWithElements {
         }
     }
 
-    private void checkShuffleState() {
-        switch (shuffleState) {
+    /**
+     * checks if the shuffle is on or off
+     */
+    private void checkShuffleState()
+    {
+        switch (shuffleState)
+        {
             case SHUFFLE_OFF:
-                mPlayer.setOnEndOfMedia(new Runnable() {
+                mPlayer.setOnEndOfMedia(new Runnable()
+                {
                     @Override
-                    public void run() {
+                    public void run()
+                    {
                         playNextSong();
                     }
                 });
                 break;
 
             case SHUFFLE_ON:
-                mPlayer.setOnEndOfMedia(new Runnable() {
+                mPlayer.setOnEndOfMedia(new Runnable()
+                {
                     @Override
-                    public void run() {
+                    public void run()
+                    {
                         Random random = new Random(System.currentTimeMillis());
                         int nextIndex = random.nextInt(activeObvPlaylist.size());
                         playSong(activeObvPlaylist.get(nextIndex));
@@ -152,25 +220,39 @@ public class MediaPlayerWithElements {
         }
     }
 
-    public void playNextSong() {
+    /**
+     * play the next song
+     */
+    public void playNextSong()
+    {
         int nextIndex = activeObvPlaylist.indexOf(activeSong) + 1;
-        if ((activeObvPlaylist.size() - 1) < nextIndex) {
+        if ((activeObvPlaylist.size() - 1) < nextIndex)
+        {
             nextIndex = 0;
         }
         activeSong = activeObvPlaylist.get(nextIndex);
         playSong(activeSong);
     }
 
-    public void playPreviousSong() {
+    /**
+     * play previous song
+     */
+    public void playPreviousSong()
+    {
         int previousIndex = activeObvPlaylist.indexOf(activeSong) - 1;
-        if (previousIndex < 0) {
+        if (previousIndex < 0)
+        {
             previousIndex = activeObvPlaylist.size() - 1;
         }
         activeSong = activeObvPlaylist.get(previousIndex);
         playSong(activeSong);
     }
 
-    private void mediaPlay() {
+    /**
+     * handles play oparations
+     */
+    private void mediaPlay()
+    {
         Image pause = new Image("Resouces/icons/icons8-pause-30.png");
         btnPlay.setImage(pause);
         mPlayer.play();
@@ -178,7 +260,11 @@ public class MediaPlayerWithElements {
 
     }
 
-    public void mediaPause() {
+    /**
+     * handles pause oparations
+     */
+    public void mediaPause()
+    {
         Image play = new Image("Resouces/icons/icons8-play-30.png");
         btnPlay.setImage(play);
         mPlayer.pause();
@@ -186,7 +272,13 @@ public class MediaPlayerWithElements {
 
     }
 
-    public void playSong(Song song) {
+    /**
+     * plays the given song
+     *
+     * @param song
+     */
+    public void playSong(Song song)
+    {
         mPlayer.stop();
         activeSong = song;
         setSongElements(song);
@@ -194,7 +286,13 @@ public class MediaPlayerWithElements {
 
     }
 
-    private void setSongElements(Song song) {
+    /**
+     * sets the diffrent song elemets
+     *
+     * @param song
+     */
+    private void setSongElements(Song song)
+    {
         String path = new File(song.getFilePath()).getAbsolutePath();
         path.replace("\\", "/").replaceAll(" ", "%20");
         Media media = new Media(new File(path).toURI().toString());
@@ -209,16 +307,24 @@ public class MediaPlayerWithElements {
         checkState();
     }
 
-    private void checkState() {
-        switch (repeatState) {
+    /**
+     * checks the state of the player ad sets the coreponding shuffle or repeat
+     * state
+     */
+    private void checkState()
+    {
+        switch (repeatState)
+        {
             case repeat_OFF:
                 checkShuffleState();
                 break;
 
             case repeat_ON:
-                mPlayer.setOnEndOfMedia(new Runnable() {
+                mPlayer.setOnEndOfMedia(new Runnable()
+                {
                     @Override
-                    public void run() {
+                    public void run()
+                    {
                         playSong(activeSong);
                     }
                 });
@@ -226,13 +332,21 @@ public class MediaPlayerWithElements {
         }
     }
 
-    private void updateSlide() {
-        sldProg.valueProperty().addListener(new InvalidationListener() {
+    /**
+     * updates the slider to add listners the new song
+     */
+    private void updateSlide()
+    {
+        sldProg.valueProperty().addListener(new InvalidationListener()
+        {
             @Override
-            public void invalidated(Observable observable) {
-                if (sldProg.isValueChanging()) {
+            public void invalidated(Observable observable)
+            {
+                if (sldProg.isValueChanging())
+                {
                     // multiply duration by percentage calculated by slider position
-                    if (duration != null) {
+                    if (duration != null)
+                    {
                         mPlayer.seek(duration.multiply(sldProg.getValue() / 100.0));
                     }
                     updateValues();
@@ -241,42 +355,60 @@ public class MediaPlayerWithElements {
             }
         });
 
-        mPlayer.currentTimeProperty().addListener(new ChangeListener() {
+        mPlayer.currentTimeProperty().addListener(new ChangeListener()
+        {
 
             @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+            public void changed(ObservableValue observable, Object oldValue, Object newValue)
+            {
                 updateValues();
             }
         });
 
-        sldProg.valueProperty().addListener(new ChangeListener<Number>() {
+        sldProg.valueProperty().addListener(new ChangeListener<Number>()
+        {
             public void changed(ObservableValue<? extends Number> ov,
-                    Number old_val, Number new_val) {
+                    Number old_val, Number new_val)
+            {
                 songProg.setProgress(new_val.doubleValue() / 100);
             }
         });
 
     }
 
-    private void updateTimer() {
-        mPlayer.currentTimeProperty().addListener((Observable ov) -> {
+    /**
+     * update time of the new song
+     */
+    private void updateTimer()
+    {
+        mPlayer.currentTimeProperty().addListener((Observable ov) ->
+        {
             updateValues();
         });
 
-        mPlayer.setOnReady(() -> {
+        mPlayer.setOnReady(() ->
+        {
             duration = mPlayer.getMedia().getDuration();
             updateValues();
         });
     }
 
-    private void updateValues() {
-        if (lbltime != null && sldProg != null && duration != null) {
-            Platform.runLater(new Runnable() {
-                public void run() {
+    /**
+     * updates values of the elemets connected to the mediaplayer
+     */
+    private void updateValues()
+    {
+        if (lbltime != null && sldProg != null && duration != null)
+        {
+            Platform.runLater(new Runnable()
+            {
+                public void run()
+                {
                     Duration currentTime = mPlayer.getCurrentTime();
                     lbltime.setText(formatTime(currentTime, duration));
                     sldProg.setDisable(duration.isUnknown());
-                    if (!sldProg.isDisabled() && duration.greaterThan(Duration.ZERO) && !sldProg.isValueChanging()) {
+                    if (!sldProg.isDisabled() && duration.greaterThan(Duration.ZERO) && !sldProg.isValueChanging())
+                    {
                         sldProg.setValue(currentTime.divide(duration).toMillis() * 100.0);
                     }
 
@@ -285,47 +417,68 @@ public class MediaPlayerWithElements {
         }
     }
 
-    private static String formatTime(Duration elapsed, Duration duration) {
+    /**
+     * formats the time to the format Hours:Minutes:seconds
+     *
+     * @param elapsed
+     * @param duration
+     * @return
+     */
+    private static String formatTime(Duration elapsed, Duration duration)
+    {
         int intElapsed = (int) floor(elapsed.toSeconds());
         int elapsedHours = intElapsed / (60 * 60);
-        if (elapsedHours > 0) {
+        if (elapsedHours > 0)
+        {
             intElapsed -= elapsedHours * 60 * 60;
         }
         int elapsedMinutes = intElapsed / 60;
         int elapsedSeconds = intElapsed - elapsedHours * 60 * 60
                 - elapsedMinutes * 60;
 
-        if (duration.greaterThan(Duration.ZERO)) {
+        if (duration.greaterThan(Duration.ZERO))
+        {
             int intDuration = (int) floor(duration.toSeconds());
             int durationHours = intDuration / (60 * 60);
-            if (durationHours > 0) {
+            if (durationHours > 0)
+            {
                 intDuration -= durationHours * 60 * 60;
             }
             int durationMinutes = intDuration / 60;
             int durationSeconds = intDuration - durationHours * 60 * 60
                     - durationMinutes * 60;
-            if (durationHours > 0) {
+            if (durationHours > 0)
+            {
                 return format("%d:%02d:%02d/%d:%02d:%02d",
                         elapsedHours, elapsedMinutes, elapsedSeconds,
                         durationHours, durationMinutes, durationSeconds);
-            } else {
+            } else
+            {
                 return format("%02d:%02d/%02d:%02d",
                         elapsedMinutes, elapsedSeconds, durationMinutes,
                         durationSeconds);
             }
-        } else {
-            if (elapsedHours > 0) {
+        } else
+        {
+            if (elapsedHours > 0)
+            {
                 return format("%d:%02d:%02d", elapsedHours,
                         elapsedMinutes, elapsedSeconds);
-            } else {
+            } else
+            {
                 return format("%02d:%02d", elapsedMinutes,
                         elapsedSeconds);
             }
         }
     }
 
-    public void playPauseSwitch() {
-        switch (playState) {
+    /**
+     * toggles the play/pause state
+     */
+    public void playPauseSwitch()
+    {
+        switch (playState)
+        {
             case PAUSED:
                 mediaPlay();
                 break;
@@ -335,8 +488,13 @@ public class MediaPlayerWithElements {
         }
     }
 
-    public void RepeatSongs() {
-        switch (repeatState) {
+    /**
+     * toggles the repeat on/off state
+     */
+    public void RepeatSongs()
+    {
+        switch (repeatState)
+        {
             case repeat_OFF:
 
                 Image repeatOn = new Image("Resouces/icons/icons8-Arefresh-96.png");
@@ -359,23 +517,44 @@ public class MediaPlayerWithElements {
         }
     }
 
-    public ObservableList<Song> getActivelistOfSongs() {
+    /**
+     * get the active list og song
+     *
+     * @return
+     */
+    public ObservableList<Song> getActivelistOfSongs()
+    {
         return activeObvPlaylist;
     }
-    
-    public void jumpinSong() {
+
+    /**
+     * jumps the speciefic place in the song
+     */
+    public void jumpinSong()
+    {
 
         Duration jumpToTime = new Duration(duration.toMillis() / 100 * sldProg.getValue());
         mPlayer.seek(jumpToTime);
 
     }
 
-    public void changeMusicList(ObservableList list) {
+    /**
+     * changes the music list
+     *
+     * @param list
+     */
+    public void changeMusicList(ObservableList list)
+    {
         activeObvPlaylist.setAll(list);
     }
 
-    public void ChangeVolume() {
-        if (mPlayer != null) {
+    /**
+     * changes the volume of the mediaplayer
+     */
+    public void ChangeVolume()
+    {
+        if (mPlayer != null)
+        {
             double volume = sldVol.getValue();
             double max = sldVol.getMax();
             mPlayer.setVolume((volume / max * 100) / 100);

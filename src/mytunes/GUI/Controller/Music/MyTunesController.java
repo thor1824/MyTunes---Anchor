@@ -17,11 +17,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -49,9 +46,9 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import mytunes.GUI.Model.MediaPlayerWithElements;
-import mytunes.DAL.MetadataExtractor;
 import mytunes.BE.Playlist;
 import mytunes.BLL.exception.MyTunesException;
+import mytunes.GUI.Model.ExceptionHandler;
 import mytunes.GUI.Model.MyTunesModel;
 
 import org.apache.tika.exception.TikaException;
@@ -98,6 +95,8 @@ public class MyTunesController implements Initializable
     private Label lblYoutube;
     @FXML
     private Label lblVideoPLayer;
+    @FXML
+    private AnchorPane mainPane;
 
     //other
     private MediaPlayer mPlayer;
@@ -114,10 +113,8 @@ public class MyTunesController implements Initializable
     private FilteredList<Song> searchList;
     private SortedList<Song> sortedData;
     private MediaPlayerWithElements mPlayer2;
-    private MetadataExtractor metadata;
     private Stage myStage;
-    @FXML
-    private AnchorPane mainPane;
+    private ExceptionHandler error;
 
     /**
      * Initializes the controller class.
@@ -125,6 +122,7 @@ public class MyTunesController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+        error = new ExceptionHandler();
 
         initializeCollums();
 
@@ -137,11 +135,11 @@ public class MyTunesController implements Initializable
         try
         {
             mtModel = new MyTunesModel();
-            
+
             activeObvPlaylist = FXCollections.observableArrayList();
             allSongs = FXCollections.observableArrayList();
             allSongs = mtModel.getAllSong();
-            
+
             tbvSongs.setItems(allSongs);
             activeObvPlaylist.setAll(allSongs);
 
@@ -166,16 +164,12 @@ public class MyTunesController implements Initializable
 
             setupSeachBar();
 
-            //Creating MetadataExtractor
-            metadata = new MetadataExtractor();
-            metadata.setMtModel(mtModel);
-
         } catch (SQLException ex)
         {
-
+            error.openExceptionPromt("Could not load library");
         } catch (IOException ex)
         {
-            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+            error.openExceptionPromt("Could not load library");
         }
 
         // timer
@@ -208,7 +202,7 @@ public class MyTunesController implements Initializable
                     mtModel.deleteFromPlayist(song, activePlaylist);
                 } catch (SQLException ex)
                 {
-                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                    error.openExceptionPromt("Could not delete from playlist");
                 }
             }
         });
@@ -225,7 +219,7 @@ public class MyTunesController implements Initializable
                     editSong();
                 } catch (MyTunesException ex)
                 {
-                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                    error.openExceptionPromt("Could not change info");
                 }
             }
         });
@@ -243,7 +237,7 @@ public class MyTunesController implements Initializable
                     mtModel.deleteSong(song);
                 } catch (SQLException ex)
                 {
-                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                    error.openExceptionPromt("Could not delete song");
                 }
 
             }
@@ -280,7 +274,7 @@ public class MyTunesController implements Initializable
                     mtModel.deletePlayliste(playlist);
                 } catch (SQLException ex)
                 {
-                    Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                    error.openExceptionPromt("Could not delete playlist");
                 }
             }
         });
@@ -385,7 +379,7 @@ public class MyTunesController implements Initializable
                 {
                     if (mouseEvent.getClickCount() == 2)
                     {
-                        
+
                         tbvSongs.setItems(allSongs);
                         if (onPlaylist)
                         {
@@ -425,13 +419,13 @@ public class MyTunesController implements Initializable
 
                         } catch (IOException ex)
                         {
-                            Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                            error.openExceptionPromt("Could not open window");
                         }
                     }
                 }
+
             }
         });
-
     }
 
     private void initializeCollums()
@@ -491,7 +485,7 @@ public class MyTunesController implements Initializable
 
         } catch (IOException e)
         {
-            e.printStackTrace();
+            error.openExceptionPromt("Could not open window");
         }
     }
 
@@ -514,35 +508,35 @@ public class MyTunesController implements Initializable
     }
 
     @FXML
-    private void menuAddSong(ActionEvent event) throws SQLException
+    private void menuAddSong(ActionEvent event)
     {
 
-        FileChooser fc = new FileChooser();
-        fc.getExtensionFilters().addAll(new ExtensionFilter("mp3 files", "*.mp3"));
-        fc.setInitialDirectory(new File("src"));
-        File addedFile = fc.showOpenDialog(null);
         try
         {
+            FileChooser fc = new FileChooser();
+            fc.getExtensionFilters().addAll(new ExtensionFilter("mp3 files", "*.mp3"));
+            fc.setInitialDirectory(new File("src"));
+            File addedFile = fc.showOpenDialog(null);
 
-            metadata.createSongFromMetadata(addedFile);
-
-        } catch (FileNotFoundException e)
+            mtModel.createSong(addedFile);
+        } catch (IOException ex)
         {
-            e.printStackTrace();
-        } catch (IOException e)
+            error.openExceptionPromt("File chooser was disruptet");
+        } catch (SAXException ex)
         {
-            e.printStackTrace();
-        } catch (SAXException e)
+            error.openExceptionPromt("Could not get metadata");
+        } catch (TikaException ex)
         {
-            e.printStackTrace();
-        } catch (TikaException e)
+            error.openExceptionPromt("Could not get metadata");
+        } catch (SQLException ex)
         {
-            e.printStackTrace();
+            error.openExceptionPromt("Could not connect to server");
         }
+
     }
 
     @FXML
-    private void menuAddAlbum(ActionEvent event) throws SQLException
+    private void menuAddAlbum(ActionEvent event)
     {
         DirectoryChooser dc = new DirectoryChooser();
         File[] files = dc.showDialog(null).listFiles();
@@ -553,20 +547,20 @@ public class MyTunesController implements Initializable
                 try
                 {
 
-                    metadata.createSongFromMetadata(addedFile);
+                    mtModel.createSong(addedFile);
 
-                } catch (FileNotFoundException e)
+                } catch (IOException ex)
                 {
-                    e.printStackTrace();
-                } catch (IOException e)
+                    error.openExceptionPromt("File chooser was disruptet");
+                } catch (SAXException ex)
                 {
-                    e.printStackTrace();
-                } catch (SAXException e)
+                    error.openExceptionPromt("Could not get metadata");
+                } catch (TikaException ex)
                 {
-                    e.printStackTrace();
-                } catch (TikaException e)
+                    error.openExceptionPromt("Could not get metadata");
+                } catch (SQLException ex)
                 {
-                    e.printStackTrace();
+                    error.openExceptionPromt("Could not connect to server");
                 }
             }
         }
@@ -615,7 +609,7 @@ public class MyTunesController implements Initializable
 
         } catch (IOException e)
         {
-            e.printStackTrace();
+            error.openExceptionPromt("Could not open window");
         }
     }
 
@@ -637,7 +631,7 @@ public class MyTunesController implements Initializable
             stage.show();
         } catch (IOException e)
         {
-            throw new MyTunesException("Song info could not be changed");
+            error.openExceptionPromt("Could not open window");
         }
     }
 
@@ -723,7 +717,7 @@ public class MyTunesController implements Initializable
                         mtModel.addSongToPlaylist(song, playlist);
                     } catch (SQLException ex)
                     {
-                        Logger.getLogger(MyTunesController.class.getName()).log(Level.SEVERE, null, ex);
+                        error.openExceptionPromt("Could add song to " + playlist.getTitle());
                     }
                 }
             });
@@ -732,24 +726,33 @@ public class MyTunesController implements Initializable
         }
     }
 
-    private Media checkMediaPath(String file, Song song) throws MyTunesException, SQLException {
+    private Media checkMediaPath(String file, Song song) 
+    {
         try
         {
             Media media = new Media(new File(file).toURI().toString());
             return media;
-        } catch (Exception e) {
-            e.printStackTrace();
-            FileChooser filechooser = new FileChooser();
-            filechooser.setInitialDirectory(new File("src"));
-            filechooser.setTitle("Open File");
-            filechooser.getExtensionFilters().addAll(
-                    new ExtensionFilter("Audio Files", ".wav", ".mp3"));
-            File selectedFile = filechooser.showOpenDialog(null);
-            song.setFilePath(mtModel.formatePathTosrc(selectedFile.getAbsolutePath()));
-            mtModel.updateSong(song);
-            Media medi = new Media(selectedFile.toURI().toString());
-            return medi;
+        } catch (Exception e)
+        {
+            try
+            {
+                error.openExceptionPromt("Could not Find song");
+                FileChooser filechooser = new FileChooser();
+                filechooser.setInitialDirectory(new File("src"));
+                filechooser.setTitle("Open File");
+                filechooser.getExtensionFilters().addAll(
+                        new ExtensionFilter("Audio Files", ".wav", ".mp3"));
+                File selectedFile = filechooser.showOpenDialog(null);
+                song.setFilePath(mtModel.formatePathTosrc(selectedFile.getAbsolutePath()));
+                mtModel.updateSong(song);
+                Media medi = new Media(selectedFile.toURI().toString());
+                return medi;
+            } catch (SQLException ex)
+            {
+                error.openExceptionPromt("Could not connect to server");
+            }
         }
+        return null;
     }
 
     public void setStage(Stage stage)
