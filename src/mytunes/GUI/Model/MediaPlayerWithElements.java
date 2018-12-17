@@ -294,6 +294,7 @@ public class MediaPlayerWithElements
     private void setSongElements(Song song)
     {
         String path = new File(song.getFilePath()).getAbsolutePath();
+        // the mediaplayer cant read slashes so it replases them with emty and %20
         path.replace("\\", "/").replaceAll(" ", "%20");
         Media media = new Media(new File(path).toURI().toString());
 
@@ -331,14 +332,11 @@ public class MediaPlayerWithElements
                 break;
         }
     }
-
-    /**
-     * updates the slider to add listners the new song
-     */
-    private void updateSlide()
-    {
-        sldProg.valueProperty().addListener(new InvalidationListener()
-        {
+    /*
+    *get the time of the songe and sets the sliter as the curent value
+    */
+    private void updateSlide() {
+        sldProg.valueProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable)
             {
@@ -508,7 +506,6 @@ public class MediaPlayerWithElements
             case repeat_ON:
                 Image repeatOFF = new Image("Resouces/icons/icons8-refresh-96.png");
                 btnRepeat.setImage(repeatOFF);
-
                 repeatState = repeat_OFF;
                 checkState();
 
